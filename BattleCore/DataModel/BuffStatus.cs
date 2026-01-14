@@ -1,4 +1,4 @@
-﻿using BattleCore.EntityObjects;
+﻿using BattleCore.DataModel.Fighters;
 using System;
 using System.Collections.Generic;
 using System.Linq;

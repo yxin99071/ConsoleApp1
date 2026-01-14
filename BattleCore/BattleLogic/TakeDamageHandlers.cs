@@ -26,7 +26,7 @@ namespace BattleCore.BattleLogic
             if (e.damageInfo.DamageTag.Contains(CommonData.UnDodgeable))
                 return;
 
-            double AvoidChance = 0.5 - (0.5 / (0.05 * e.damageInfo.Target.Agility + 1));
+            double AvoidChance = 0.5 - (0.5 / (0.05 * e.damageInfo.Target.Agility + 1))/1.3;
             var random = new Random();
             int choice = random.Next(0, 101);       
             if (choice / 100.0 < AvoidChance)
@@ -48,7 +48,41 @@ namespace BattleCore.BattleLogic
                         e.damageInfo.Target.LoadBuff(buff,e.damageInfo.Source);
                     }
                 }
+                //判断吸血类buff生效
+                if(e.damageInfo.Source is not null)
+                {
+                    if (e.damageInfo.Source.BuffStatuses.Any(b => b.buff.Name == "UndeadWilling"))
+                    {
+                        //UndeadWilling有50%的吸血
+                        e.damageInfo.Source.Health += e.damageInfo.Damage*0.5;
+                    }
+                }
             }
+        }
+        public static void PassivePretendDeath(object? sender, TakeDamageEventArgs e)
+        {
+            
+            if (e.damageInfo.Target.Health > 0)
+                return;
+            BattleLogger.PassiveSkillInvoke("PretendDeath");
+            //生命值置为1，清除所有buff
+            e.damageInfo.Target.Health = 1;
+            e.damageInfo.Target.BuffStatuses.Clear();
+            e.damageInfo.Target.TakeDamageEA -= PassivePretendDeath;
+        }
+        public static void PassiveUndeadWilling(object? sender, TakeDamageEventArgs e)
+        {
+            
+            if (e.damageInfo.Target.Health >= 0)
+                return;
+            BattleLogger.PassiveSkillInvoke("UndeadWilling");
+            var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
+            e.damageInfo.Target.LoadBuff(new Buff("UndeadWilling", 1, true, 1+damageCorrection),null);
+            e.damageInfo.DamageTag.Add(CommonData.UnFightBackable);
+            e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWilling;
+
+            BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
+
         }
 
         public static void FightBack(object? sender, TakeDamageEventArgs e)
@@ -61,7 +95,8 @@ namespace BattleCore.BattleLogic
                 e.damageInfo.Damage = 0;
                 return;
             }
-            double FightBackChance = (0.5 - (0.5 / (0.05 * e.damageInfo.Target.Agility + 1))) /2;
+            double FightBackChance = (0.5 - (0.5 / (0.05 * e.damageInfo.Target.Agility + 1))) /1.5;
+            //最高33%概率反击
             var random = new Random();
             int choice = random.Next(0, 101);
             if (choice / 100.0 < FightBackChance)

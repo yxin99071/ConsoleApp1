@@ -1,0 +1,443 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battleevnetargs\\causedamageeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battleevnetargs\\causedamageeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlelogic\\takedamagehandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlelogic\\takedamagehandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\fighters\\warrior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\fighters\\warrior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battleevnetargs\\takedamageeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battleevnetargs\\takedamageeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\fighters\\fighter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\fighters\\fighter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlelogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlelogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlelogic\\battlecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlelogic\\battlecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlelogic\\causedamagehandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlelogic\\causedamagehandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlelogic\\loadbuffhandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlelogic\\loadbuffhandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\buffstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\buffstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battleevnetargs\\loadbuffeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battleevnetargs\\loadbuffeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\buff.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\buff.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\damageinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\damageinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\commondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\commondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\skill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\skill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\fighters\\magician.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\fighters\\magician.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\fighters\\ranger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\fighters\\ranger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\fighters\\mortal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\fighters\\mortal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlelogic\\globaleventbus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlelogic\\globaleventbus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\datamodel\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\datamodel\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battlecore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battlecore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battleevnetargs\\roundbegineventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battleevnetargs\\roundbegineventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|d:\\workspace\\test\\consoles\\consoleapp1\\battlecore\\battleevnetargs\\roundendeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0EFD07BB-CB9A-49FB-8345-6C82B53F6DFE}|BattleCore\\BattleCore.csproj|solutionrelative:battlecore\\battleevnetargs\\roundendeventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1885741193:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{c6f34f0d-7ae5-4f3a-be61-fe0c21ae9eb8}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TakeDamageEventArgs.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\TakeDamageEventArgs.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleEvnetArgs\\TakeDamageEventArgs.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\TakeDamageEventArgs.cs",
+              "RelativeToolTip": "BattleCore\\BattleEvnetArgs\\TakeDamageEventArgs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:03:56.594Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Warrior.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Warrior.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Fighters\\Warrior.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Warrior.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Fighters\\Warrior.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA8wBcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T04:57:16.694Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SeedData.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\SeedData.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\SeedData.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\SeedData.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\SeedData.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAADgvyUAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:35:33.708Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TakeDamageHandlers.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\TakeDamageHandlers.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleLogic\\TakeDamageHandlers.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\TakeDamageHandlers.cs",
+              "RelativeToolTip": "BattleCore\\BattleLogic\\TakeDamageHandlers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAF0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T06:20:38.788Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CauseDamageEventArgs.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\CauseDamageEventArgs.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleEvnetArgs\\CauseDamageEventArgs.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\CauseDamageEventArgs.cs",
+              "RelativeToolTip": "BattleCore\\BattleEvnetArgs\\CauseDamageEventArgs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T04:33:36.867Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Fighter.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Fighter.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Fighters\\Fighter.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Fighter.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Fighters\\Fighter.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAMBAwCwAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T04:31:33.374Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "BattleLogger.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogger.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleLogger.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogger.cs",
+              "RelativeToolTip": "BattleCore\\BattleLogger.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAIBAwBwAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T06:48:40.519Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "LoadBuffHandlers.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\LoadBuffHandlers.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleLogic\\LoadBuffHandlers.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\LoadBuffHandlers.cs",
+              "RelativeToolTip": "BattleCore\\BattleLogic\\LoadBuffHandlers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T06:56:17.78Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CauseDamageHandlers.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\CauseDamageHandlers.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleLogic\\CauseDamageHandlers.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\CauseDamageHandlers.cs",
+              "RelativeToolTip": "BattleCore\\BattleLogic\\CauseDamageHandlers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T06:43:02.633Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BattleController.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\BattleController.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleLogic\\BattleController.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\BattleController.cs",
+              "RelativeToolTip": "BattleCore\\BattleLogic\\BattleController.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAIA2wBcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:32:13.627Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "BuffStatus.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\BuffStatus.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\BuffStatus.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\BuffStatus.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\BuffStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T08:11:17.581Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "LoadBuffEventArgs.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\LoadBuffEventArgs.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleEvnetArgs\\LoadBuffEventArgs.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\LoadBuffEventArgs.cs",
+              "RelativeToolTip": "BattleCore\\BattleEvnetArgs\\LoadBuffEventArgs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:05:41.564Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Buff.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Buff.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Buff.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Buff.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Buff.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:06:02.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "DamageInfo.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\DamageInfo.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\DamageInfo.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\DamageInfo.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\DamageInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:00:28.219Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Skill.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Skill.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Skill.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Skill.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Skill.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T04:38:56.978Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Magician.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Magician.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Fighters\\Magician.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Magician.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Fighters\\Magician.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T05:03:15.972Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "CommonData.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\CommonData.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\CommonData.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\CommonData.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\CommonData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T01:45:44.746Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\Program.cs",
+              "RelativeDocumentMoniker": "BattleCore\\Program.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\Program.cs",
+              "RelativeToolTip": "BattleCore\\Program.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAA4wBoAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T04:29:30.128Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Ranger.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Ranger.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Fighters\\Ranger.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Ranger.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Fighters\\Ranger.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAA2wB8AAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T05:01:39.823Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Mortal.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Mortal.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Fighters\\Mortal.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Fighters\\Mortal.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Fighters\\Mortal.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAA2wB8AAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T05:21:13.703Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "GlobalEventBus.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\GlobalEventBus.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleLogic\\GlobalEventBus.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleLogic\\GlobalEventBus.cs",
+              "RelativeToolTip": "BattleCore\\BattleLogic\\GlobalEventBus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:24:46.907Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Weapon.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Weapon.cs",
+              "RelativeDocumentMoniker": "BattleCore\\DataModel\\Weapon.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\DataModel\\Weapon.cs",
+              "RelativeToolTip": "BattleCore\\DataModel\\Weapon.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAIBAwBIAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:11:30.448Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "BattleCore.csproj",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleCore.csproj",
+              "RelativeDocumentMoniker": "BattleCore\\BattleCore.csproj",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleCore.csproj",
+              "RelativeToolTip": "BattleCore\\BattleCore.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-13T05:30:14.193Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "RoundBeginEventArgs.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\RoundBeginEventArgs.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleEvnetArgs\\RoundBeginEventArgs.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\RoundBeginEventArgs.cs",
+              "RelativeToolTip": "BattleCore\\BattleEvnetArgs\\RoundBeginEventArgs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:25:06.122Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "RoundEndEventArgs.cs",
+              "DocumentMoniker": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\RoundEndEventArgs.cs",
+              "RelativeDocumentMoniker": "BattleCore\\BattleEvnetArgs\\RoundEndEventArgs.cs",
+              "ToolTip": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleEvnetArgs\\RoundEndEventArgs.cs",
+              "RelativeToolTip": "BattleCore\\BattleEvnetArgs\\RoundEndEventArgs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T05:25:36.83Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

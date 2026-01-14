@@ -6,24 +6,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleCore.EntityObjects
+namespace BattleCore.DataModel.Fighters
 {
-    public class Fighter
+    public abstract class Fighter
     {
-        public Fighter(string name, double health, double agility, double strength, List<BuffStatus> buffStatuses, List<Weapon> weapons)
+        public Fighter(string name, double health, double agility, double strength,double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons)
         {
             Name = name;
             Health = health;
+            MaxHealth = health;
             Agility = agility;
             Strength = strength;
             BuffStatuses = buffStatuses;
+            Intelligence = intelligence;
             Weapons = weapons;
         }
-
+        public readonly double MaxHealth;
         public string Name { get; set; }
         public double Health { get; set; }
         public double Agility { get; set; }
         public double Strength { get; set; }
+        public double Intelligence { get; set; }
         public int SpeedBar { get; set; }
         public List<BuffStatus> BuffStatuses { get; set; } = new List<BuffStatus>();
         public List<Weapon> Weapons { get; set; } = new List<Weapon>();
@@ -33,28 +36,21 @@ namespace BattleCore.EntityObjects
         public event EventHandler<TakeDamageEventArgs>? TakeDamageEA;
         public event EventHandler<LoadBuffEventArgs>? LoadBuffEA;
 
-        public void CauseDamage(DamageInfo damageInfo)
+        public virtual void CauseDamage(DamageInfo damageInfo)
         {
             CauseDamageEA?.Invoke(this, new CauseDamageEventArgs(damageInfo));
         }
-        public void TakeDamage(DamageInfo damageInfo)
+        public virtual void TakeDamage(DamageInfo damageInfo)
         {
             TakeDamageEA?.Invoke(this, new TakeDamageEventArgs(damageInfo));  
         }
-        public void LoadBuff(Buff buff,Fighter? source)
+        public virtual void LoadBuff(Buff buff,Fighter? source)
         {
-            var newBuff = new Buff(buff);
-            if (source is not null)
-            {
-                if (newBuff.CoefficientStrength > 0)
-                    newBuff.DirectDamage = newBuff.CoefficientStrength * source.Strength;
-                if (newBuff.CoefficientAgility > 0)
-                    newBuff.DirectDamage = newBuff.CoefficientAgility * source.Agility;
-            }
             
-
-            LoadBuffEA?.Invoke(this, new LoadBuffEventArgs(newBuff));
+            LoadBuffEA?.Invoke(this, new LoadBuffEventArgs(buff,source));
         }
+
+        public abstract void SetFitDamage(DamageInfo damageInfo);
         
 
     }

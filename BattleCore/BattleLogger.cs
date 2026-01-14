@@ -21,7 +21,7 @@ namespace BattleCore
 
             if (prop != null)
             {
-                Console.WriteLine($"{name} chooses action{prop.GetValue(action)}");
+                Console.WriteLine($"{name} chooses action: {prop.GetValue(action)}");
             }
             else
                 Console.WriteLine("UNKNOWN ERROR IN LogAction");
@@ -43,6 +43,11 @@ namespace BattleCore
         public static void LogBuffTimeOut(string buffName)
         {
             Console.WriteLine($"Buff {buffName} times out");
+        }
+
+        internal static void PassiveSkillInvoke(string skillName)
+        {
+            Console.WriteLine($"Passive Skill Invoked: {skillName}");
         }
     }
 }

@@ -1,0 +1,15 @@
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\bin\Debug\net8.0\BattleCore.exe
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\bin\Debug\net8.0\BattleCore.deps.json
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\bin\Debug\net8.0\BattleCore.runtimeconfig.json
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\bin\Debug\net8.0\BattleCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\bin\Debug\net8.0\BattleCore.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.GeneratedMSBuildEditorConfig.editorconfig
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.AssemblyInfoInputs.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.AssemblyInfo.cs
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.csproj.CoreCompileInputs.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\refint\BattleCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.genruntimeconfig.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\ref\BattleCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleCore\obj\Debug\net8.0\BattleCore.sourcelink.json

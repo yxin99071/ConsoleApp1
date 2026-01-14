@@ -1,6 +1,6 @@
 ﻿using BattleCore.BattleLogic;
 using BattleCore.DataModel;
-using BattleCore.EntityObjects;
+using BattleCore.DataModel.Fighters;
 
 namespace BattleCore
 {
@@ -10,25 +10,31 @@ namespace BattleCore
         {
 
             SeedData sd = new SeedData();
-            BattleController.Initial(new List<EntityObjects.Fighter> { sd.Fighter_Balacne
+            BattleController.Initial(new List<Fighter> { sd.Fighter_Balacne
                     , sd.Fighter_Agility
                     , sd.Fighter_Strength });
             while (true)
             {
-                if (BattleController.WhetherAction(sd.Fighter_Balacne))
+                if (BattleController.WhetherAction(sd.Fighter_Agility))
                 {
                     Thread.Sleep(1000);
-                    BattleController.DecideAction(sd.Fighter_Balacne, sd.Fighter_Strength);
+                    BattleController.BuffEffection(sd.Fighter_Agility);
+                    BattleController.DecideAction(sd.Fighter_Agility, sd.Fighter_Strength);
+                    BattleController.BuffSettle(sd.Fighter_Agility);
                     Console.WriteLine($"Fighter_Strength's Health:{(int)sd.Fighter_Strength.Health}");
                 }
+                if (sd.Fighter_Agility.Health <= 0 || sd.Fighter_Strength.Health <= 0)
+                    break;
                 if (BattleController.WhetherAction(sd.Fighter_Strength))
                 {
                     Thread.Sleep(1000);
-                    BattleController.DecideAction(sd.Fighter_Strength, sd.Fighter_Balacne);
-                    Console.WriteLine($"Fighter_Balacne's Health:{(int)sd.Fighter_Balacne.Health}");
+                    BattleController.BuffEffection(sd.Fighter_Strength);
+                    BattleController.DecideAction(sd.Fighter_Strength, sd.Fighter_Agility);
+                    BattleController.BuffSettle(sd.Fighter_Strength);
+                    Console.WriteLine($"Fighter_Agility's Health:{(int)sd.Fighter_Agility.Health}");
                 }
 
-                if (sd.Fighter_Balacne.Health <= 0 || sd.Fighter_Strength.Health <=0)
+                if (sd.Fighter_Agility.Health <= 0 || sd.Fighter_Strength.Health <=0)
                     break;
             }
         }

@@ -1,5 +1,5 @@
 ﻿using BattleCore.DataModel;
-using BattleCore.EntityObjects;
+using BattleCore.DataModel.Fighters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,10 @@ namespace BattleCore.BattleLogic
         public static void AttackWithFist(Fighter source, Fighter taker)
         {
             BattleLogger.LogAction(source.Name, new {Name="Fist"});
-            double finalDamage = 0;
-            finalDamage += source.Strength * 1;
-            DamageInfo damageInfo = new DamageInfo(source, taker, finalDamage);
+            
+            DamageInfo damageInfo = new DamageInfo(source, taker, 0);
+
+            source.SetFitDamage(damageInfo);
 
             source.CauseDamage(damageInfo);
             taker.TakeDamage(damageInfo);
@@ -28,8 +29,7 @@ namespace BattleCore.BattleLogic
             //todo 判断武器是否剩余
             double finalDamage = 0;
             var random = new Random();
-            //int choice = random.Next(0, source.Weapons.Count());
-            int choice = 1;
+            int choice = random.Next(0, source.Weapons.Count());
             Weapon weapon = source.Weapons[choice];
             BattleLogger.LogAction(source.Name, weapon);
             DamageInfo damageInfo;
@@ -61,7 +61,6 @@ namespace BattleCore.BattleLogic
         {
             if (taker == null)
                 return;
-            BuffEffection(source);
             var random = new Random();
             int choice = random.Next(1, 3);
             switch(choice)
@@ -77,23 +76,27 @@ namespace BattleCore.BattleLogic
                         break;
                     }
             }
-            BuffSettle(source);
 
         }
         public static void BuffEffection(Fighter fighter)
         {
             if(fighter.BuffStatuses.Count()>0)
             {
+                List<BuffStatus> damagedBuffs = new List<BuffStatus>();
                 foreach(var buffStatus in fighter.BuffStatuses)
                 {
                     if(buffStatus.buff.DirectDamage !=0)
-                    {
-                        BattleLogger.LogBuffDamage(buffStatus.buff.Name);
-                        var damageTag = $"{CommonData.UnDodgeable},{CommonData.UnFightBackable}";
-                        DamageInfo damageInfo = new DamageInfo(buffStatus.Source, fighter, buffStatus.buff.DirectDamage,damageTag:damageTag);
-                        buffStatus.Source?.CauseDamage(damageInfo);
-                        fighter.TakeDamage(damageInfo);
-                    }
+                        damagedBuffs.Add(buffStatus);
+
+                }
+                //先遍历完再结算伤害，否则可能出现遍历时清除buff的而错误
+                foreach(var buffStatus in damagedBuffs)
+                {
+                    BattleLogger.LogBuffDamage(buffStatus.buff.Name);
+                    var damageTag = $"{CommonData.UnDodgeable},{CommonData.UnFightBackable}";
+                    DamageInfo damageInfo = new DamageInfo(buffStatus.Source, fighter, buffStatus.buff.DirectDamage, damageTag: damageTag);
+                    buffStatus.Source?.CauseDamage(damageInfo);
+                    fighter.TakeDamage(damageInfo);
                 }
             }
         }
@@ -120,14 +123,20 @@ namespace BattleCore.BattleLogic
         }
         public static void Initial(List<Fighter> fighters)
         {
-            foreach(var fighter in fighters)
+            for (int i = 0; i < fighters.Count; i++)
             {
-                fighter.LoadBuffEA += LoadBuffHandlers.LoadBuff;
-                fighter.CauseDamageEA += CauseDamageHandlers.CorrectDamageByBuff;
-                fighter.TakeDamageEA += TakeDamageHandlers.CorrectDamage;
-                fighter.TakeDamageEA += TakeDamageHandlers.AvoidanceOrDamage;
-                fighter.TakeDamageEA += TakeDamageHandlers.DamageOnHp;
-                fighter.TakeDamageEA += TakeDamageHandlers.FightBack;
+                fighters[i].LoadBuffEA += LoadBuffHandlers.LoadBuff;
+                fighters[i].CauseDamageEA += CauseDamageHandlers.CorrectDamageByBuff;
+                fighters[i].TakeDamageEA += TakeDamageHandlers.CorrectDamage;
+                fighters[i].TakeDamageEA += TakeDamageHandlers.AvoidanceOrDamage;
+                fighters[i].TakeDamageEA += TakeDamageHandlers.DamageOnHp;
+
+                if (i == 1)
+                    fighters[i].TakeDamageEA += TakeDamageHandlers.PassivePretendDeath;
+                if (i == 2)
+                    fighters[i].TakeDamageEA += TakeDamageHandlers.PassiveUndeadWilling;
+
+                fighters[i].TakeDamageEA += TakeDamageHandlers.FightBack;
             }
         }
         public static bool WhetherAction(Fighter fighter)
@@ -142,7 +151,57 @@ namespace BattleCore.BattleLogic
 
             return false;
         }
+        public static void ActionWithSkill(Fighter source, Fighter taker)
+        {
+            //随机选中技能 !IsPassive
 
+            //TagDamage=> DamageSkill
+
+            //TagBuff => BuffSkill
+
+            //TagSpecial => Special
+        }
+
+        public static void ActionWithDamageSkill(Fighter source, Fighter taker,Skill skill)
+        {
+            double finalDamage = source.Agility * skill.CoefficientAgility
+                + source.Intelligence * skill.CoefficientIntelligence
+                + source.Strength * skill.CoefficientStrength;
+            DamageInfo damageInfo;
+
+            if (skill.Buffs.Count() > 0)
+            {
+                damageInfo = new DamageInfo(source, taker, finalDamage, skill.Buffs.Where(b => b.IsOnSelf != true).ToList());
+                damageInfo.DamageTag = skill.Tags;
+            }
+            else
+                damageInfo = new DamageInfo(source, taker, finalDamage);
+
+
+            source.CauseDamage(damageInfo);
+            //结算自己伤害后，判定伤害前挂载自我buff
+            foreach (var buff in skill.Buffs)
+            {
+                if (buff.IsOnSelf)
+                {
+                    source.LoadBuff(buff, null);
+                }
+            }
+            taker.TakeDamage(damageInfo);
+
+
+        }
+
+        public static void ActionWithBuffSkill(Fighter source,Fighter taker,Skill skill)
+        {
+            foreach(var buff in skill.Buffs)
+            {
+                if (buff.IsOnSelf)
+                    source.LoadBuff(buff,null);
+                else
+                    taker.LoadBuff(buff, source);
+            }
+        }
     }
 
 
