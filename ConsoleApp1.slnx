@@ -4,4 +4,6 @@
   </Folder>
   <Project Path="BattleBackend/BattleBackend.csproj" Id="9c9ce924-e289-48a9-9720-696a75b4f5c6" />
   <Project Path="BattleCore/BattleCore.csproj" Id="0efd07bb-cb9a-49fb-8345-6c82b53f6dfe" />
+  <Project Path="BattleTestProject/BattleTestProject.csproj" Id="a147a651-3184-42d2-9a04-118e3049114b" />
+  <Project Path="DataCore/DataCore.csproj" Id="2d6b9ce7-170e-464b-b575-ff156aee61b6" />
 </Solution>

@@ -1,0 +1,13 @@
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\bin\Debug\net8.0\DataCore.deps.json
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\bin\Debug\net8.0\DataCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\bin\Debug\net8.0\DataCore.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.csproj.AssemblyReference.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.GeneratedMSBuildEditorConfig.editorconfig
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.AssemblyInfoInputs.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.AssemblyInfo.cs
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.csproj.CoreCompileInputs.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.sourcelink.json
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\refint\DataCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\ref\DataCore.dll
