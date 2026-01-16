@@ -4,3 +4,4 @@
 [Obj]/
 *.user
 *.suo
+/BattleTestProject/BattleTestProject.csproj
