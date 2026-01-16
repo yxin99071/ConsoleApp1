@@ -9,10 +9,14 @@ namespace BattleCore.DataModel.Fighters
 {
     public class Magician : Fighter
     {
-        public Magician(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons)
-    : base(name, health, agility, strength, intelligence, buffStatuses, weapons)
+        public Magician(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons,List<Skill> skills)
+    : base(name, health, agility, strength, intelligence, buffStatuses, weapons,skills)
         {
             Profession = "Magician";
+            //法师开局有护盾
+            BuffStatuses.Add(new BuffStatus(
+                new Buff("FakeHealth", 1, true,damageCorrection:1.2, specialTag: $"{intelligence * 2.5}"),this,null
+                ));
         }
         public string Profession { get; set; }
 
@@ -21,7 +25,7 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Intelligence * 1.0;
             //添加buff
             Random random = new Random();
-            var buff = CommonData.BuffPools[random.Next(0, CommonData.BuffPools.Count)];
+            var buff = CommonData.BuffPool[random.Next(0, CommonData.BuffPool.Count)];
             if (buff.IsOnSelf)
                 this.LoadBuff(buff, null);
             else

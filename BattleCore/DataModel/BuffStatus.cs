@@ -12,6 +12,7 @@ namespace BattleCore.DataModel
         public Buff buff;
         public Fighter? Source;
         public Fighter Taker;
+        
 
         public BuffStatus(Buff buff,Fighter taker,Fighter? source = null)
         {

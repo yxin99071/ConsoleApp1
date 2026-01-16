@@ -8,35 +8,27 @@ namespace BattleCore
     {
         static void Main(string[] args)
         {
-
-            SeedData sd = new SeedData();
-            BattleController.Initial(new List<Fighter> { sd.Fighter_Balacne
-                    , sd.Fighter_Agility
-                    , sd.Fighter_Strength });
-            while (true)
+            var F_B = 0;
+            var F_A = 0;
+            var totalRound = 0;
+            while (totalRound < 100)
             {
-                if (BattleController.WhetherAction(sd.Fighter_Agility))
-                {
-                    Thread.Sleep(1000);
-                    BattleController.BuffEffection(sd.Fighter_Agility);
-                    BattleController.DecideAction(sd.Fighter_Agility, sd.Fighter_Strength);
-                    BattleController.BuffSettle(sd.Fighter_Agility);
-                    Console.WriteLine($"Fighter_Strength's Health:{(int)sd.Fighter_Strength.Health}");
-                }
-                if (sd.Fighter_Agility.Health <= 0 || sd.Fighter_Strength.Health <= 0)
-                    break;
-                if (BattleController.WhetherAction(sd.Fighter_Strength))
-                {
-                    Thread.Sleep(1000);
-                    BattleController.BuffEffection(sd.Fighter_Strength);
-                    BattleController.DecideAction(sd.Fighter_Strength, sd.Fighter_Agility);
-                    BattleController.BuffSettle(sd.Fighter_Strength);
-                    Console.WriteLine($"Fighter_Agility's Health:{(int)sd.Fighter_Agility.Health}");
-                }
-
-                if (sd.Fighter_Agility.Health <= 0 || sd.Fighter_Strength.Health <=0)
-                    break;
+                SeedData sd = new SeedData();
+                BattleController.Initial(new List<Fighter> { sd.Fighter_Mortal
+                        , sd.Fighter_Ranger
+                        , sd.Fighter_Warrior
+                        , sd.Fighter_Magician});
+                if (BattleController.BattleSimulation(sd.Fighter_Warrior, sd.Fighter_Magician))
+                    F_A++;
+                else
+                    F_B++;
+                totalRound++;
             }
+            Console.WriteLine("==========Statistics==========");
+            Console.WriteLine($"F_A Win: {F_A}");
+            Console.WriteLine($"F_B Win: {F_B}");
+                
         }
+
     }
 }

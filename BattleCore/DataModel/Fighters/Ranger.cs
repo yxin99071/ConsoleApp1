@@ -8,8 +8,8 @@ namespace BattleCore.DataModel.Fighters
 {
     public class Ranger : Fighter
     {
-        public Ranger(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons)
-            : base(name, health, agility, strength, intelligence, buffStatuses, weapons)
+        public Ranger(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons, List<Skill> skills)
+            : base(name, health, agility, strength, intelligence, buffStatuses, weapons,skills)
         {
             Profession = "Ranger";
         }

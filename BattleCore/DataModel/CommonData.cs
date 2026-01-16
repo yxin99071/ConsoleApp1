@@ -1,25 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BattleCore.BattleLogic;
+using BattleCore.DataModel;
+using BattleCore.DataModel.Fighters;
 
 namespace BattleCore.DataModel
 {
     public static class CommonData
     {
-        public static readonly string FireDamage = "FireDamage";
-        public static readonly string IceDamage = "IceDamage";
-        public static readonly string GroundDamage = "GroundDamage";
-        public static readonly string WindDamage = "WindDamage";
-        public static readonly string NormalDamage = "NormalDamage";
-
-
+        #region DamageTag
         public static readonly string UnDodgeable = "UnDogeable";
         public static readonly string UnFightBackable = "UnFightBackable";
+        #endregion
+        #region SpecialSkillTag
+        public static readonly string SkillTagTorture = "Torture";
+        #endregion
 
-        public static readonly List<Buff> BuffPools = [new Buff("Bleed", 2, false, coefficientAgility: 0.3)
-            ,new Buff("Weak", 2, false, 0.7, 1.1)
-            ,new Buff("Strong", 2, true, 1.2,0.8)];
+        public static readonly Dictionary<string, Action<Fighter, Fighter, Skill>> SpecialSkillMap
+            = new Dictionary<string, Action<Fighter, Fighter, Skill>>
+            {
+                [SkillTagTorture] = BattleController.ActionWithSkillTorture
+            };
+        
+        public static readonly List<Buff> BuffPool = new List<Buff>
+    {
+        SeedData.Bleeding, SeedData.IronWill, SeedData.ArmorCrush, SeedData.Poison,
+        SeedData.Adrenaline, SeedData.EagleEye, SeedData.Ignite, SeedData.ArcaneFocus,
+        SeedData.Frozen, SeedData.Weak, SeedData.Strong, SeedData.Regrow
+    };
+
+
+
+        public static double CalculateDodge(double agility, double k = 0.04)
+        {
+            // 预计算常量以提升性能
+            double offset = 1.0 / (1.0 + Math.Exp(k * 60));
+            double denominator = 1.0 - offset;
+
+            // 核心逻辑回归公式
+            double exponent = Math.Exp(-k * (agility - 60));
+            double sigmoid = 1.0 / (1.0 + exponent);
+
+            double dodgeRate = 0.4 * ((sigmoid - offset) / denominator);
+
+            return Math.Clamp(dodgeRate, 0, 0.4); // 确保在 [0, 0.4] 区间
+        }
+        public static double CalculateCounterRate(double agi, double str, double intel)
+        {
+            // 1. 计算加权总值 (Weight Ratio 11:9:7)
+            double weightedAttr = (14 * agi + 7 * str + 9 * intel) / 30.0;
+
+            // 2. 设定 Sigmoid 参数
+            double k = 0.05;      // 增长斜率
+            double midPoint = 40; // 曲线中心点
+
+            // 3. 计算逻辑回归部分 (0 到 1 之间的 S 曲线)
+            double sigmoid = 1.0 / (1.0 + Math.Exp(-k * (weightedAttr - midPoint)));
+
+            // 4. 映射到 5% - 20% 区间
+            // Formula: Min + (Max - Min) * Sigmoid
+            double counterRate = 0.05 + 0.15 * sigmoid;
+
+            return Math.Clamp(counterRate, 0.05, 0.20);
+        }
     }
 }

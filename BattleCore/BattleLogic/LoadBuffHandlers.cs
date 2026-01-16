@@ -13,6 +13,8 @@ namespace BattleCore.BattleLogic
     {
         public static void LoadBuff(object? sender, LoadBuffEventArgs e)
         {
+            if (((Fighter)sender!).BuffStatuses.Any(s => s.buff.Name == "FakeHealth"))
+                return;
             ((Fighter)sender!).BuffStatuses.Add(new BuffStatus(e.buff, (Fighter)sender,e.Source));
         }
     }

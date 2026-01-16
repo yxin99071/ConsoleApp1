@@ -8,8 +8,8 @@ namespace BattleCore.DataModel.Fighters
 {
     public class Mortal :Fighter
     {
-        public Mortal(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons)
-: base(name, health, agility, strength, intelligence, buffStatuses, weapons)
+        public Mortal(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons,List<Skill> skills)
+: base(name, health, agility, strength, intelligence, buffStatuses, weapons,skills)
         {
             Profession = "Magician";
         }
@@ -17,7 +17,7 @@ namespace BattleCore.DataModel.Fighters
 
         public override void SetFitDamage(DamageInfo damageInfo)
         {
-            damageInfo.Damage += Agility*0.5 + Strength*0.5 + Intelligence * 0.5;
+            damageInfo.Damage += Agility*0.71 + Strength*0.71 + Intelligence * 0.71;
         }
         public override void LoadBuff(Buff buff, Fighter? source)
         {

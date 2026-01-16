@@ -26,19 +26,42 @@ namespace BattleCore.BattleLogic
             if (e.damageInfo.DamageTag.Contains(CommonData.UnDodgeable))
                 return;
 
-            double AvoidChance = 0.5 - (0.5 / (0.05 * e.damageInfo.Target.Agility + 1))/1.3;
+            double AvoidChance = CommonData.CalculateDodge(e.damageInfo.Target.Agility);
             var random = new Random();
             int choice = random.Next(0, 101);       
             if (choice / 100.0 < AvoidChance)
             {
                 BattleLogger.LogReaction(e.damageInfo.Target.Name, "Dodge");
                 e.damageInfo.Damage = -1;
+                e.damageInfo.Buffs.Clear();
             }
         }
         public static void DamageOnHp(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.Damage >= 0)
+            if (e.damageInfo.Damage > 0)
             {
+                //判断虚假生命值
+                var FakeHealth = e.damageInfo.Target.BuffStatuses.SingleOrDefault(s => s.buff.Name == "FakeHealth");
+                if (FakeHealth != null)
+                {
+                    //如果解析护盾值成功
+                    if (Double.TryParse(FakeHealth.buff.SpecialTag[0], out double shield))
+                    {
+                        if (shield >= e.damageInfo.Damage)
+                        {
+                            shield -= e.damageInfo.Damage;
+                            e.damageInfo.Damage = 0;
+                            FakeHealth.buff.SpecialTag[0] = ((int)shield).ToString();
+                        }
+                        else
+                        {
+                            e.damageInfo.Damage -= shield;
+                            e.damageInfo.Target.BuffStatuses.Remove(FakeHealth);
+                        }
+                    }
+                        
+                }
+
                 e.damageInfo.Target.Health -= e.damageInfo.Damage;
                 BattleLogger.LogDamage(e.damageInfo.Target.Name, e.damageInfo.Damage);
                 if(e.damageInfo.Buffs!=null)
@@ -69,11 +92,14 @@ namespace BattleCore.BattleLogic
             e.damageInfo.Target.Health = 1;
             e.damageInfo.Target.BuffStatuses.Clear();
             e.damageInfo.Target.TakeDamageEA -= PassivePretendDeath;
+            e.damageInfo.DamageTag.Add(CommonData.UnFightBackable);
         }
         public static void PassiveUndeadWilling(object? sender, TakeDamageEventArgs e)
         {
             
             if (e.damageInfo.Target.Health >= 0)
+                return;
+            if (e.damageInfo.Source == null)
                 return;
             BattleLogger.PassiveSkillInvoke("UndeadWilling");
             var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
@@ -83,6 +109,11 @@ namespace BattleCore.BattleLogic
 
             BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
 
+            if(e.damageInfo.Target.SpeedBar>e.damageInfo.Target.Max_SpeedBar)
+                e.damageInfo.Target.LoadBuff(new Buff("Block", 0, true, 1 + damageCorrection), null);
+
+            if (e.damageInfo.Source.IsDead)
+                e.damageInfo.Target.Health = 1;
         }
 
         public static void FightBack(object? sender, TakeDamageEventArgs e)
@@ -95,8 +126,8 @@ namespace BattleCore.BattleLogic
                 e.damageInfo.Damage = 0;
                 return;
             }
-            double FightBackChance = (0.5 - (0.5 / (0.05 * e.damageInfo.Target.Agility + 1))) /1.5;
-            //最高33%概率反击
+            double FightBackChance = CommonData.CalculateCounterRate(e.damageInfo.Target.Agility, e.damageInfo.Target.Strength, e.damageInfo.Target.Intelligence);
+            //最高20%概率反击
             var random = new Random();
             int choice = random.Next(0, 101);
             if (choice / 100.0 < FightBackChance)
@@ -104,6 +135,12 @@ namespace BattleCore.BattleLogic
                 BattleLogger.LogReaction(e.damageInfo.Target.Name, "FightBack");
                 BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
             }
+        }
+
+        public static void JudgeDeath(object? sender, TakeDamageEventArgs e)
+        {
+            if (e.damageInfo.Target.Health <= 0)
+                e.damageInfo.Target.IsDead = true;
         }
        
     }
