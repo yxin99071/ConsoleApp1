@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,7 @@ namespace BattleCore.DataModel.Fighters
 {
     public class Mortal :Fighter
     {
-        public Mortal(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons,List<Skill> skills)
-: base(name, health, agility, strength, intelligence, buffStatuses, weapons,skills)
+        public Mortal(User user): base(user)
         {
             Profession = "Magician";
         }
@@ -21,7 +21,7 @@ namespace BattleCore.DataModel.Fighters
         }
         public override void LoadBuff(Buff buff, Fighter? source)
         {
-            var newBuff = new Buff(buff);
+            var newBuff = buff.Clone();
             if (source is not null)
             {
                 if (newBuff.CoefficientStrength > 0)

@@ -16,5 +16,13 @@ namespace DataCore.Models
 
         // 你的特殊属性
         public int Level { get; set; }
+
+        public SkillBuff Clone()
+        {
+            return new SkillBuff
+            {
+                Level = this.Level
+            };
+        }
     }
 }

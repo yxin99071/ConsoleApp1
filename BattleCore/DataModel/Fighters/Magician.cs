@@ -1,21 +1,17 @@
-﻿using BattleCore.BattleEvnetArgs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataCore.Models;
+
 
 namespace BattleCore.DataModel.Fighters
 {
     public class Magician : Fighter
     {
-        public Magician(string name, double health, double agility, double strength, double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons,List<Skill> skills)
-    : base(name, health, agility, strength, intelligence, buffStatuses, weapons,skills)
+        public Magician(User user) : base(user)
         {
             Profession = "Magician";
             //法师开局有护盾
             BuffStatuses.Add(new BuffStatus(
-                new Buff("FakeHealth", 1, true,damageCorrection:1.2, specialTag: $"{intelligence * 2.5}"),this,null
+                new Buff {Name="FakeHealth", LastRound=1,IsOnSelf= true, DamageCorrection = 1.2,
+                    SpecialTag= (Intelligence * 2.5).ToString().Split(',').ToList()},this,null
                 ));
         }
         public string Profession { get; set; }

@@ -1,9 +1,5 @@
 ﻿using BattleCore.DataModel.Fighters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataCore.Models;
 
 namespace BattleCore.DataModel
 {

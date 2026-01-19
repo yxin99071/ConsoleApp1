@@ -1,5 +1,6 @@
 ﻿using BattleCore.BattleEvnetArgs;
 using BattleCore.DataModel;
+using DataCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +11,20 @@ namespace BattleCore.DataModel.Fighters
 {
     public abstract class Fighter
     {
-        public Fighter(string name, double health, double agility, double strength,double intelligence, List<BuffStatus> buffStatuses, List<Weapon> weapons,List<Skill> skills)
+        public Fighter(User user)
         {
-            Name = name;
-            Health = health;
-            MaxHealth = health;
-            Agility = agility;
-            Strength = strength;
-            BuffStatuses = buffStatuses;
-            Intelligence = intelligence;
-            Weapons = weapons;
-            Skills = skills;
+            Id = user.Id;
+            Name = user.Name;
+            Health = user.Health;
+            MaxHealth = user.Health;
+            Agility = user.Agility;
+            Strength = user.Strength;
+            BuffStatuses = new List<BuffStatus>();
+            Intelligence = user.Intelligence;
+            Weapons = user.Weapons;
+            Skills = user.Skills;
         }
-
+        public readonly int Id;
         public readonly double MaxHealth;
         public string Name { get; set; }
         public double Health { get; set; }
