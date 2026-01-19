@@ -1,11 +1,7 @@
 ﻿using DataCore.Data;
 using DataCore.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace DataCore.Services
 {
@@ -27,6 +23,10 @@ namespace DataCore.Services
                 .ThenInclude(s => s.SkillBuffs)
                 .ThenInclude(sb => sb.Buff)
                 .SingleOrDefaultAsync(u => u.Id == UserId);
+        }
+        public async Task<List<Buff>> GetAllBuffs()
+        {
+            return await _context.Buffs.AsNoTracking().ToListAsync();
         }
 
     }

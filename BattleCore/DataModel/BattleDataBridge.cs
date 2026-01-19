@@ -2,24 +2,35 @@
 using BattleCore.DataModel.Fighters;
 using DataCore.Services;
 using Buff = DataCore.Models.Buff;
-using Skill = DataCore.Models.Skill;
-using User = DataCore.Models.User;
-using Weapon = DataCore.Models.Weapon;
 
 namespace BattleCore.DataModel
 {
     public class BattleDataBridge
     {
-        public readonly DataService dataService = new DataService();
+        private static readonly DataService dataService = new DataService();
         /*
          * readonly dataservice
          */
         public async Task<Fighter?> ConvertUserToFighter(int userId)
         {
             var user = await dataService.GetUserById(userId);
+            if (user is not null)
+            {
+                if (user.Profession == "MAGICIAN")
+                    return new Magician(user);
+                if (user.Profession == "WARRIOR")
+                    return new Warrior(user);
+                if (user.Profession == "RANGER")
+                    return new Ranger(user);
+                if (user.Profession == "MORTAL")
+                    return new Mortal(user);
+            }
             return null;
         }
-
+        public static async Task<List<Buff>> GetBuffTools()
+        {
+            return await dataService.GetAllBuffs();
+        }
 
         //dataservice.GetUserInfo => return User
 

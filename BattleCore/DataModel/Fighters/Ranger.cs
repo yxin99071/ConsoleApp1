@@ -17,7 +17,7 @@ namespace BattleCore.DataModel.Fighters
         public override void SetFitDamage(DamageInfo damageInfo)
         {
             damageInfo.Damage += Agility * 1.3;
-            damageInfo.DamageTag = [CommonData.UnFightBackable, CommonData.UnDodgeable];
+            damageInfo.DamageTag = [StaticData.UnFightBackable, StaticData.UnDodgeable];
         }
         public override void LoadBuff(Buff buff, Fighter? source)
         {

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace DataCore.Data  
 {
-    public class AppDbContext : DbContext
+    public class BattleDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Buff> Buffs { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public BattleDbContext(DbContextOptions<BattleDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,12 +1,6 @@
 ﻿using BattleCore.BattleEvnetArgs;
 using BattleCore.DataModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-
+using DataCore.Models;
 namespace BattleCore.BattleLogic
 {
     public static class TakeDamageHandlers
@@ -23,10 +17,10 @@ namespace BattleCore.BattleLogic
         } 
         public static void AvoidanceOrDamage(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.DamageTag.Contains(CommonData.UnDodgeable))
+            if (e.damageInfo.DamageTag.Contains(StaticData.UnDodgeable))
                 return;
 
-            double AvoidChance = CommonData.CalculateDodge(e.damageInfo.Target.Agility);
+            double AvoidChance = StaticData.CalculateDodge(e.damageInfo.Target.Agility);
             var random = new Random();
             int choice = random.Next(0, 101);       
             if (choice / 100.0 < AvoidChance)
@@ -92,7 +86,7 @@ namespace BattleCore.BattleLogic
             e.damageInfo.Target.Health = 1;
             e.damageInfo.Target.BuffStatuses.Clear();
             e.damageInfo.Target.TakeDamageEA -= PassivePretendDeath;
-            e.damageInfo.DamageTag.Add(CommonData.UnFightBackable);
+            e.damageInfo.DamageTag.Add(StaticData.UnFightBackable);
         }
         public static void PassiveUndeadWilling(object? sender, TakeDamageEventArgs e)
         {
@@ -103,14 +97,14 @@ namespace BattleCore.BattleLogic
                 return;
             BattleLogger.PassiveSkillInvoke("UndeadWilling");
             var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
-            e.damageInfo.Target.LoadBuff(new Buff("UndeadWilling", 1, true, 1+damageCorrection),null);
-            e.damageInfo.DamageTag.Add(CommonData.UnFightBackable);
+            e.damageInfo.Target.LoadBuff(new Buff { Name="UndeadWilling",LastRound = 1,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
+            e.damageInfo.DamageTag.Add(StaticData.UnFightBackable);
             e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWilling;
 
             BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
 
             if(e.damageInfo.Target.SpeedBar>e.damageInfo.Target.Max_SpeedBar)
-                e.damageInfo.Target.LoadBuff(new Buff("Block", 0, true, 1 + damageCorrection), null);
+                e.damageInfo.Target.LoadBuff(new Buff {Name= "Block",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection }, null);
 
             if (e.damageInfo.Source.IsDead)
                 e.damageInfo.Target.Health = 1;
@@ -118,7 +112,7 @@ namespace BattleCore.BattleLogic
 
         public static void FightBack(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.DamageTag.Contains(CommonData.UnFightBackable))
+            if (e.damageInfo.DamageTag.Contains(StaticData.UnFightBackable))
                 return;
                 
             if (e.damageInfo.Damage == -1)
@@ -126,7 +120,7 @@ namespace BattleCore.BattleLogic
                 e.damageInfo.Damage = 0;
                 return;
             }
-            double FightBackChance = CommonData.CalculateCounterRate(e.damageInfo.Target.Agility, e.damageInfo.Target.Strength, e.damageInfo.Target.Intelligence);
+            double FightBackChance = StaticData.CalculateCounterRate(e.damageInfo.Target.Agility, e.damageInfo.Target.Strength, e.damageInfo.Target.Intelligence);
             //最高20%概率反击
             var random = new Random();
             int choice = random.Next(0, 101);

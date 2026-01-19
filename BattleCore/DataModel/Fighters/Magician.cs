@@ -21,7 +21,7 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Intelligence * 1.0;
             //添加buff
             Random random = new Random();
-            var buff = CommonData.BuffPool[random.Next(0, CommonData.BuffPool.Count)];
+            var buff = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)];
             if (buff.IsOnSelf)
                 this.LoadBuff(buff, null);
             else
@@ -29,7 +29,7 @@ namespace BattleCore.DataModel.Fighters
         }
         public override void LoadBuff(Buff buff, Fighter? source)
         {
-            var newBuff = new Buff(buff);
+            var newBuff = buff.Clone();
             if (source is not null)
             {
                 if (newBuff.CoefficientStrength > 0)

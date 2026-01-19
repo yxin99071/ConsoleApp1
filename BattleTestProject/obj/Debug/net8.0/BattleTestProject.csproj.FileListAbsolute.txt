@@ -139,3 +139,8 @@ D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\obj\Debug\net8.0\refint
 D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\obj\Debug\net8.0\BattleTestProject.pdb
 D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\obj\Debug\net8.0\BattleTestProject.genruntimeconfig.cache
 D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\obj\Debug\net8.0\ref\BattleTestProject.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\bin\Debug\net8.0\BattleCore.deps.json
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\bin\Debug\net8.0\BattleCore.runtimeconfig.json
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\bin\Debug\net8.0\BattleCore.exe
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\bin\Debug\net8.0\BattleCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleTestProject\bin\Debug\net8.0\BattleCore.pdb

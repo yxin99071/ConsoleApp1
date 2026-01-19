@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+#if false
 namespace BattleCore.DataModel
 {
+
     public class SeedData
     {
         #region buffSeed
@@ -222,3 +223,4 @@ namespace BattleCore.DataModel
 
     }
 }
+#endif

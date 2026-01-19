@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleCore.BattleLogic;
-using BattleCore.DataModel;
+﻿using BattleCore.BattleLogic;
+using DataCore.Models;
 using BattleCore.DataModel.Fighters;
 
 namespace BattleCore.DataModel
 {
-    public static class CommonData
+    public class StaticData
     {
         #region DamageTag
-        public static readonly string UnDodgeable = "UnDogeable";
-        public static readonly string UnFightBackable = "UnFightBackable";
+        public static readonly string UnDodgeable = "UnDogeable".ToUpper();
+        public static readonly string UnFightBackable = "UnFightBackable".ToUpper();
         #endregion
         #region SpecialSkillTag
-        public static readonly string SkillTagTorture = "Torture";
+        public static readonly string SkillTagTorture = "Torture".ToUpper();
         #endregion
 
         public static readonly Dictionary<string, Action<Fighter, Fighter, Skill>> SpecialSkillMap
@@ -25,15 +19,17 @@ namespace BattleCore.DataModel
             {
                 [SkillTagTorture] = BattleController.ActionWithSkillTorture
             };
-        
-        public static readonly List<Buff> BuffPool = new List<Buff>
-    {
-        SeedData.Bleeding, SeedData.IronWill, SeedData.ArmorCrush, SeedData.Poison,
-        SeedData.Adrenaline, SeedData.EagleEye, SeedData.Ignite, SeedData.ArcaneFocus,
-        SeedData.Frozen, SeedData.Weak, SeedData.Strong, SeedData.Regrow
-    };
+
+        public static List<Buff> BuffPool = new List<Buff>();
 
 
+
+        public async static Task InitializeAsyncData()
+        {
+            var pool = await BattleDataBridge.GetBuffTools();
+            if (pool is not null)
+                BuffPool.Concat(pool);
+        }
 
         public static double CalculateDodge(double agility, double k = 0.04)
         {
