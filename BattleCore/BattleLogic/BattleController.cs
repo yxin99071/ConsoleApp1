@@ -128,9 +128,9 @@ namespace BattleCore.BattleLogic
                 fighters[i].TakeDamageEA += TakeDamageHandlers.DamageOnHp;
 
 
-                if (fighters[i].Skills.Any(s => s.Name == "PretendDeath"))
+                if (fighters[i].Skills.Any(s => s.Name == StaticData.PassivePretendDeath))
                     fighters[i].TakeDamageEA += TakeDamageHandlers.PassivePretendDeath;
-                if (fighters[i].Skills.Any(s=>s.Name == "UndeadWilling"))
+                if (fighters[i].Skills.Any(s=>s.Name == StaticData.PassiveUndeadWilling))
                     fighters[i].TakeDamageEA += TakeDamageHandlers.PassiveUndeadWilling;
 
                 fighters[i].TakeDamageEA += TakeDamageHandlers.FightBack;
@@ -141,8 +141,8 @@ namespace BattleCore.BattleLogic
         {
             var balanceSumption = (int)(fighter_1.Agility + fighter_2.Agility) / 2;
 
-            fighter_1.SpeedBar += balanceSumption + (int)fighter_1.Agility;
-            fighter_2.SpeedBar += balanceSumption + (int)fighter_2.Agility;
+            fighter_1.SpeedBar += balanceSumption + (int)(fighter_1.Agility * 0.5);
+            fighter_2.SpeedBar += balanceSumption + (int)(fighter_2.Agility * 0.5);
             
 
         }
@@ -157,7 +157,7 @@ namespace BattleCore.BattleLogic
             } while (chosenSkill.IsPassive);
 
             //normalSkill
-            if(chosenSkill.Tags.Count == 0)
+            if (chosenSkill.Tags[0] == "GENERAL")
                 ActionWithNormalSkill(source, taker, chosenSkill);
             //specialSkill
             else
@@ -174,11 +174,13 @@ namespace BattleCore.BattleLogic
         }
         public static void ActionWithNormalSkill(Fighter source, Fighter taker,Skill skill)
         {
+            BattleLogger.LogAction(source.Name, skill);
             double finalDamage = source.Agility * skill.CoefficientAgility
                 + source.Intelligence * skill.CoefficientIntelligence
                 + source.Strength * skill.CoefficientStrength;
             if (finalDamage > 0)
             {
+
                 DamageInfo damageInfo;
                 //UNSURECHANGED : 原本没有导航属性
                 if (skill.SkillBuffs.Count() > 0)
@@ -250,6 +252,10 @@ namespace BattleCore.BattleLogic
                 taker.Max_SpeedBar = Max_SpeedBar;
                 if (source.SpeedBar >= Max_SpeedBar)
                 {
+                    if (source.Profession == "Warrior")
+                        Program.MOVE_TIME_WARRIOR++;
+                    else
+                        Program.MOVE_TIME_RANGER++;
                     Console.WriteLine($"New Round:======{source.Name}========");
                     //Thread.Sleep(1000);
                     BuffEffection(source);
@@ -274,6 +280,10 @@ namespace BattleCore.BattleLogic
 
                 if (taker.SpeedBar >= Max_SpeedBar)
                 {
+                    if (taker.Profession == "Warrior")
+                        Program.MOVE_TIME_WARRIOR++;
+                    else
+                        Program.MOVE_TIME_RANGER++;
                     Console.WriteLine($"New Round:======{taker.Name}========");
                     //Thread.Sleep(1000);
                     BuffEffection(taker);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace BattleCore
             Console.WriteLine("=====================");
             Console.WriteLine($"It's {name}'s turn!");
         }
-        public static void LogAction(string name,Object action)
+        public static void LogAction(string name, Object action)
         {
             var type = action.GetType();
             var prop = type.GetProperty("Name");
@@ -45,9 +46,13 @@ namespace BattleCore
             Console.WriteLine($"Buff {buffName} times out");
         }
 
-        internal static void PassiveSkillInvoke(string skillName)
+        public static void PassiveSkillInvoke(string skillName)
         {
             Console.WriteLine($"Passive Skill Invoked: {skillName}");
+        }
+        public static void LoadBuffBegin(Buff buff)
+        {
+            Console.WriteLine($"BuffLoaded:{buff.Name}, Periord: {buff.LastRound}");
         }
     }
 }

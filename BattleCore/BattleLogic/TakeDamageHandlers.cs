@@ -58,11 +58,11 @@ namespace BattleCore.BattleLogic
 
                 e.damageInfo.Target.Health -= e.damageInfo.Damage;
                 BattleLogger.LogDamage(e.damageInfo.Target.Name, e.damageInfo.Damage);
-                if(e.damageInfo.Buffs!=null)
+                if (e.damageInfo.Buffs != null)
                 {
-                    foreach(Buff buff in e.damageInfo.Buffs)
+                    foreach (Buff buff in e.damageInfo.Buffs)
                     {
-                        e.damageInfo.Target.LoadBuff(buff,e.damageInfo.Source);
+                        e.damageInfo.Target.LoadBuff(buff, e.damageInfo.Source);
                     }
                 }
                 //判断吸血类buff生效

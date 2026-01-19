@@ -79,7 +79,7 @@ namespace DataCore.Services
                 }
                 weapons.Add(w);
             }
-            void AddSkill(string name, bool isPassive, double agi, double str, double intel, List<string> buffNames, string tag = "常规")
+            void AddSkill(string name, bool isPassive, double agi, double str, double intel, List<string> buffNames, string tag = "GENERAL")
             {
                 var s = new Skill
                 {
@@ -185,11 +185,13 @@ namespace DataCore.Services
                 {
                     Name = "战士_凯尔",
                     Password = 1234.ToString(),
-                    Health = 840,
+                    Health = 820,
+                    Exp = 0,
+                    Level = 10,
                     Profession = "WARRIOR",
-                    Agility = 12,
-                    Strength = 55,
-                    Intelligence = 10,
+                    Agility = 15,
+                    Strength = 57,
+                    Intelligence = 15,
                     Weapons = universalWeapons.Concat(GetListW("EXECUTIONER_AXE", "TOWER_SHIELD_HAMMER")).ToList(),
                     Skills = warriorSkill
                 },
@@ -197,9 +199,11 @@ namespace DataCore.Services
                 {
                     Name = "游侠_莱拉",
                     Password = 1234.ToString(),
-                    Health = 320,
+                    Health = 590,
+                    Exp = 0,
+                    Level = 10,
                     Profession = "RANGER",
-                    Agility = 58,
+                    Agility = 57,
                     Strength = 15,
                     Intelligence = 15,
                     Weapons = universalWeapons.Concat(GetListW("RECURVE_BOW", "SHADOW_BLADES")).ToList(),
@@ -209,11 +213,13 @@ namespace DataCore.Services
                 {
                     Name = "法师_赞",
                     Password = 1234.ToString(),
-                    Health = 620,
+                    Health = 674,
+                    Exp = 0,
+                    Level = 10,
                     Profession = "MAGICIAN",
-                    Agility = 18,
-                    Strength = 10,
-                    Intelligence = 60,
+                    Agility = 15,
+                    Strength = 15,
+                    Intelligence = 57,
                     Weapons = universalWeapons.Concat(GetListW("ARCHMAGE_STAFF", "RUNIC_MAGIC_SWORD")).ToList(),
                     Skills = magicianSkill
                 },
@@ -221,11 +227,11 @@ namespace DataCore.Services
                 {
                     Name = "凡人_艾里斯",
                     Password = 1234.ToString(),
-                    Health = 650,
+                    Health = 754,
                     Profession = "MORTAL",
-                    Agility = 31,
-                    Strength = 33,
-                    Intelligence = 30,
+                    Agility = 32,
+                    Strength = 32,
+                    Intelligence = 32,
                     Weapons = allWeapons, // 凡人精通所有武器
                     Skills = mortalSkill
                 }

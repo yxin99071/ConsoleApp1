@@ -11,15 +11,15 @@ namespace DataCore.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = default!;
-        public int LastRound { get; set; }
-        public double DirectDamage { get; set; }
-        public double DamageCorrection { get; set; }
-        public double WoundCorrection { get; set; }
+        public int LastRound { get; set; } = 1;
+        public double DirectDamage { get; set; } = 0;
+        public double DamageCorrection { get; set; } = 1.0;
+        public double WoundCorrection { get; set; } = 1.0;
         public bool IsOnSelf { get; set; } = false;
         public List<String> SpecialTag { get; set; } = default!;
-        public double CoefficientAgility { get; set; }
-        public double CoefficientStrength { get; set; }
-        public double CoefficientIntelligence { get; set; }
+        public double CoefficientAgility { get; set; } = 0;
+        public double CoefficientStrength { get; set; } = 0;
+        public double CoefficientIntelligence { get; set; } = 0;
         public List<WeaponBuff> WeaponBuffs { get; set; } = new();
         public List<SkillBuff> SkillBuffs { get; set; } = new();
 

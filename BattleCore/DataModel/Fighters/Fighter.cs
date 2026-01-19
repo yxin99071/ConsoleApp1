@@ -29,6 +29,7 @@ namespace BattleCore.DataModel.Fighters
         public string Name { get; set; }
         public double Health { get; set; }
         public double Agility { get; set; }
+        public string Profession { get; set; }
         public double Strength { get; set; }
         public double Intelligence { get; set; }
         public int SpeedBar { get; set; }

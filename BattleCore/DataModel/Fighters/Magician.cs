@@ -10,11 +10,10 @@ namespace BattleCore.DataModel.Fighters
             Profession = "Magician";
             //法师开局有护盾
             BuffStatuses.Add(new BuffStatus(
-                new Buff {Name="FakeHealth", LastRound=1,IsOnSelf= true, DamageCorrection = 1.2,
+                new Buff {Name="FakeHealth", LastRound=2,IsOnSelf= true, DamageCorrection = 1.2,
                     SpecialTag= (Intelligence * 2.5).ToString().Split(',').ToList()},this,null
                 ));
         }
-        public string Profession { get; set; }
 
         public override void SetFitDamage(DamageInfo damageInfo)
         {
@@ -39,9 +38,13 @@ namespace BattleCore.DataModel.Fighters
             }
             //法师被动
             if (newBuff.DamageCorrection < 1 || newBuff.WoundCorrection > 1 || newBuff.DirectDamage > 0)
+                { 
                 newBuff.LastRound--;
+                BattleLogger.PassiveSkillInvoke("法师的灵动");
+                }
             if (newBuff.DamageCorrection > 1 || newBuff.WoundCorrection < 1)
                 newBuff.LastRound++;
+            
             base.LoadBuff(newBuff, source);
         }
 

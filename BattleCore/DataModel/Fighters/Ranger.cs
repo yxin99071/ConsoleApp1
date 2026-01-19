@@ -13,7 +13,6 @@ namespace BattleCore.DataModel.Fighters
         {
             Profession = "Ranger";
         }
-        public string Profession { get; set; }
         public override void SetFitDamage(DamageInfo damageInfo)
         {
             damageInfo.Damage += Agility * 1.3;

@@ -13,7 +13,6 @@ namespace BattleCore.DataModel.Fighters
         {
             Profession = "Magician";
         }
-        public string Profession { get; set; }
 
         public override void SetFitDamage(DamageInfo damageInfo)
         {
