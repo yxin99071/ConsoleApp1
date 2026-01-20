@@ -10,24 +10,19 @@ namespace BattleCore.DataModel.States
 {
     public class DamageInfo
     {
-        public DamageInfo(Fighter? source, Fighter target, double damage, List<Buff>? buffs = null, string damageTag = "Normal,")
+        public DamageInfo(Fighter? source, Fighter target, double damage)
         {
             Source = source;
             Target = target;
+            damageDetail = new DamageDetail();
             Damage = damage;
-            if(buffs!=null)
-            {
-                foreach (Buff buff in buffs)
-                    Buffs.Add(buff);
-            }
-            DamageTag = damageTag.Split(',').ToList();
         }
 
         public Fighter? Source { get; set; }
         public Fighter Target { get; set; }
+        public DamageDetail damageDetail { get; set; }
         public double Damage { get; set; }
-        public List<Buff> Buffs { get; set; } = new List<Buff>();
-        public List<String> DamageTag { get; set; }
+
         
     }
 }

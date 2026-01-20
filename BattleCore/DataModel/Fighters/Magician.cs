@@ -21,16 +21,22 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Intelligence * 1.0;
             //添加buff
             Random random = new Random();
-            var buff_1 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)];
-            var buff_2 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)];
+            var buff_1 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)].Clone();
+            var buff_2 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)].Clone();
             var buffs = BattleDataBridge.ExtractBuffs(new List<SkillBuff> { new SkillBuff { Buff = buff_1,Level=4 }, new SkillBuff { Buff = buff_2,Level=4 } });
+            var detail = new DamageDetail
+            {
+                DamageType = StaticData.FistDamage,
+                DirectSource = $"{this.Profession}'s Fist",
+            };
             foreach(var buff in buffs)
             {
                 if (buff.IsOnSelf)
-                    this.LoadBuff(buff, null,4);
+                    this.LoadBuff(buff, null, 4);
                 else
-                    damageInfo.Buffs.Add(buff);
+                    detail.buffs.Add(buff);
             }
+            damageInfo.damageDetail = detail;
 
         }
         public override void LoadBuff(Buff buff, Fighter? source,int buffLevel)

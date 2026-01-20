@@ -44,7 +44,7 @@ namespace BattleCore
             Console.WriteLine($"F_B Win: {F_B}");
             Console.WriteLine(MOVE_TIME_RANGER);
             Console.WriteLine(MOVE_TIME_WARRIOR);
-            //JsonLogger.GetJson();
+            JsonLogger.GetJson();
            
                 
         }

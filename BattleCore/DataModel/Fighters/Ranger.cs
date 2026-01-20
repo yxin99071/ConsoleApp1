@@ -17,7 +17,13 @@ namespace BattleCore.DataModel.Fighters
         public override void SetFitDamage(DamageInfo damageInfo)
         {
             damageInfo.Damage += Agility * 1.3;
-            damageInfo.DamageTag = [StaticData.UnFightBackable, StaticData.UnDodgeable];
+            var detail = new DamageDetail
+            {
+                DamageType = StaticData.FistDamage,
+                DirectSource = $"{this.Profession}'s Fist",
+                tags = [StaticData.UnFightBackable, StaticData.UnDodgeable]
+            };
+            damageInfo.damageDetail = detail;
         }
         public override void LoadBuff(Buff buff, Fighter? source,int buffLevel)
         {

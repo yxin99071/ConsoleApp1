@@ -109,9 +109,9 @@ namespace BattleCore
         // 事件的数据结构
         public class BattleEvent
         {
-            public string Type { get; set; }
+            public string Type { get; set; } = default!;
             public int Depth { get; set; }
-            public Dictionary<string, object> Data { get; set; }
+            public Dictionary<string, object> Data { get; set; } = default!;
         }
     }
 }

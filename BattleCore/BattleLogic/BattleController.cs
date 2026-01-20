@@ -2,6 +2,7 @@
 using BattleCore.DataModel.Fighters;
 using BattleCore.DataModel.States;
 using DataCore.Models;
+using System;
 using System.Net;
 namespace BattleCore.BattleLogic
 {
@@ -27,26 +28,36 @@ namespace BattleCore.BattleLogic
             var random = new Random();
             int choice = random.Next(0, source.Weapons.Count());
             Weapon weapon = source.Weapons[choice];
+
             BattleLogger.LogAction(source.Name, weapon);
             JsonLogger.LogAction(source.Name, "weapon", weapon.Name);
-            DamageInfo damageInfo;
 
-            //todo 移除武器
-            if(source.Weapons.Any(w=>w.Name == weapon.Name))
+            DamageInfo damageInfo;
+            //伤害细节
+            var detail = new DamageDetail
+            {
+                DamageType = StaticData.WeaponDamage,
+                DirectSource = weapon.Name,
+                tags = new List<String>(weapon.Tags),
+            };
+            //移除武器
+            if (source.Weapons.Any(w=>w.Name == weapon.Name))
                 source.Weapons.Remove(weapon);
 
             finalDamage += (weapon.CoefficientStrength * source.Strength 
                 + weapon.CoefficientAgility * source.Agility
                 + weapon.CoefficientIntelligence* source.Intelligence);
             //UNSURECHANGED : 原本没有导航属性
-            if (weapon.WeaponBuffs.Count() > 0)
+            if (weapon.WeaponBuffs.Count > 0)
             {
-                damageInfo = new DamageInfo(source, taker, finalDamage,BattleDataBridge.ExtractBuffs(null,weapon.WeaponBuffs));
+                damageInfo = new DamageInfo(source, taker, finalDamage);
+                detail.buffs = BattleDataBridge.ExtractBuffs(null, weapon.WeaponBuffs);
             }
             else
                 damageInfo = new DamageInfo(source, taker, finalDamage);
 
-            
+            //挂载伤害细节 
+            damageInfo.damageDetail = detail;
             source.CauseDamage(damageInfo);
             //结算自己伤害后，判定伤害前挂载自我buff
             //UNSURECHANGED : 原本没有导航属性
@@ -97,9 +108,16 @@ namespace BattleCore.BattleLogic
                 foreach(var buffStatus in damagedBuffs)
                 {
                     BattleLogger.LogBuffDamage(buffStatus.buff);
+                    DamageInfo damageInfo = new DamageInfo(buffStatus.Source, fighter, buffStatus.buff.DirectDamage);
                     //来自Buff的伤害不可反击
-                    var damageTag = $"{StaticData.UnDodgeable},{StaticData.UnFightBackable},{StaticData.BuffDamage}";
-                    DamageInfo damageInfo = new DamageInfo(buffStatus.Source, fighter, buffStatus.buff.DirectDamage, damageTag: damageTag);
+                    var detail = new DamageDetail
+                    {
+                        DamageType = StaticData.BuffDamage,
+                        DirectSource = buffStatus.buff.Name,
+                        tags = [StaticData.UnDodgeable,StaticData.UnFightBackable,StaticData.BuffDamage]
+                    };
+                    damageInfo.damageDetail = detail;
+
                     buffStatus.Source?.CauseDamage(damageInfo);
                     fighter.TakeDamage(damageInfo);
                 }
@@ -192,14 +210,21 @@ namespace BattleCore.BattleLogic
             {
 
                 DamageInfo damageInfo;
+                var detail = new DamageDetail
+                {
+                    DirectSource = skill.Name,
+                    DamageType = StaticData.SkillDamage,
+                    tags = new List<string>(skill.Tags)
+                };
                 //UNSURECHANGED : 原本没有导航属性
                 if (skill.SkillBuffs.Count() > 0)
                 {
-                    damageInfo = new DamageInfo(source, taker, finalDamage, BattleDataBridge.ExtractBuffs(skill.SkillBuffs));
-                    damageInfo.DamageTag = new List<string>(skill.Tags);
+                    damageInfo = new DamageInfo(source, taker, finalDamage);
+                    detail.buffs = BattleDataBridge.ExtractBuffs(skill.SkillBuffs);
                 }
                 else
                     damageInfo = new DamageInfo(source, taker, finalDamage);
+                damageInfo.damageDetail = detail;
                 source.CauseDamage(damageInfo);
                 //结算自己可能打出的伤害后，判定对方伤害前挂载自我buff
                 //UNSURECHANGED : 原本没有导航属性

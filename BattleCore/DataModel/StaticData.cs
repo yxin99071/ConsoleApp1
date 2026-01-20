@@ -10,6 +10,10 @@ namespace BattleCore.DataModel
         public static readonly string UnDodgeable = "Undogeable".ToUpper();
         public static readonly string UnFightBackable = "UnFightBackable".ToUpper();
         public static readonly string BuffDamage = "BUFF_DAMAGE";
+        public static readonly string WeaponDamage = "WEAPON_DAMAGE";
+        public static readonly string SkillDamage = "SKILL_DAMAGE";
+        public static readonly string FistDamage = "Fist_DAMAGE";
+
 
         #endregion
         #region SpecialSkillTag

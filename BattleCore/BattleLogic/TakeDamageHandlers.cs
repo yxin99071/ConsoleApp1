@@ -17,7 +17,7 @@ namespace BattleCore.BattleLogic
         } 
         public static void AvoidanceOrDamage(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.DamageTag.Contains(StaticData.UnDodgeable))
+            if (e.damageInfo.damageDetail.tags.Contains(StaticData.UnDodgeable))
                 return;
 
             double AvoidChance = StaticData.CalculateDodge(e.damageInfo.Target.Agility);
@@ -28,7 +28,7 @@ namespace BattleCore.BattleLogic
                 BattleLogger.LogReaction(e.damageInfo.Target.Name, "Dodge");
                 JsonLogger.LogDodge(e.damageInfo.Target.Name);
                 e.damageInfo.Damage = -1;
-                e.damageInfo.Buffs.Clear();
+                e.damageInfo.damageDetail.buffs.Clear();
             }
         }
         public static void DamageOnHp(object? sender, TakeDamageEventArgs e)
@@ -60,16 +60,16 @@ namespace BattleCore.BattleLogic
             e.damageInfo.Target.Health -= e.damageInfo.Damage;
             BattleLogger.LogDamage(e.damageInfo.Target.Name, e.damageInfo.Damage, e.damageInfo.Target.Health);
             //如果是来自Buff的
-            if (e.damageInfo.DamageTag.Contains(StaticData.BuffDamage))
+            if (e.damageInfo.damageDetail.tags.Contains(StaticData.BuffDamage))
             {
-                JsonLogger.LogBuffTick(e.damageInfo.Target.Name, e.damageInfo.Buffs[0].Name, (int)e.damageInfo.Damage);
+                JsonLogger.LogBuffTick(e.damageInfo.Target.Name, e.damageInfo.damageDetail.DirectSource, (int)e.damageInfo.Damage);
                 //来自buff的伤害，buff会被添加进伤害信息
             }
             else
                 JsonLogger.LogDamage(e.damageInfo.Target.Name, (int)e.damageInfo.Damage, (int)e.damageInfo.Target.Health);
-            if (e.damageInfo.Buffs != null)
+            if (e.damageInfo.damageDetail.buffs != null)
             {
-                foreach (Buff buff in e.damageInfo.Buffs)
+                foreach (Buff buff in e.damageInfo.damageDetail.buffs)
                 {
                     e.damageInfo.Target.LoadBuff(buff, e.damageInfo.Source);
                 }
@@ -96,7 +96,7 @@ namespace BattleCore.BattleLogic
             e.damageInfo.Target.Health = 1;
             e.damageInfo.Target.BuffStatuses.Clear();
             e.damageInfo.Target.TakeDamageEA -= PassivePretendDeath;
-            e.damageInfo.DamageTag.Add(StaticData.UnFightBackable);
+            e.damageInfo.damageDetail.tags.Add(StaticData.UnFightBackable);
         }
         public static void PassiveUndeadWilling(object? sender, TakeDamageEventArgs e)
         {
@@ -110,7 +110,7 @@ namespace BattleCore.BattleLogic
 
             var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
             e.damageInfo.Target.LoadBuff(new Buff { Name="UNDEADWILLING",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
-            e.damageInfo.DamageTag.Add(StaticData.UnFightBackable);
+            e.damageInfo.damageDetail.tags.Add(StaticData.UnFightBackable);
             e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWilling;
 
             BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
@@ -124,7 +124,7 @@ namespace BattleCore.BattleLogic
 
         public static void FightBack(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.DamageTag.Contains(StaticData.UnFightBackable))
+            if (e.damageInfo.damageDetail.tags.Contains(StaticData.UnFightBackable))
                 return;
                 
             if (e.damageInfo.Damage == -1)

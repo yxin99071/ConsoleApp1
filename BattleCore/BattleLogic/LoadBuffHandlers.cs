@@ -1,6 +1,6 @@
 ﻿using BattleCore.BattleEvnetArgs;
-using BattleCore.DataModel;
 using BattleCore.DataModel.Fighters;
+using BattleCore.DataModel.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;

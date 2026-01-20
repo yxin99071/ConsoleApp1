@@ -18,6 +18,13 @@ namespace BattleCore.DataModel.Fighters
         public override void SetFitDamage(DamageInfo damageInfo)
         {
             damageInfo.Damage += Strength * 2.0;
+            var detail = new DamageDetail
+            {
+                DamageType = StaticData.FistDamage,
+                DirectSource = $"{this.Profession}'s Fist",
+            };
+            damageInfo.damageDetail = detail;
+
         }
         public override void LoadBuff(Buff buff, Fighter? source,int buffLevel)
         {
