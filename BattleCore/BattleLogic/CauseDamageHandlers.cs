@@ -1,4 +1,4 @@
-﻿using BattleCore.BattleEvnetArgs;
+﻿using BattleCore.BattleEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

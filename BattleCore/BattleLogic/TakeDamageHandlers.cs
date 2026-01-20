@@ -1,4 +1,4 @@
-﻿using BattleCore.BattleEvnetArgs;
+﻿using BattleCore.BattleEventArgs;
 using BattleCore.DataModel;
 using DataCore.Models;
 namespace BattleCore.BattleLogic

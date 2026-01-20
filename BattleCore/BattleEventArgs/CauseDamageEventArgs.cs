@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleCore.BattleEvnetArgs
+namespace BattleCore.BattleEventArgs
 {
-    public class TakeDamageEventArgs:EventArgs
+    public class CauseDamageEventArgs:EventArgs
     {
         public DamageInfo damageInfo { get; set; }
-        public TakeDamageEventArgs(DamageInfo info) => damageInfo = info;
+        public CauseDamageEventArgs(DamageInfo info) => damageInfo = info;
+
     }
 }

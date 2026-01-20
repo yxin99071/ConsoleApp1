@@ -1,4 +1,4 @@
-﻿using BattleCore.BattleEvnetArgs;
+﻿using BattleCore.BattleEventArgs;
 using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
