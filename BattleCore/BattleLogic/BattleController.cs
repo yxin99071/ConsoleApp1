@@ -1,14 +1,18 @@
 ﻿using BattleCore.DataModel;
 using BattleCore.DataModel.Fighters;
+using BattleCore.DataModel.States;
 using DataCore.Models;
+using System.Net;
 namespace BattleCore.BattleLogic
 {
     public static class BattleController
     {
+        record Fist(string Name);
         public static void AttackWithFist(Fighter source, Fighter taker)
         {
-            BattleLogger.LogAction(source.Name, new {Name="Fist"});
             
+            BattleLogger.LogAction(source.Name, new Fist(Name:source.Profession+"'s Fist"));
+            JsonLogger.LogAction(source.Name, "Fist", source.Profession + "'s Fist");
             DamageInfo damageInfo = new DamageInfo(source, taker, 0);
 
             source.SetFitDamage(damageInfo);
@@ -18,26 +22,26 @@ namespace BattleCore.BattleLogic
         }
         public static void AttackWithWeapon(Fighter source,Fighter taker)
         {
-            //todo 判断武器是否剩余
+            //如果武器为空，不会进入到该函数
             double finalDamage = 0;
             var random = new Random();
             int choice = random.Next(0, source.Weapons.Count());
             Weapon weapon = source.Weapons[choice];
             BattleLogger.LogAction(source.Name, weapon);
+            JsonLogger.LogAction(source.Name, "weapon", weapon.Name);
             DamageInfo damageInfo;
 
             //todo 移除武器
+            if(source.Weapons.Any(w=>w.Name == weapon.Name))
+                source.Weapons.Remove(weapon);
+
             finalDamage += (weapon.CoefficientStrength * source.Strength 
                 + weapon.CoefficientAgility * source.Agility
                 + weapon.CoefficientIntelligence* source.Intelligence);
             //UNSURECHANGED : 原本没有导航属性
             if (weapon.WeaponBuffs.Count() > 0)
             {
-                damageInfo = new DamageInfo(source, taker, finalDamage,weapon
-                    .WeaponBuffs
-                    .Where(wb=>wb.Buff.IsOnSelf!=true)
-                    .Select(wb=>wb.Buff)
-                    .ToList());
+                damageInfo = new DamageInfo(source, taker, finalDamage,BattleDataBridge.ExtractBuffs(null,weapon.WeaponBuffs));
             }
             else
                 damageInfo = new DamageInfo(source, taker, finalDamage);
@@ -47,11 +51,13 @@ namespace BattleCore.BattleLogic
             //结算自己伤害后，判定伤害前挂载自我buff
             //UNSURECHANGED : 原本没有导航属性
             var OnSelfBuffs = weapon.WeaponBuffs.Where(wb => wb.Buff.IsOnSelf).Select(wb => wb.Buff);
+            
             foreach (var buff in OnSelfBuffs)
             {
-                if(buff.IsOnSelf)
+                var buffLevel = weapon.WeaponBuffs.SingleOrDefault(b => b.Buff.Name == buff.Name)?.Level ?? 1;
+                if (buff.IsOnSelf)
                 {
-                    source.LoadBuff(buff,null);
+                    source.LoadBuff(buff,null, buffLevel);
                 }
             }
             taker.TakeDamage(damageInfo);
@@ -61,11 +67,11 @@ namespace BattleCore.BattleLogic
         public static void DecideAction(Fighter source, Fighter? taker)
         {
 
-            if (taker == null || source.BuffStatuses.Any(b => b.buff.Name == "Block"))
+            if (taker == null || source.BuffStatuses.Any(b => b.buff.Name == "BLOCK"))
                 return;
             //计算权重
             var weaponRight = source.Weapons.Count;
-            var skillRight = source.Skills.Count;
+            var skillRight = source.Skills.Where(s=>!s.IsPassive).ToList().Count;
             var fistRight = (skillRight + weaponRight) / 2;
             var random = new Random();
             int choice = random.Next(0, fistRight+weaponRight + skillRight+1);
@@ -90,8 +96,9 @@ namespace BattleCore.BattleLogic
                 //先遍历完再结算伤害，否则可能出现遍历时清除buff的而错误
                 foreach(var buffStatus in damagedBuffs)
                 {
-                    BattleLogger.LogBuffDamage(buffStatus.buff.Name);
-                    var damageTag = $"{StaticData.UnDodgeable},{StaticData.UnFightBackable}";
+                    BattleLogger.LogBuffDamage(buffStatus.buff);
+                    //来自Buff的伤害不可反击
+                    var damageTag = $"{StaticData.UnDodgeable},{StaticData.UnFightBackable},{StaticData.BuffDamage}";
                     DamageInfo damageInfo = new DamageInfo(buffStatus.Source, fighter, buffStatus.buff.DirectDamage, damageTag: damageTag);
                     buffStatus.Source?.CauseDamage(damageInfo);
                     fighter.TakeDamage(damageInfo);
@@ -150,11 +157,11 @@ namespace BattleCore.BattleLogic
         {
             var random = new Random();
             Skill chosenSkill;
-            do
-            {
-                var choice = random.Next(0, source.Skills.Count);
-                chosenSkill = source.Skills[choice];
-            } while (chosenSkill.IsPassive);
+            var SkillList = source.Skills.Where(s => !s.IsPassive).ToList();
+
+            var choice = random.Next(0, SkillList.Count);
+            chosenSkill = SkillList[choice];
+            
 
             //normalSkill
             if (chosenSkill.Tags[0] == "GENERAL")
@@ -169,12 +176,15 @@ namespace BattleCore.BattleLogic
                         action(source, taker, chosenSkill);
                 }
             }
+            if (source.Skills.Any(s => s.Name == chosenSkill.Name))
+                source.Skills.Remove(chosenSkill);
 
 
         }
         public static void ActionWithNormalSkill(Fighter source, Fighter taker,Skill skill)
         {
             BattleLogger.LogAction(source.Name, skill);
+            JsonLogger.LogAction(source.Name, "Skill", skill.Name);
             double finalDamage = source.Agility * skill.CoefficientAgility
                 + source.Intelligence * skill.CoefficientIntelligence
                 + source.Strength * skill.CoefficientStrength;
@@ -185,10 +195,7 @@ namespace BattleCore.BattleLogic
                 //UNSURECHANGED : 原本没有导航属性
                 if (skill.SkillBuffs.Count() > 0)
                 {
-                    damageInfo = new DamageInfo(source, taker, finalDamage, skill.SkillBuffs
-                        .Where(wb => wb.Buff.IsOnSelf != true)
-                        .Select(wb=>wb.Buff)
-                        .ToList());
+                    damageInfo = new DamageInfo(source, taker, finalDamage, BattleDataBridge.ExtractBuffs(skill.SkillBuffs));
                     damageInfo.DamageTag = new List<string>(skill.Tags);
                 }
                 else
@@ -203,7 +210,8 @@ namespace BattleCore.BattleLogic
                 {
                     if (buff.IsOnSelf)
                     {
-                        source.LoadBuff(buff, null);
+                        var buffLevel = skill.SkillBuffs.SingleOrDefault(b => b.Buff.Name == buff.Name)?.Level ?? 1;
+                        source.LoadBuff(buff, null,buffLevel);
                     }
                 }
                 taker.TakeDamage(damageInfo);
@@ -218,7 +226,8 @@ namespace BattleCore.BattleLogic
                 {
                     if (buff.IsOnSelf)
                     {
-                        source.LoadBuff(buff, null);
+                        var buffLevel = skill.SkillBuffs.SingleOrDefault(b => b.Buff.Name == buff.Name)?.Level ?? 1;
+                        source.LoadBuff(buff, null,buffLevel);
                     }
                 }
             }

@@ -13,10 +13,12 @@ namespace BattleCore.BattleEvnetArgs
     {
         public Buff buff { get; set; }
         public Fighter? Source { get; set; }
-        public LoadBuffEventArgs(Buff buff, Fighter? source = null)
+        public int BuffLevel { get; set; }
+        public LoadBuffEventArgs(Buff buff, Fighter? source = null,int bufflevel = 1)
         {
             this.buff = buff;
             Source = source;
+            BuffLevel = bufflevel;
         }
     }
 }

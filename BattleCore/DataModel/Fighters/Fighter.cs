@@ -1,5 +1,5 @@
 ﻿using BattleCore.BattleEvnetArgs;
-using BattleCore.DataModel;
+using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Collections.Generic;
@@ -52,9 +52,9 @@ namespace BattleCore.DataModel.Fighters
         {
             TakeDamageEA?.Invoke(this, new TakeDamageEventArgs(damageInfo));  
         }
-        public virtual void LoadBuff(Buff buff,Fighter? source)
+        public virtual void LoadBuff(Buff buff,Fighter? source,int buffLevel = 1)
         {
-            LoadBuffEA?.Invoke(this, new LoadBuffEventArgs(buff,source));
+            LoadBuffEA?.Invoke(this, new LoadBuffEventArgs(buff,source,buffLevel));
         }
         public abstract void SetFitDamage(DamageInfo damageInfo);  
         

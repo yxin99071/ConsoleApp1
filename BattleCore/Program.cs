@@ -19,7 +19,7 @@ namespace BattleCore
             var F_A = 0;
             var totalRound = 0;
             var BtData = new BattleDataBridge();
-            while (totalRound < 100)
+            while (totalRound < 1)
             {
                 Console.WriteLine("========NewRound========");
                 Console.WriteLine("========NewRound========");
@@ -32,7 +32,7 @@ namespace BattleCore
                 if (fighter_1 != null && fighter_2!= null && fighter_3 != null && fighter_4 != null)
                 {
                     BattleController.Initial(new List<Fighter> { fighter_1, fighter_2, fighter_3, fighter_4 });
-                    if (BattleController.BattleSimulation(fighter_1, fighter_3))
+                    if (BattleController.BattleSimulation(fighter_3, fighter_2))
                         F_A++;
                     else
                         F_B++;
@@ -44,6 +44,7 @@ namespace BattleCore
             Console.WriteLine($"F_B Win: {F_B}");
             Console.WriteLine(MOVE_TIME_RANGER);
             Console.WriteLine(MOVE_TIME_WARRIOR);
+            //JsonLogger.GetJson();
            
                 
         }

@@ -1,4 +1,4 @@
-﻿using BattleCore.DataModel;
+﻿using BattleCore.DataModel.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;

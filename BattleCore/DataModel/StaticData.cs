@@ -7,8 +7,10 @@ namespace BattleCore.DataModel
     public class StaticData
     {
         #region DamageTag
-        public static readonly string UnDodgeable = "UnDogeable".ToUpper();
+        public static readonly string UnDodgeable = "Undogeable".ToUpper();
         public static readonly string UnFightBackable = "UnFightBackable".ToUpper();
+        public static readonly string BuffDamage = "BUFF_DAMAGE";
+
         #endregion
         #region SpecialSkillTag
         public static readonly string SkillTagTorture = "Torture".ToUpper();
@@ -17,7 +19,6 @@ namespace BattleCore.DataModel
         public static readonly string PassiveUndeadWilling = "UNDEAD_WILL";
         public static readonly string PassivePretendDeath = "FEIGN_DEATH";
         #endregion
-
 
         public static readonly Dictionary<string, Action<Fighter, Fighter, Skill>> SpecialSkillMap
             = new Dictionary<string, Action<Fighter, Fighter, Skill>>

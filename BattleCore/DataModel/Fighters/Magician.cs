@@ -1,4 +1,5 @@
-﻿using DataCore.Models;
+﻿using BattleCore.DataModel.States;
+using DataCore.Models;
 
 
 namespace BattleCore.DataModel.Fighters
@@ -20,13 +21,19 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Intelligence * 1.0;
             //添加buff
             Random random = new Random();
-            var buff = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)];
-            if (buff.IsOnSelf)
-                this.LoadBuff(buff, null);
-            else
-                damageInfo.Target.LoadBuff(buff, this);
+            var buff_1 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)];
+            var buff_2 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)];
+            var buffs = BattleDataBridge.ExtractBuffs(new List<SkillBuff> { new SkillBuff { Buff = buff_1,Level=4 }, new SkillBuff { Buff = buff_2,Level=4 } });
+            foreach(var buff in buffs)
+            {
+                if (buff.IsOnSelf)
+                    this.LoadBuff(buff, null,4);
+                else
+                    damageInfo.Buffs.Add(buff);
+            }
+
         }
-        public override void LoadBuff(Buff buff, Fighter? source)
+        public override void LoadBuff(Buff buff, Fighter? source,int buffLevel)
         {
             var newBuff = buff.Clone();
             if (source is not null)
@@ -45,7 +52,7 @@ namespace BattleCore.DataModel.Fighters
             if (newBuff.DamageCorrection > 1 || newBuff.WoundCorrection < 1)
                 newBuff.LastRound++;
             
-            base.LoadBuff(newBuff, source);
+            base.LoadBuff(newBuff, source, buffLevel);
         }
 
     }

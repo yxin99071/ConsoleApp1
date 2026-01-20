@@ -26,55 +26,64 @@ namespace BattleCore.BattleLogic
             if (choice / 100.0 < AvoidChance)
             {
                 BattleLogger.LogReaction(e.damageInfo.Target.Name, "Dodge");
+                JsonLogger.LogDodge(e.damageInfo.Target.Name);
                 e.damageInfo.Damage = -1;
                 e.damageInfo.Buffs.Clear();
             }
         }
         public static void DamageOnHp(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.Damage > 0)
+            if (e.damageInfo.Damage <= 0)
+                return;
+            //判断虚假生命值
+            var FakeHealth = e.damageInfo.Target.BuffStatuses.SingleOrDefault(s => s.buff.Name == "FakeHealth");
+            if (FakeHealth != null)
             {
-                //判断虚假生命值
-                var FakeHealth = e.damageInfo.Target.BuffStatuses.SingleOrDefault(s => s.buff.Name == "FakeHealth");
-                if (FakeHealth != null)
+                //如果解析护盾值成功
+                if (Double.TryParse(FakeHealth.buff.SpecialTag[0], out double shield))
                 {
-                    //如果解析护盾值成功
-                    if (Double.TryParse(FakeHealth.buff.SpecialTag[0], out double shield))
+                    if (shield >= e.damageInfo.Damage)
                     {
-                        if (shield >= e.damageInfo.Damage)
-                        {
-                            shield -= e.damageInfo.Damage;
-                            e.damageInfo.Damage = 0;
-                            FakeHealth.buff.SpecialTag[0] = ((int)shield).ToString();
-                        }
-                        else
-                        {
-                            e.damageInfo.Damage -= shield;
-                            e.damageInfo.Target.BuffStatuses.Remove(FakeHealth);
-                        }
+                        shield -= e.damageInfo.Damage;
+                        e.damageInfo.Damage = 0;
+                        FakeHealth.buff.SpecialTag[0] = ((int)shield).ToString();
                     }
+                    else
+                    {
+                        e.damageInfo.Damage -= shield;
+                        e.damageInfo.Target.BuffStatuses.Remove(FakeHealth);
+                    }
+                }
                         
-                }
-
-                e.damageInfo.Target.Health -= e.damageInfo.Damage;
-                BattleLogger.LogDamage(e.damageInfo.Target.Name, e.damageInfo.Damage);
-                if (e.damageInfo.Buffs != null)
+            }
+            //伤害结算逻辑
+            e.damageInfo.Target.Health -= e.damageInfo.Damage;
+            BattleLogger.LogDamage(e.damageInfo.Target.Name, e.damageInfo.Damage, e.damageInfo.Target.Health);
+            //如果是来自Buff的
+            if (e.damageInfo.DamageTag.Contains(StaticData.BuffDamage))
+            {
+                JsonLogger.LogBuffTick(e.damageInfo.Target.Name, e.damageInfo.Buffs[0].Name, (int)e.damageInfo.Damage);
+                //来自buff的伤害，buff会被添加进伤害信息
+            }
+            else
+                JsonLogger.LogDamage(e.damageInfo.Target.Name, (int)e.damageInfo.Damage, (int)e.damageInfo.Target.Health);
+            if (e.damageInfo.Buffs != null)
+            {
+                foreach (Buff buff in e.damageInfo.Buffs)
                 {
-                    foreach (Buff buff in e.damageInfo.Buffs)
-                    {
-                        e.damageInfo.Target.LoadBuff(buff, e.damageInfo.Source);
-                    }
-                }
-                //判断吸血类buff生效
-                if(e.damageInfo.Source is not null)
-                {
-                    if (e.damageInfo.Source.BuffStatuses.Any(b => b.buff.Name == "UndeadWilling"))
-                    {
-                        //UndeadWilling有50%的吸血
-                        e.damageInfo.Source.Health += e.damageInfo.Damage*0.5;
-                    }
+                    e.damageInfo.Target.LoadBuff(buff, e.damageInfo.Source);
                 }
             }
+            //判断吸血类buff生效
+            if(e.damageInfo.Source is not null)
+            {
+                if (e.damageInfo.Source.BuffStatuses.Any(b => b.buff.Name == "UNDEADWILLING"))
+                {
+                    //UndeadWilling有50%的吸血
+                    e.damageInfo.Source.Health += e.damageInfo.Damage*0.5;
+                }
+            }
+
         }
         public static void PassivePretendDeath(object? sender, TakeDamageEventArgs e)
         {
@@ -82,6 +91,7 @@ namespace BattleCore.BattleLogic
             if (e.damageInfo.Target.Health > 0)
                 return;
             BattleLogger.PassiveSkillInvoke("PretendDeath");
+            JsonLogger.LogPassive(e.damageInfo.Target.Name, "PretendDeath");
             //生命值置为1，清除所有buff
             e.damageInfo.Target.Health = 1;
             e.damageInfo.Target.BuffStatuses.Clear();
@@ -96,15 +106,17 @@ namespace BattleCore.BattleLogic
             if (e.damageInfo.Source == null)
                 return;
             BattleLogger.PassiveSkillInvoke("UndeadWilling");
+            JsonLogger.LogPassive(e.damageInfo.Target.Name, "UndeadWilling");
+
             var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
-            e.damageInfo.Target.LoadBuff(new Buff { Name="UndeadWilling",LastRound = 1,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
+            e.damageInfo.Target.LoadBuff(new Buff { Name="UNDEADWILLING",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
             e.damageInfo.DamageTag.Add(StaticData.UnFightBackable);
             e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWilling;
 
             BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
 
             if(e.damageInfo.Target.SpeedBar>e.damageInfo.Target.Max_SpeedBar)
-                e.damageInfo.Target.LoadBuff(new Buff {Name= "Block",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection }, null);
+                e.damageInfo.Target.LoadBuff(new Buff {Name= "BLOCK",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection }, null);
 
             if (e.damageInfo.Source.IsDead)
                 e.damageInfo.Target.Health = 1;
@@ -126,8 +138,11 @@ namespace BattleCore.BattleLogic
             int choice = random.Next(0, 101);
             if (choice / 100.0 < FightBackChance)
             {
-                BattleLogger.LogReaction(e.damageInfo.Target.Name, "FightBack");
-                BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
+                using (JsonLogger.StartReactionScope(e.damageInfo.Target.Name, "FightBack"))
+                {
+                    BattleLogger.LogReaction(e.damageInfo.Target.Name, "FightBack");
+                    BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
+                }
             }
         }
 

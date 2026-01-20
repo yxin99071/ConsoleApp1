@@ -1,4 +1,5 @@
-﻿using DataCore.Models;
+﻿using BattleCore.DataModel.States;
+using DataCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace BattleCore.DataModel.Fighters
         {
             damageInfo.Damage += Strength * 2.0;
         }
-        public override void LoadBuff(Buff buff, Fighter? source)
+        public override void LoadBuff(Buff buff, Fighter? source,int buffLevel)
         {
             var newBuff = buff.Clone();
             if (source is not null)
@@ -28,7 +29,7 @@ namespace BattleCore.DataModel.Fighters
                 if (newBuff.CoefficientAgility > 0)
                     newBuff.DirectDamage = newBuff.CoefficientAgility * source.Agility;
             }
-            base.LoadBuff(newBuff, source);
+            base.LoadBuff(newBuff, source, buffLevel);
         }
 
 

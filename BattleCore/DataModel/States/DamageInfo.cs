@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataCore.Models;
 
-namespace BattleCore.DataModel
+namespace BattleCore.DataModel.States
 {
     public class DamageInfo
     {
