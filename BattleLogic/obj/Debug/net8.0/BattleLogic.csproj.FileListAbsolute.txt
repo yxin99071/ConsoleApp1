@@ -1,0 +1,16 @@
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\bin\Debug\net8.0\BattleLogic.deps.json
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\bin\Debug\net8.0\BattleLogic.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\bin\Debug\net8.0\BattleLogic.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\bin\Debug\net8.0\DataCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\bin\Debug\net8.0\DataCore.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.csproj.AssemblyReference.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.GeneratedMSBuildEditorConfig.editorconfig
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.AssemblyInfoInputs.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.AssemblyInfo.cs
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.csproj.CoreCompileInputs.cache
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.sourcelink.json
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLo.E9E82E83.Up2Date
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\refint\BattleLogic.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\BattleLogic.pdb
+D:\Workspace\Test\Consoles\ConsoleApp1\BattleLogic\obj\Debug\net8.0\ref\BattleLogic.dll

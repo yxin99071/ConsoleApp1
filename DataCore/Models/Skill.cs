@@ -10,6 +10,7 @@ namespace DataCore.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = default!;
+        public string Description { get; set; } = "No Description";
         public bool IsPassive { get; set; }
         public double CoefficientAgility { get; set; }
         public double CoefficientStrength { get; set; }

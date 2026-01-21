@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataCore.Models;
-using BattleLogic.DataModel.Fighters;
+using BattleCore.DataModel.Fighters;
 
-namespace BattleLogic.DataModel.States
+namespace BattleCore.DataModel.States
 {
     public class DamageInfo
     {

@@ -6547,8 +6547,8 @@
     },
     "BattleCore/1.0.0": {
       "type": "project",
-      "path": "../BattleCore/BattleCore.csproj",
-      "msbuildProject": "../BattleCore/BattleCore.csproj"
+      "path": "../BattleLogic/BattleCore.csproj",
+      "msbuildProject": "../BattleLogic/BattleCore.csproj"
     },
     "DataCore/1.0.0": {
       "type": "project",
@@ -6599,8 +6599,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleCore.csproj": {
-              "projectPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleCore\\BattleCore.csproj"
+            "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleCore.csproj": {
+              "projectPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleCore.csproj"
             },
             "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\DataCore.csproj": {
               "projectPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\DataCore.csproj"

@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public string Password { get; set; } = default!;
         public string Name { get; set; } = default!;
-        public string Profession { get; set; } = default!;
+        public string? Profession { get; set; } = null;
+        public string? SecondProfession { get; set; } = null;
         public double Exp { get; set; }
         public int Level { get; set; }
         public double Health { get; set; }

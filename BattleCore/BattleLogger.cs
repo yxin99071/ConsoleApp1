@@ -1,7 +1,7 @@
 ﻿using DataCore.Models;
 
 
-namespace BattleCore
+namespace BattleLogic
 {
     public class BattleLogger
     {

@@ -1,8 +1,7 @@
-﻿using BattleLogic;
-using BattleLogic.BattleEventArgs;
-using BattleLogic.DataModel;
+﻿using BattleCore.BattleEventArgs;
+using BattleCore.DataModel;
 using DataCore.Models;
-namespace BattleLogic.BattleLogic
+namespace BattleCore.BattleLogic.EventHandlers
 {
     public static class TakeDamageHandlers
     {
@@ -114,7 +113,7 @@ namespace BattleLogic.BattleLogic
             e.damageInfo.damageDetail.tags.Add(StaticData.UnFightBackable);
             e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWilling;
 
-            BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
+            BattleHelper.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
 
             if(e.damageInfo.Target.SpeedBar>e.damageInfo.Target.Max_SpeedBar)
                 e.damageInfo.Target.LoadBuff(new Buff {Name= "BLOCK",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection }, null);
@@ -142,7 +141,7 @@ namespace BattleLogic.BattleLogic
                 using (JsonLogger.StartReactionScope(e.damageInfo.Target.Name, "FightBack"))
                 {
                     BattleLogger.LogReaction(e.damageInfo.Target.Name, "FightBack");
-                    BattleController.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
+                    BattleHelper.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
                 }
             }
         }

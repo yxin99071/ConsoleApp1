@@ -11,6 +11,7 @@ namespace DataCore.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = default!;
+        public string Description { get; set; } = "No Description";
         public int LastRound { get; set; } = 1;
         public double DirectDamage { get; set; } = 0;
         public double DamageCorrection { get; set; } = 1.0;

@@ -1,7 +1,7 @@
-﻿using BattleCore.BattleEventArgs;
-using BattleCore.DataModel;
+﻿using BattleLogic.BattleEventArgs;
+using BattleLogic.DataModel;
 using DataCore.Models;
-namespace BattleCore.BattleLogic
+namespace BattleLogic.BattleLogic
 {
     public static class TakeDamageHandlers
     {

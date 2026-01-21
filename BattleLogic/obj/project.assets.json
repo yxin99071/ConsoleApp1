@@ -1057,9 +1057,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleLogic.csproj",
-      "projectName": "BattleLogic",
-      "projectPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleLogic.csproj",
+      "projectUniqueName": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleCore.csproj",
+      "projectName": "BattleCore",
+      "projectPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleCore.csproj",
       "packagesPath": "C:\\Users\\huang.yuexin\\.nuget\\packages\\",
       "outputPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\obj\\",
       "projectStyle": "PackageReference",

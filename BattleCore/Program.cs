@@ -1,9 +1,9 @@
-﻿using BattleCore.BattleLogic;
-using BattleCore.DataModel;
-using BattleCore.DataModel.Fighters;
+﻿using BattleLogic.BattleLogic;
+using BattleLogic.DataModel;
+using BattleLogic.DataModel.Fighters;
 using System.Text;
 
-namespace BattleCore
+namespace BattleLogic
 {
     internal class Program
     {

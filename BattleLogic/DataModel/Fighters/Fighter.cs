@@ -1,5 +1,5 @@
-﻿using BattleLogic.BattleEventArgs;
-using BattleLogic.DataModel.States;
+﻿using BattleCore.BattleEventArgs;
+using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.DataModel.Fighters
+namespace BattleCore.DataModel.Fighters
 {
     public abstract class Fighter
     {

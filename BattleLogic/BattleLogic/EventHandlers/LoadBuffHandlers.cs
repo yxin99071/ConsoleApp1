@@ -1,13 +1,13 @@
 ﻿using BattleCore.BattleEventArgs;
 using BattleCore.DataModel.States;
-using BattleLogic.DataModel.Fighters;
+using BattleCore.DataModel.Fighters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.BattleLogic
+namespace BattleCore.BattleLogic.EventHandlers
 {
     public static class LoadBuffHandlers
     {

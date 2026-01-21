@@ -1,7 +1,7 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 
-namespace BattleCore
+namespace BattleLogic
 {
     public static class JsonLogger
     {

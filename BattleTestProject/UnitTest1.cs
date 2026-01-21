@@ -1,10 +1,10 @@
-﻿using BattleCore;
-using BattleCore.DataModel;
-using BattleCore.DataModel.Fighters;
+﻿using BattleLogic;
+using BattleLogic.DataModel;
+using BattleLogic.DataModel.Fighters;
 using DataCore.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using static BattleCore.JsonLogger;
+using static BattleLogic.JsonLogger;
 
 
 namespace BattleTestProject

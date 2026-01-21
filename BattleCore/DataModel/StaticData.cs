@@ -1,8 +1,8 @@
-﻿using BattleCore.BattleLogic;
+﻿using BattleLogic.BattleLogic;
 using DataCore.Models;
-using BattleCore.DataModel.Fighters;
+using BattleLogic.DataModel.Fighters;
 
-namespace BattleCore.DataModel
+namespace BattleLogic.DataModel
 {
     public class StaticData
     {

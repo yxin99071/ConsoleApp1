@@ -1,10 +1,10 @@
 ﻿
-using BattleCore.DataModel.Fighters;
+using BattleLogic.DataModel.Fighters;
 using DataCore.Models;
 using DataCore.Services;
 using Buff = DataCore.Models.Buff;
 
-namespace BattleCore.DataModel
+namespace BattleLogic.DataModel
 {
     public class BattleDataBridge
     {

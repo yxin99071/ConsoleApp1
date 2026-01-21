@@ -1,4 +1,4 @@
-﻿using BattleCore.DataModel.States;
+﻿using BattleLogic.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleCore.DataModel.Fighters
+namespace BattleLogic.DataModel.Fighters
 {
     public class Ranger : Fighter
     {

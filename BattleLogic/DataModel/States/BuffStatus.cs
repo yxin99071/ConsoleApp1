@@ -1,7 +1,7 @@
-﻿using BattleLogic.DataModel.Fighters;
+﻿using BattleCore.DataModel.Fighters;
 using DataCore.Models;
 
-namespace BattleLogic.DataModel.States
+namespace BattleCore.DataModel.States
 {
     public class BuffStatus
     {

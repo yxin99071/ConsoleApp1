@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataCore.Models;
 
-namespace BattleLogic.BattleEventArgs
+namespace BattleCore.BattleEventArgs
 {
     public class LoadBuffEventArgs:EventArgs
     {

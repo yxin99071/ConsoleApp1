@@ -1,8 +1,8 @@
 ﻿using DataCore.Models;
-using BattleLogic.DataModel.Fighters;
-using BattleLogic.BattleLogic;
+using BattleCore.DataModel.Fighters;
+using BattleCore.BattleLogic;
 
-namespace BattleLogic.DataModel
+namespace BattleCore.DataModel
 {
     public class StaticData
     {
@@ -27,7 +27,7 @@ namespace BattleLogic.DataModel
         public static readonly Dictionary<string, Action<Fighter, Fighter, Skill>> SpecialSkillMap
             = new Dictionary<string, Action<Fighter, Fighter, Skill>>
             {
-                [SkillTagTorture] = BattleController.ActionWithSkillTorture
+                [SkillTagTorture] = BattleHelper.ActionWithSkillTorture
             };
 
         public static List<Buff> BuffPool = new List<Buff>();

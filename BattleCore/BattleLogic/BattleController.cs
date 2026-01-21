@@ -1,10 +1,10 @@
-﻿using BattleCore.DataModel;
-using BattleCore.DataModel.Fighters;
-using BattleCore.DataModel.States;
+﻿using BattleLogic.DataModel;
+using BattleLogic.DataModel.Fighters;
+using BattleLogic.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Net;
-namespace BattleCore.BattleLogic
+namespace BattleLogic.BattleLogic
 {
     public static class BattleController
     {

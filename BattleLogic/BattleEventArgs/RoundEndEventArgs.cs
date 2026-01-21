@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.BattleEventArgs
+namespace BattleCore.BattleEventArgs
 {
     public class RoundEndEventArgs:EventArgs
     {

@@ -1,15 +1,17 @@
-﻿using BattleLogic;
-using BattleLogic.DataModel;
-using BattleLogic.DataModel.Fighters;
-using BattleLogic.DataModel.States;
+﻿using BattleCore;
+using BattleCore.BattleLogic.EventHandlers;
+using BattleCore.DataModel;
+using BattleCore.DataModel.Fighters;
+using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Net;
-namespace BattleLogic.BattleLogic
+namespace BattleCore.BattleLogic
 {
-    public static class BattleController
+    public static class BattleHelper
     {
         record Fist(string Name);
+        #region Action in a round
         public static void AttackWithFist(Fighter source, Fighter taker)
         {
             
@@ -94,6 +96,15 @@ namespace BattleLogic.BattleLogic
             else
                 ActionWithSkill(source,taker);
         }
+        public static void CalcuAction(Fighter fighter_1,Fighter fighter_2)
+        {
+            var balanceSumption = (int)(fighter_1.Agility + fighter_2.Agility) / 2;
+
+            fighter_1.SpeedBar += balanceSumption + (int)(fighter_1.Agility * 0.5);
+            fighter_2.SpeedBar += balanceSumption + (int)(fighter_2.Agility * 0.5);
+            
+
+        }
         public static void BuffEffection(Fighter fighter)
         {
             if(fighter.BuffStatuses.Count()>0)
@@ -139,38 +150,6 @@ namespace BattleLogic.BattleLogic
                 BattleLogger.LogBuffTimeOut(buffStatus.buff.Name);
                 fighter.BuffStatuses.Remove(buffStatus);
             }
-        }
-        public static void Initial(List<Fighter> fighters)
-        {
-            for (int i = 0; i < fighters.Count; i++)
-            {
-                fighters[i].ClearAllEA();
-
-                //绑定顺序很重要
-                fighters[i].LoadBuffEA += LoadBuffHandlers.LoadBuff;
-                fighters[i].CauseDamageEA += CauseDamageHandlers.CorrectDamageByBuff;
-                fighters[i].TakeDamageEA += TakeDamageHandlers.CorrectDamage;
-                fighters[i].TakeDamageEA += TakeDamageHandlers.AvoidanceOrDamage;
-                fighters[i].TakeDamageEA += TakeDamageHandlers.DamageOnHp;
-
-
-                if (fighters[i].Skills.Any(s => s.Name == StaticData.PassivePretendDeath))
-                    fighters[i].TakeDamageEA += TakeDamageHandlers.PassivePretendDeath;
-                if (fighters[i].Skills.Any(s=>s.Name == StaticData.PassiveUndeadWilling))
-                    fighters[i].TakeDamageEA += TakeDamageHandlers.PassiveUndeadWilling;
-
-                fighters[i].TakeDamageEA += TakeDamageHandlers.FightBack;
-                fighters[i].TakeDamageEA += TakeDamageHandlers.JudgeDeath;
-            }
-        }
-        public static void CalcuAction(Fighter fighter_1,Fighter fighter_2)
-        {
-            var balanceSumption = (int)(fighter_1.Agility + fighter_2.Agility) / 2;
-
-            fighter_1.SpeedBar += balanceSumption + (int)(fighter_1.Agility * 0.5);
-            fighter_2.SpeedBar += balanceSumption + (int)(fighter_2.Agility * 0.5);
-            
-
         }
         public static void ActionWithSkill(Fighter source, Fighter taker)
         {
@@ -259,6 +238,8 @@ namespace BattleLogic.BattleLogic
             }
 
         }
+        #endregion
+
         #region SpecialSkillAction
         public static void ActionWithSkillTorture(Fighter source,Fighter taker,Skill skill)
         {
@@ -277,71 +258,7 @@ namespace BattleLogic.BattleLogic
             ActionWithNormalSkill(source, taker, skill);
         }
         #endregion
-        public static bool BattleSimulation(Fighter source, Fighter taker)
-        {
-            while (true)
-            {
-                CalcuAction(source, taker);
-                var Max_SpeedBar = (int)(source.Agility + taker.Agility) * 2;
-                source.Max_SpeedBar = Max_SpeedBar;
-                taker.Max_SpeedBar = Max_SpeedBar;
-                if (source.SpeedBar >= Max_SpeedBar)
-                {
-                    if (source.Profession == "Warrior")
-                        Program.MOVE_TIME_WARRIOR++;
-                    else
-                        Program.MOVE_TIME_RANGER++;
-                    Console.WriteLine($"New Round:======{source.Name}========");
-                    //Thread.Sleep(1000);
-                    BuffEffection(source);
-                    DecideAction(source, taker);
-                    BuffSettle(source);
-                    Console.WriteLine($"{taker.Name}'s Health:{(int)taker.Health}");
-                    source.SpeedBar -= Max_SpeedBar;
 
-                }
-
-                if (source.IsDead)
-                {
-                    Console.WriteLine($"Game Over, {taker.Name} win!");
-                    return false;
-                }
-                if (taker.IsDead)
-                {
-                    Console.WriteLine($"Game Over, {source.Name} win!");
-                    return true;
-                }
-
-
-                if (taker.SpeedBar >= Max_SpeedBar)
-                {
-                    if (taker.Profession == "Warrior")
-                        Program.MOVE_TIME_WARRIOR++;
-                    else
-                        Program.MOVE_TIME_RANGER++;
-                    Console.WriteLine($"New Round:======{taker.Name}========");
-                    //Thread.Sleep(1000);
-                    BuffEffection(taker);
-                    DecideAction(taker, source);
-                    BuffSettle(taker);
-                    Console.WriteLine($"{source.Name}'s Health:{(int)source.Health}");
-                    taker.SpeedBar -= Max_SpeedBar;//放在最后可以在方法中判断是否正在自己的回合
-
-                }
-
-                if (source.IsDead)
-                {
-                    Console.WriteLine($"Game Over, {taker.Name} win!");
-                    return false;
-                }
-                if (taker.IsDead)
-                {
-                    Console.WriteLine($"Game Over, {source.Name} win!");
-                    return true;
-                }
-
-            }
-        }
         
 
     }

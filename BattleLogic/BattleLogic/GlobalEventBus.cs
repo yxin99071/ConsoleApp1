@@ -1,11 +1,11 @@
-﻿using BattleLogic.BattleEventArgs;
+﻿using BattleCore.BattleEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.BattleLogic
+namespace BattleCore.BattleLogic
 {
     public class GlobalEventBus
     {

@@ -1,4 +1,4 @@
-
+﻿
 namespace BattleBackend
 {
     public class Program
@@ -13,7 +13,8 @@ namespace BattleBackend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            //依赖注入
+            builder.Services.AddScoped<JwtService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

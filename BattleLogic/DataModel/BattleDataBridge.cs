@@ -1,10 +1,10 @@
-﻿using BattleCore.DataModel.Fighters;
-using BattleLogic.DataModel.Fighters;
+﻿using BattleCore.BattleLogic;
+using BattleCore.DataModel.Fighters;
 using DataCore.Models;
 using DataCore.Services;
 using Buff = DataCore.Models.Buff;
 
-namespace BattleLogic.DataModel
+namespace BattleCore.DataModel
 {
     public class BattleDataBridge
     {
@@ -32,7 +32,6 @@ namespace BattleLogic.DataModel
         {
             return await dataService.GetAllBuffs();
         }
-
         private static Buff? ExtractBuff(SkillBuff? skillBuff = null,WeaponBuff? weaponBuff = null)
         {
             Buff? newBuff = null;
@@ -105,9 +104,48 @@ namespace BattleLogic.DataModel
             }
             return EnhencedBuffs;
         }
+        public static async Task<bool> SetBattleResult(int challengerId, int opponentId,bool isWin)
+        {
+            var challenger = await dataService.GetUserById(challengerId);
+            var challenger_copy = await dataService.GetUserById(challengerId);
+            var opponent = await dataService.GetUserById(opponentId);
+            if (challenger is null || opponent is null)
+                return false;
+            //当前经验
+            var exp = challenger.Exp + BattleManager.CalculateGainedExp(challenger.Level, opponent.Level, isWin);
+            var finalLevel = challenger.Level;
+            while (true)
+            {
+                // 计算下一级所需的总经验门槛
+                int nextLevel = finalLevel + 1;
+                double threshold = 50.0 * nextLevel * nextLevel + 50.0 * nextLevel;
 
-        //dataservice.GetBuffInfo => return List<Buff>
+                // 如果当前总经验达到了下一级的门槛，则等级自增
+                if (exp >= threshold)
+                {
+                    finalLevel++;
+                }
+                else
+                {
+                    break; // 未达到门槛，退出循环
+                }
+            }
+            
+            if(BattleManager.LevelUp(challenger,finalLevel - challenger.Level))
+            {
+                //同步经验值
+                challenger.Exp = exp;
+                await dataService.UpdateSinlgeUser(challenger);
+                //日志结算信息
+            }
+            JsonLogger.LogBattleEnd(challenger_copy!, challenger);
+            return true;
+        }
         
+        //Change Account
+        //Choose Skill
+        //Choose Profession
+
         //dataservice.GetWeaponInfo => return List<Weapon>
 
 

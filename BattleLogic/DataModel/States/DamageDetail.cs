@@ -1,7 +1,7 @@
 ﻿using DataCore.Models;
 
 
-namespace BattleLogic.DataModel.States
+namespace BattleCore.DataModel.States
 {
     public class DamageDetail
     {

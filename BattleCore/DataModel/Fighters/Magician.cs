@@ -1,8 +1,8 @@
-﻿using BattleCore.DataModel.States;
+﻿using BattleLogic.DataModel.States;
 using DataCore.Models;
 
 
-namespace BattleCore.DataModel.Fighters
+namespace BattleLogic.DataModel.Fighters
 {
     public class Magician : Fighter
     {

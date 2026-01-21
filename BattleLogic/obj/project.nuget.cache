@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Nc99Tp3TN+0=",
+  "dgSpecHash": "cGera7/WaI4=",
   "success": true,
-  "projectFilePath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleLogic.csproj",
+  "projectFilePath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\BattleLogic\\BattleCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\huang.yuexin\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.23\\microsoft.data.sqlite.core.8.0.23.nupkg.sha512",
     "C:\\Users\\huang.yuexin\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.23\\microsoft.entityframeworkcore.8.0.23.nupkg.sha512",

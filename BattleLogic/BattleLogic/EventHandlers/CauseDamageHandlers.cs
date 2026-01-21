@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.BattleLogic
+namespace BattleCore.BattleLogic.EventHandlers
 {
     public static class CauseDamageHandlers
     {

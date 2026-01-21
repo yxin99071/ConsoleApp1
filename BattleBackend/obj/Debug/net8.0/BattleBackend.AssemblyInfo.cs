@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BattleBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bdf72ca3eabe32ea0e9b538b6548667c09167481")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c7fc04629a41c7b1f061bcff5264d0b128276cf6")]
 [assembly: System.Reflection.AssemblyProductAttribute("BattleBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BattleBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
