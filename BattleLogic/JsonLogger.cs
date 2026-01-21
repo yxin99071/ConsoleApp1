@@ -32,13 +32,11 @@ namespace BattleCore
             });
         }
         // ---  Buff 时间结算 (结算名称、等级、剩余时间) ---
-        public static void LogBuffUpdate(string unit, string buffName, int level, int remainRound)
+        public static void LogBuffUpdate(string unit, string buffName)
         {
-            Emit("BuffUpdate", new Dictionary<string, object> {
+            Emit("BuffTimeOut", new Dictionary<string, object> {
                 { "Unit", unit },
-                { "BuffName", buffName },
-                { "Level", level },
-                { "Remain", remainRound }
+                { "BuffName", buffName }
             });
         }
 
@@ -81,10 +79,10 @@ namespace BattleCore
         }
 
         // A2 & R3: 挂载 Buff (对自己或对方)
-        public static void LogBuffApply(string target, string buffName,int buffLevel)
+        public static void LogBuffApply(string target, string buffName,int buffLevel,int lastRound)
         {
             Emit("BuffApply", new Dictionary<string, object> {
-            { "Target", target }, { "BuffName", buffName },{"BuffLevel",buffLevel }
+            { "Target", target }, { "BuffName", buffName },{"BuffLevel",buffLevel },{"LastRound",lastRound }
         });
         }
 
@@ -114,6 +112,8 @@ namespace BattleCore
         #region 对局开始与结束
         public static void LogBattleStart(Fighter p1, Fighter p2, List<Buff> fullBuffList)
         {
+
+            _events.Clear();
             // 1. 玩家快照
             var players = new[] { SerializeFighter(p1), SerializeFighter(p2) };
 

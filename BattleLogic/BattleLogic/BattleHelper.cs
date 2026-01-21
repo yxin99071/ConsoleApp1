@@ -148,6 +148,7 @@ namespace BattleCore.BattleLogic
             foreach(var buffStatus in timeOutBuffs)
             {
                 BattleLogger.LogBuffTimeOut(buffStatus.buff.Name);
+                JsonLogger.LogBuffUpdate(fighter.Name, buffStatus.buff.Name);
                 fighter.BuffStatuses.Remove(buffStatus);
             }
         }

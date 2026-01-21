@@ -37,23 +37,19 @@ namespace BattleBackend.Controllers
         public async Task<IActionResult> Test()
         {
             await StaticData.InitializeAsyncData();
-            var totalRound = 0;
             var BtData = new BattleDataBridge();
-            while (totalRound < 1)
+
+            var fighter_1 = await BtData.ConvertUserToFighter(1);
+            var fighter_2 = await BtData.ConvertUserToFighter(2);
+            var fighter_3 = await BtData.ConvertUserToFighter(3);
+            var fighter_4 = await BtData.ConvertUserToFighter(4);
+
+            if (fighter_1 != null && fighter_2 != null && fighter_3 != null && fighter_4 != null)
             {
-                var fighter_1 = await BtData.ConvertUserToFighter(1);
-                var fighter_2 = await BtData.ConvertUserToFighter(2);
-                var fighter_3 = await BtData.ConvertUserToFighter(3);
-                var fighter_4 = await BtData.ConvertUserToFighter(4);
-
-                if (fighter_1 != null && fighter_2 != null && fighter_3 != null && fighter_4 != null)
-                {
-                    BattleManager.Initial(new List<Fighter> { fighter_1, fighter_2});
-                    await BattleManager.BattleSimulation(fighter_1, fighter_2);
-
-                    totalRound++;
-                }
+                BattleManager.Initial(new List<Fighter> { fighter_1, fighter_2});
+                await BattleManager.BattleSimulation(fighter_1, fighter_2);
             }
+
             return Content(JsonLogger.GetJson(), "application/json");
         }
 

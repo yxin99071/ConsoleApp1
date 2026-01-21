@@ -15,6 +15,7 @@ namespace BattleCore.BattleLogic
         #region BattleManage
         public static async Task BattleSimulation(Fighter source, Fighter taker)
         {
+            Console.Write("");
             while (true)
             {
                 BattleHelper.CalcuAction(source, taker);

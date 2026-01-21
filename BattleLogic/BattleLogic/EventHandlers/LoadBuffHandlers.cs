@@ -17,7 +17,7 @@ namespace BattleCore.BattleLogic.EventHandlers
                 return;
             ((Fighter)sender!).BuffStatuses.Add(new BuffStatus(e.buff, (Fighter)sender,e.Source));
             BattleLogger.LoadBuffBegin(e.buff);
-            JsonLogger.LogBuffApply(((Fighter)sender).Name, e.buff.Name,e.BuffLevel);
+            JsonLogger.LogBuffApply(((Fighter)sender).Name, e.buff.Name,e.BuffLevel,e.buff.LastRound);
         }
     }
 }

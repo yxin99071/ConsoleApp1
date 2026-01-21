@@ -106,6 +106,8 @@ namespace BattleCore.DataModel
         }
         public static async Task<bool> SetBattleResult(int challengerId, int opponentId,bool isWin)
         {
+            return false;
+            Console.Write("");
             var challenger = await dataService.GetUserById(challengerId);
             var challenger_copy = await dataService.GetUserById(challengerId);
             var opponent = await dataService.GetUserById(opponentId);
