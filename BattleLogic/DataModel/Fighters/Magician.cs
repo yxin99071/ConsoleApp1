@@ -16,6 +16,7 @@ namespace BattleCore.DataModel.Fighters
                 new Buff {Name="FakeHealth", LastRound=2,IsOnSelf= true, DamageCorrection = 1.2,
                     SpecialTag= (Intelligence * 2.5).ToString().Split(',').ToList()},this,null
                 ));
+            DamageInreasement += StaticData.CalculateDamageIncreasement(Intelligence)/2;
         }
 
         public override void SetFitDamage(DamageInfo damageInfo)

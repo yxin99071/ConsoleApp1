@@ -14,6 +14,8 @@ namespace BattleCore.DataModel.Fighters
         public Ranger(User user): base(user)
         {
             Profession = "Ranger";
+            CraticalRate += StaticData.CalculateCriticalRate(Agility) / 2;
+            CraticalDamage += StaticData.CalculateCriticalDamage(0.2*Agility) / 2;
         }
         public override void SetFitDamage(DamageInfo damageInfo)
         {

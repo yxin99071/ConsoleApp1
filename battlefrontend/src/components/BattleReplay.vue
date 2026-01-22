@@ -107,18 +107,50 @@
       </div>
     </div>
   </div>
+  <Transition name="fade">
+  <div v-if="isFinished && settlementData" class="settlement-overlay">
+    <div class="settlement-card">
+      <h2>战斗结算</h2>
+      <div class="winner-tag">胜者: {{ winnerName }}</div>
+      
+      <div class="exp-bar-container">
+         <p>经验获得: +{{ settlementData.ExperienceChange.Gained }}</p>
+         </div>
+
+      <div v-if="settlementData.LevelChange.IsLeveledUp" class="level-badge">
+        LEVEL UP! {{ settlementData.LevelChange.To }}
+      </div>
+
+      <div class="stats-grid">
+        <div v-for="(val, key) in settlementData.StatsChange" :key="key" class="stat-item">
+          <span class="stat-label">{{ key }}</span>
+          <span class="stat-old">{{ val.From }}</span>
+          <span class="stat-arrow">➔</span>
+          <span class="stat-new">{{ val.To }}</span>
+        </div>
+      </div>
+      
+      <button @click="isFinished = false">确认</button>
+    </div>
+  </div>
+</Transition>
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue';
 import type { BattleEvent, Player } from '@/Models/BattleInterface';
-
+const settlementData = ref<any>(null);
 const props = defineProps<{ rawJson: BattleEvent[] }>();
 
 const p1 = ref<Player | null>(null);
 const p2 = ref<Player | null>(null);
 // 增加 depth 字段
-const displayLogs = ref<{ type: string; msg: string; depth: number }[]>([]);
+const displayLogs = ref<{ 
+  type: string; 
+  msg: string; 
+  depth: number; 
+  isCrit?: boolean; // 新增：标识是否为暴击
+}[]>([]);
 const isPlaying = ref(false);
 const isFinished = ref(false);
 const winnerName = ref<string | null>(null);
@@ -149,30 +181,7 @@ const startReplay = async () => {
     if (logRef.value) logRef.value.scrollTop = logRef.value.scrollHeight;
   }
 
-  // --- 新增：自动推断胜负逻辑 (兜底后端没发 BattleEnd 的情况) ---
-  if (!isFinished.value && p1.value && p2.value) {
-    // 情况 A: P1 死了，P2 活着 -> P2 胜
-    if (p1.value.CurrentHP <= 0 && p2.value.CurrentHP > 0) {
-      isFinished.value = true;
-      winnerName.value = p2.value.Name;
-      displayLogs.value.push({ type: 'sys', msg: '⚠️ (本地判定) 战斗结束，胜者判定为：' + p2.value.Name, depth: 0 });
-    }
-    // 情况 B: P2 死了，P1 活着 -> P1 胜
-    else if (p2.value.CurrentHP <= 0 && p1.value.CurrentHP > 0) {
-      isFinished.value = true;
-      winnerName.value = p1.value.Name;
-      displayLogs.value.push({ type: 'sys', msg: '⚠️ (本地判定) 战斗结束，胜者判定为：' + p1.value.Name, depth: 0 });
-    }
-    // 情况 C: 同归于尽
-    else if (p1.value.CurrentHP <= 0 && p2.value.CurrentHP <= 0) {
-      isFinished.value = true;
-      displayLogs.value.push({ type: 'sys', msg: '⚠️ (本地判定) 战斗结束，平局', depth: 0 });
-    }
-    // 情况 D: 都还活着 (可能是日志不完整)
-    else {
-      displayLogs.value.push({ type: 'sys', msg: '❓ 数据流播放完毕，但无人倒下。', depth: 0 });
-    }
-  }
+
   
   isPlaying.value = false;
 };
@@ -197,7 +206,35 @@ const processEvent = async (event: BattleEvent) => {
     case 'Damage':
       const target = findP(Data.Target);
       if (target) target.CurrentHP = Data.HP;
-      displayLogs.value.push({ type: 'dmg', msg: `💥 ${Data.Target} 受到 ${Data.Value} 伤害 (剩: ${Data.HP})`, depth: d });
+
+      // 根据是否暴击选择图标
+      const icon = Data.Critical ? '🔥 CRITICAL!' : '💥';
+      const message = `${icon} ${Data.Target} 受到 ${Data.Value} 伤害 (剩: ${Data.HP})`;
+
+      displayLogs.value.push({
+        type: 'dmg',
+        msg: message,
+        depth: d,
+        isCrit: Data.Critical // 将暴击状态存入 log 对象
+      });
+      break;
+
+    case 'Dodge':
+      displayLogs.value.push({
+        type: 'dodge',
+        msg: `🌬️ ${Data.Target} 灵活地闪避了攻击`,
+        depth: d
+      });
+      break;
+
+    case 'ReactionBegin':
+      // 根据反应类型选择图标，如果是还击则用 ↩️
+      const reactionIcon = Data.Type === 'Counter' ? '↩️' : '⚡';
+      displayLogs.value.push({
+        type: 'reaction',
+        msg: `${reactionIcon} ${Data.Actor} 触发了 ${Data.Type}！`,
+        depth: d
+      });
       break;
 
     case 'BuffApply':
@@ -224,11 +261,67 @@ const processEvent = async (event: BattleEvent) => {
     case 'Passive':
       displayLogs.value.push({ type: 'pass', msg: `⚡ ${Data.Unit} 触发被动: ${Data.SkillName}`, depth: d });
       break;
-
+    
     case 'BattleEnd':
       isFinished.value = true;
       winnerName.value = Data.UserName;
-      displayLogs.value.push({ type: 'sys', msg: `🏁 战斗结束！胜者: ${Data.UserName}`, depth: 0 });
+      settlementData.value = Data; // 记录全量结算数据用于面板显示
+
+      // A. 基础结束信息
+      displayLogs.value.push({
+        type: 'sys',
+        msg: `🏁 战斗结束！最终胜者: ${Data.UserName}`,
+        depth: 0
+      });
+
+      // B. 经验值奖励
+      displayLogs.value.push({
+        type: 'exp',
+        msg: `📈 获得经验: +${Data.ExperienceChange.Gained} (当前: ${Data.ExperienceChange.After})`,
+        depth: 0
+      });
+
+      // C. 等级提升检查
+      if (Data.LevelChange.IsLeveledUp) {
+        displayLogs.value.push({
+          type: 'level-up',
+          msg: `🎊 恭喜升级！Lv.${Data.LevelChange.From} ➔ Lv.${Data.LevelChange.To}`,
+          depth: 0
+        });
+
+        // D. 属性成长详情 (如果升级了，遍历展示属性变化)
+        const stats = Data.StatsChange;
+        const statNames: Record<string, string> = {
+          Health: '生命',
+          Strength: '力量',
+          Agility: '敏捷',
+          Intelligence: '智力'
+        };
+
+        Object.entries(stats).forEach(([key, change]: [string, any]) => {
+          const diff = change.To - change.From;
+          if (diff !== 0) {
+            displayLogs.value.push({
+              type: 'stat-up',
+              msg: `🔺 ${statNames[key] || key}: ${change.From} ➔ ${change.To} (${diff > 0 ? '+' : ''}${diff})`,
+              depth: 0
+            });
+          }
+        });
+      }
+      break;
+    case 'Healing':
+      const healerTarget = findP(Data.Target);
+      if (healerTarget) {
+        // 更新前端实体的生命值
+        healerTarget.CurrentHP = Data.HP;
+      }
+      // 向日志列表推送治疗消息
+      displayLogs.value.push({
+        type: 'heal',
+        msg: `💚 ${Data.Target} 恢复了 ${Data.Value} 点生命 (剩: ${Data.HP})`,
+        depth: d,
+      });
       break;
   }
 };
@@ -365,4 +458,55 @@ const processEvent = async (event: BattleEvent) => {
 ::-webkit-scrollbar-thumb:hover { background: #484f58; }
 
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+/* 升级日志特殊样式 */
+.level-up {
+  color: #f1c40f;
+  font-weight: bold;
+  background: rgba(241, 196, 15, 0.1);
+  border-left: 4px solid #f1c40f;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+/* 属性提升样式 */
+.stat-up {
+  color: #3498db;
+  font-size: 0.9em;
+  padding-left: 20px;
+}
+
+/* 经验值样式 */
+.exp {
+  color: #9b59b6;
+}
+
+/* 结算弹窗样式简述 */
+.settlement-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 100;
+}
+.settlement-card {
+  background: #2c3e50;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 2px solid #3498db;
+  text-align: center;
+  min-width: 300px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 15px 0;
+}
+.stat-item {
+  display: flex; justify-content: space-between;
+  background: rgba(0,0,0,0.2);
+  padding: 5px 10px;
+  border-radius: 4px;
+}
 </style>

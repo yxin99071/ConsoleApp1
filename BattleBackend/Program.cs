@@ -1,4 +1,6 @@
 ﻿
+using BattleBackend.Controllers;
+
 namespace BattleBackend
 {
     public class Program
@@ -14,6 +16,7 @@ namespace BattleBackend
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             //依赖注入
+            builder.Services.AddTransient<BattleController>();
             builder.Services.AddScoped<JwtService>();
             // 1. 定义 CORS 策略名
             const string MyAllowVueApp = "_myAllowVueApp";

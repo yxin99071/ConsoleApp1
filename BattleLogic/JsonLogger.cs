@@ -17,11 +17,12 @@ namespace BattleCore
             public DepthScope() => _currentDepth++;
             public void Dispose() => _currentDepth--;
         }
-        // ---  回合管理 ---
+        // ---  回合管理:开始 ---
         public static void LogRoundBegin(string name)
         {
             Emit("RoundBegin", new Dictionary<string, object> { { "Unit", name } });
         }
+        
         // ---  伤害性 Buff 结算 (结算名称、等级、伤害) ---
         public static void LogBuffTick(string unit, string buffName, int damage)
         {
@@ -93,11 +94,19 @@ namespace BattleCore
         }
 
         // R2: 扣血
-        public static void LogDamage(string target, int value, int remain)
+        public static void LogDamage(string target, int value, int remain,bool isCritical)
         {
             Emit("Damage", new Dictionary<string, object> {
+            { "Target", target }, { "Value", value }, { "HP", remain },{"Critical", isCritical}
+        });
+        }
+        // R3: 回血
+        public static void LogHealing(string target, int value, int remain)
+        {
+            Emit("Healing", new Dictionary<string, object> {
             { "Target", target }, { "Value", value }, { "HP", remain }
         });
+
         }
 
         // C1: 被动保命

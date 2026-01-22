@@ -106,8 +106,7 @@ namespace BattleCore.DataModel
         }
         public static async Task<bool> SetBattleResult(int challengerId, int opponentId,bool isWin)
         {
-            return false;
-            Console.Write("");
+            
             var challenger = await dataService.GetUserById(challengerId);
             var challenger_copy = await dataService.GetUserById(challengerId);
             var opponent = await dataService.GetUserById(opponentId);
@@ -137,7 +136,7 @@ namespace BattleCore.DataModel
             {
                 //同步经验值
                 challenger.Exp = exp;
-                await dataService.UpdateSinlgeUser(challenger);
+                await dataService.UpgradeSinlgeUser(challenger);
                 //日志结算信息
             }
             JsonLogger.LogBattleEnd(challenger_copy!, challenger);

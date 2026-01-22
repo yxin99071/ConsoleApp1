@@ -89,7 +89,13 @@ namespace BattleCore.BattleLogic
 
                 //绑定顺序很重要
                 fighters[i].LoadBuffEA += LoadBuffHandlers.LoadBuff;
+
+                fighters[i].HealingEA += HealingEventHandlers.HealingOnHp;
+
                 fighters[i].CauseDamageEA += CauseDamageHandlers.CorrectDamageByBuff;
+                fighters[i].CauseDamageEA += CauseDamageHandlers.CorrectDamageByCritical;
+                fighters[i].CauseDamageEA += CauseDamageHandlers.CorrectDamageByIncreasement;
+
                 fighters[i].TakeDamageEA += TakeDamageHandlers.CorrectDamage;
                 fighters[i].TakeDamageEA += TakeDamageHandlers.AvoidanceOrDamage;
                 fighters[i].TakeDamageEA += TakeDamageHandlers.DamageOnHp;
@@ -97,8 +103,8 @@ namespace BattleCore.BattleLogic
 
                 if (fighters[i].Skills.Any(s => s.Name == StaticData.PassivePretendDeath))
                     fighters[i].TakeDamageEA += TakeDamageHandlers.PassivePretendDeath;
-                if (fighters[i].Skills.Any(s => s.Name == StaticData.PassiveUndeadWilling))
-                    fighters[i].TakeDamageEA += TakeDamageHandlers.PassiveUndeadWilling;
+                if (fighters[i].Skills.Any(s => s.Name == StaticData.PassiveUndeadWill))
+                    fighters[i].TakeDamageEA += TakeDamageHandlers.PassiveUndeadWill;
 
                 fighters[i].TakeDamageEA += TakeDamageHandlers.FightBack;
                 fighters[i].TakeDamageEA += TakeDamageHandlers.JudgeDeath;
@@ -174,7 +180,7 @@ namespace BattleCore.BattleLogic
                 _ => -1 // 未知或无
             };
             //升级点数
-            int propertyPoint = upgradeLevel * 8;
+            int propertyPoint = upgradeLevel * 6;
             int mainIdx = GetIndex(user.Profession!.ToUpper());
             int subIdx = GetIndex(user.SecondProfession?.ToUpper());
 
@@ -186,42 +192,43 @@ namespace BattleCore.BattleLogic
 
             if (subIdx == -1 || subIdx == mainIdx)
             {
-                // 纯色职：主属性 80%，其余各 10%
+                // 纯色职：主属性 70%，其余各 15%
                 for (int i = 0; i < 3; i++)
-                    weights[i] = (i == mainIdx) ? 24 : 3;
+                    weights[i] = (i == mainIdx) ? 42 : 9;
 
             }
             else if (mainIdx == 4)
             {
                 for (int i = 0; i < 3; i++)
-                    weights[i] = 10;
+                    weights[i] = 20;
                 //该职业需要修正点数
-                propertyPoint =upgradeLevel * 9;
+                propertyPoint =upgradeLevel * 7;
             }
             else
             {
-                // 双修职：主 60%, 副 30%, 剩余 10%
+                // 双修职：主 60%, 副 25%, 剩余 15%
                 for (int i = 0; i < 3; i++)
                 {
-                    if (i == mainIdx) weights[i] = 18;
-                    else if (i == subIdx) weights[i] = 9;
-                    else weights[i] = 3;
+                    if (i == mainIdx) weights[i] = 36;
+                    else if (i == subIdx) weights[i] = 15;
+                    else weights[i] = 9;
                 }
             }
              
             var random = new Random();
-            var choice = random.Next(0, 31);
             while (propertyPoint > 0)
             {
+                var choice = random.Next(0, 61);
                 if (choice <= weights[0])
                     user.Strength++;
-                else if (choice <= weights[1])
+                else if (choice <= weights[1]+ weights[0])
                     user.Agility++;
                 else
                     user.Intelligence++;
                 propertyPoint--;
             }
             user.Level += upgradeLevel;
+            user.Health = 5 * user.Level + 10 * user.Strength + 7 * user.Intelligence + 5 * user.Agility;
             return true;
         }
 
