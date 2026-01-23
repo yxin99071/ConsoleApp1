@@ -11,3 +11,5 @@ D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.dll
 D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\refint\DataCore.dll
 D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.pdb
 D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\ref\DataCore.dll
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\bin\Debug\net8.0\DataCore.runtimeconfig.json
+D:\Workspace\Test\Consoles\ConsoleApp1\DataCore\obj\Debug\net8.0\DataCore.genruntimeconfig.cache

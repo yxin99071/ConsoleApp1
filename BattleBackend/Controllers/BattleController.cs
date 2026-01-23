@@ -17,6 +17,8 @@ namespace BattleBackend.Controllers
             if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
                 return Unauthorized("缺少或无效的 Authorization");
             var principal = _jwtService.ValidateToken(authHeader);
+            //
+
 
             if (principal == null)
                 return Unauthorized("Token 无效或过期");

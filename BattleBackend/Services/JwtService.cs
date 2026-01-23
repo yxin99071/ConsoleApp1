@@ -1,8 +1,8 @@
-﻿using System;
+﻿using DataCore.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
 public class JwtService
 {
@@ -17,12 +17,13 @@ public class JwtService
     }
 
     // 生成 JWT
-    public string GenerateToken(string username, string role = "User")
+    public string GenerateToken(User user)
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, role)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // 存入 ID
+            new Claim("Account", user.Account),                       // 自定义 Claim
+            new Claim(ClaimTypes.Name, user.Name),                   // 存入真实姓名
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));

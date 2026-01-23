@@ -12,7 +12,7 @@ namespace BattleCore.DataModel.Fighters
     {
         public Warrior(User user): base(user)
         {
-            Profession = "Warrior";
+            Profession = "WARRIOR";
             CraticalDamage += StaticData.CalculateCriticalDamage(Strength) / 2;
             CraticalRate += StaticData.CalculateCriticalRate(0.8 * Strength) / 2;
         }

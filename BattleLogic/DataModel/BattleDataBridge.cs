@@ -8,7 +8,7 @@ namespace BattleCore.DataModel
 {
     public class BattleDataBridge
     {
-        private static readonly DataService dataService = new DataService();
+        private static readonly DataHelper dataService = new DataHelper();
         /*
          * readonly dataservice
          */

@@ -19,7 +19,7 @@ namespace BattleCore.DataModel
 
         #endregion
         #region SpecialSkillTag
-        public static readonly string SkillTagTorture = "Torture".ToUpper();
+        public static readonly string SkillTagTorture = "折磨";
         #endregion
         #region PassiveSkillName
         public static readonly string PassiveUndeadWill = "UNDEAD_WILL";

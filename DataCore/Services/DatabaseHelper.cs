@@ -1,11 +1,28 @@
 ﻿using DataCore.Data;
 using DataCore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DataCore.Services
 {
-    public static class DatabaseService
+    public static class DatabaseHelper
     {
+        public static void AddBattleDatabase(this IServiceCollection services)
+        {
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string dbDirectory = Path.Combine(folder, "MyProject");
+            string dbPath = Path.Combine(dbDirectory, "game.db");
+
+            if (!Directory.Exists(dbDirectory)) Directory.CreateDirectory(dbDirectory);
+
+            // 注册 DbContext
+            services.AddDbContext<BattleDbContext>(options =>
+                options.UseSqlite($"Data Source={dbPath}"));
+
+            // 注册数据操作类
+            services.AddScoped<DataHelper>();
+        }
         public static BattleDbContext GetDbContext()
         {
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -30,6 +47,7 @@ namespace DataCore.Services
 
             return context;
         }
+
         private static void SeedData(BattleDbContext db)
         {
             // 如果已经有 Buff 数据，说明已经初始化过了，直接返回
@@ -59,7 +77,7 @@ namespace DataCore.Services
             var weapons = new List<Weapon>();
 
             // 定义一个辅助动作方便快速添加武器
-            void AddWeapon(string name, double agi, double str, double intel, List<string> buffNames, string tag = "GENERAL")
+            void AddWeapon(string name, double agi, double str, double intel, List<string> buffNames, string tag = "普通")
             {
                 var w = new Weapon
                 {
@@ -79,7 +97,7 @@ namespace DataCore.Services
                 }
                 weapons.Add(w);
             }
-            void AddSkill(string name, bool isPassive, double agi, double str, double intel, List<string> buffNames, string tag = "GENERAL")
+            void AddSkill(string name, bool isPassive, double agi, double str, double intel, List<string> buffNames, string tag = "普通")
             {
                 var s = new Skill
                 {
@@ -135,12 +153,12 @@ namespace DataCore.Services
             AddWeapon("RUNIC_MAGIC_SWORD", 1.0, 0.5, 1.5, new() { "IGNITE" });
 
             // 通用武器 (General Weapons)
-            AddWeapon("GUARDIAN_HALBERD", 0.9, 1.2, 0.9, new() { "STRENGTHEN", "REGENERATION" }, "GENERAL");
-            AddWeapon("HEAVY_CROSSBOW", 1.1, 1.1, 0.8, new() { "WEAKNESS" }, "GENERAL");
-            AddWeapon("SCOUT_DAGGER", 1.2, 0.9, 0.9, new() { "STRENGTHEN" }, "GENERAL");
-            AddWeapon("HEAVY_CLUB", 0.8, 1.1, 1.1, new(), "GENERAL");
-            AddWeapon("BALANCED_STAFF", 1.0, 1.0, 1.0, new(), "GENERAL");
-            AddWeapon("ETCHED_DAGGER", 1.1, 0.9, 1.0, new(), "GENERAL");
+            AddWeapon("GUARDIAN_HALBERD", 0.9, 1.2, 0.9, new() { "STRENGTHEN", "REGENERATION" }, "普通");
+            AddWeapon("HEAVY_CROSSBOW", 1.1, 1.1, 0.8, new() { "WEAKNESS" }, "普通");
+            AddWeapon("SCOUT_DAGGER", 1.2, 0.9, 0.9, new() { "STRENGTHEN" }, "普通");
+            AddWeapon("HEAVY_CLUB", 0.8, 1.1, 1.1, new(), "普通");
+            AddWeapon("BALANCED_STAFF", 1.0, 1.0, 1.0, new(), "普通");
+            AddWeapon("ETCHED_DAGGER", 1.1, 0.9, 1.0, new(), "普通");
 
             db.Weapons.AddRange(weapons);
             db.SaveChanges();
@@ -183,6 +201,8 @@ namespace DataCore.Services
             db.Users.AddRange(
                 new User
                 {
+                    Id = 1,
+                    Account = 1.ToString(),
                     Name = "战士_凯尔",
                     Password = 1234.ToString(),
                     Health = 820,
@@ -197,6 +217,8 @@ namespace DataCore.Services
                 },
                 new User
                 {
+                    Id = 2,
+                    Account = 2.ToString(),
                     Name = "游侠_莱拉",
                     Password = 1234.ToString(),
                     Health = 590,
@@ -211,6 +233,8 @@ namespace DataCore.Services
                 },
                 new User
                 {
+                    Id = 3,
+                    Account = 3.ToString(),
                     Name = "法师_赞",
                     Password = 1234.ToString(),
                     Health = 674,
@@ -225,6 +249,8 @@ namespace DataCore.Services
                 },
                 new User
                 {
+                    Id = 4,
+                    Account = 4.ToString(),
                     Name = "凡人_艾里斯",
                     Password = 1234.ToString(),
                     Health = 754,

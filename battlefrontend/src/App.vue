@@ -1,61 +1,31 @@
 <template>
-  <div class="app-container">
-    <h1>Arena 战斗模拟器</h1>
-    
-    <div v-if="loading">正在加载战斗数据...</div>
-    
-    <BattleReplay 
-      v-else-if="battleData.length > 0" 
-      :rawJson="battleData" 
-    />
-    
-    <div v-else>
-      <button @click="fetchBattleData">获取战斗数据</button>
+  <el-config-provider>
+    <div id="app">
+      <router-view />
     </div>
-  </div>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import BattleReplay from './components/BattleReplay.vue'; // 确保路径正确
-import request from '@/api/request'; // 之前封装的 axios
-import type { BattleEvent } from '@/Models/BattleInterface'; // 引入接口
-
-const battleData = ref<BattleEvent[]>([]);
-const loading = ref(false);
-
-const fetchBattleData = async () => {
-  loading.value = true;
-  try {
-    // 关键点：第一个传 any，第二个传你想要的最终类型 BattleEvent[]
-    // 这样 TS 就会强制认为 data 是 BattleEvent[] 而不是 AxiosResponse
-    const data = await request.get<any, BattleEvent[]>('/WeatherForecast/test');
-    
-    battleData.value = data;
-  } catch (error) {
-    console.error("无法获取战斗数据:", error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// 如果你想页面一打开就加载
-onMounted(() => {
-  fetchBattleData();
-});
+// 这里目前不需要复杂的逻辑
 </script>
 
 <style>
-.app-container {
-  text-align: center;
-  padding: 20px;
-  background-color: #2c3e50;
-  min-height: 100vh;
-  color: white;
+/* 全局样式重置 */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
 }
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+
+#app {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* 消除 Element Plus 的一些默认边距干扰 */
+.el-main {
+  padding: 0;
 }
 </style>

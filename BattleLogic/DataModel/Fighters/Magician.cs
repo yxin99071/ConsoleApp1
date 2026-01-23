@@ -10,7 +10,7 @@ namespace BattleCore.DataModel.Fighters
     {
         public Magician(User user) : base(user)
         {
-            Profession = "Magician";
+            Profession = "MAGICIAN";
             //法师开局有护盾
             BuffStatuses.Add(new BuffStatus(
                 new Buff {Name="FakeHealth", LastRound=2,IsOnSelf= true, DamageCorrection = 1.2,

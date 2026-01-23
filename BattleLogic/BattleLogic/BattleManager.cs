@@ -132,34 +132,47 @@ namespace BattleCore.BattleLogic
          */
         public static double CalculateGainedExp(int playerLvl, int enemyLvl, bool isWin)
         {
-            // 1. 基础经验基数：随敌人等级线性增长 (20, 25, 30...)
-            double baseExp = 20.0 + (enemyLvl * 5.0);
+            // 1. 基础经验基数 (保持不变)
+            // 限制敌人等级对经验贡献的有效上限（玩家等级 + 5）
+            int effectiveEnemyLvl = Math.Min(enemyLvl, playerLvl + 5);
 
-            // 2. 计算等级差系数 (deltaL 为正表示越级打怪，为负表示虐菜)
+            // 基于有效等级计算基础经验
+            double baseExp = 20.0 + (effectiveEnemyLvl * 5.0);
+
+            // 2. 计算等级差
             double deltaL = enemyLvl - playerLvl;
             double factor;
 
-            if (deltaL <= -5)
+            double levelBonus = 1;
+            if(playerLvl < 15)
             {
-                factor = 0.05; // 等级过高，收益极低
+                levelBonus += (15 - playerLvl) * 0.2;
             }
-            else if (deltaL >= 5)
+            
+
+            if (isWin)
             {
-                factor = 2.5;  // 越级挑战，收益大幅提升
-            }
-            else if (deltaL < 0)
-            {
-                // -5 到 0 级之间平滑过渡 (0.05 -> 1.0)
-                factor = 0.05 + (0.95 / 5.0) * (deltaL + 5);
+                // 胜利时的逻辑：保留原有的越级激励
+                if (deltaL <= -5) factor = 0.05;
+                else if (deltaL >= 5) factor = 2.5;
+                else if (deltaL < 0) factor = 0.05 + (0.95 / 5.0) * (deltaL + 5);
+                else factor = 1.0 + (1.5 / 5.0) * deltaL;
             }
             else
             {
-                // 0 到 5 级之间平滑增加 (1.0 -> 2.5)
-                factor = 1.0 + (1.5 / 5.0) * deltaL;
+                // 失败时的逻辑：严厉惩罚越级失败
+                // 如果是虐菜失败(deltaL < 0)，给少量经验；如果是越级失败(deltaL > 0)，经验衰减
+                // 核心：失败时 factor 最高只能是 0.8 (甚至更低)，且等级差越大，失败收益占比越小
+                if (deltaL < 0)
+                    factor = 0.4; // 虐菜居然输了，给点低保
+                else
+                    // 越级失败惩罚：等级差越大，factor越低。
+                    // 例子：越1级失败 factor=0.35, 越5级失败 factor=0.1
+                    factor = Math.Max(0.1, 0.4 - (deltaL * 0.06));
             }
 
-            // 3. 计算最终经验：基础值 * 等级差系数 * 胜负系数 (失败得一半)
-            return baseExp * factor * (isWin ? 1.0 : 0.5);
+            // 3. 最终计算
+            return baseExp * factor * levelBonus;
         }
         /// <summary>
         /// 如果upgradeLevel为0返回false，否则就处理升级逻辑，包括加点与等级同步

@@ -15,8 +15,11 @@
     "lint": "eslint . --fix --cache"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.13.2",
-    "vue": "^3.5.26"
+    "element-plus": "^2.13.1",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",

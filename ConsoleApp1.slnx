@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/解决方案项/">
     <File Path="README.md" />
+    <File Path="ToDoList.txt" />
   </Folder>
   <Project Path="BattleBackend/BattleBackend.csproj" Id="9c9ce924-e289-48a9-9720-696a75b4f5c6" />
   <Project Path="BattleFrontEnd/battlefrontend.esproj">

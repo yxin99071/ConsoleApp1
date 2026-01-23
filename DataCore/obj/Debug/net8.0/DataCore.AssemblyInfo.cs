@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DataCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d0fcdd695ea47de0c353803e1bc1acbea2a1752")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4df6343902799b376da3a3886f1ac727facd33f7")]
 [assembly: System.Reflection.AssemblyProductAttribute("DataCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DataCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

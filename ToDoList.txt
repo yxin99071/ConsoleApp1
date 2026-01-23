@@ -1,0 +1,24 @@
+﻿
+. 登录=>  Finished
+
+. 创建角色 => Undo
+	Get: 是否有职业
+	Post:选择职业,初始化属性
+
+. 获取信息 => Finished	
+	Get:获取角色的基本信息json包
+
+. 修改信息 => Undo	
+	Post: 发送要修改的信息
+
+. 获取技能 => Undo	
+	Get : 可选择的技能列表（树）	
+	Post: 选择的技能
+
+. 获取武器 => Undo	
+	Get : 可选择的武器列表（图鉴）	Post: 选择的技能
+
+. 战斗 => Undo
+	Post: 对手
+	Get : 战斗结果
+

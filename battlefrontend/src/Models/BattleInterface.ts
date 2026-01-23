@@ -15,3 +15,27 @@ export interface Player {
   CurrentHP: number;
   ActiveBuffs: { name: string; level: number; rounds: number }[]; 
 }
+
+export interface Buff {
+  name: string;
+  description: string;
+}
+
+// 2. 定义武器和技能的通用结构
+export interface GameItem {
+  name: string;
+  profession: string;
+  description: string;
+  buffs: Buff[];
+}
+
+// 3. 定义主用户数据的结构
+export interface UserProfile {
+  name: string;
+  exp: number;
+  level: number;
+  profession: string;
+  secondProfession: string | null;
+  skillDTO: GameItem[];
+  weaponDTO: GameItem[];
+}

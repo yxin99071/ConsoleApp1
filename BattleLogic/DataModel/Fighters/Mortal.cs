@@ -13,7 +13,7 @@ namespace BattleCore.DataModel.Fighters
     {
         public Mortal(User user): base(user)
         {
-            Profession = "Magician";
+            Profession = "MORTAL";
         }
 
         public override void SetFitDamage(DamageInfo damageInfo)

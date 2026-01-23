@@ -6,6 +6,7 @@ namespace DataCore.Models
         public int Id { get; set; }
         public string Name { get; set; } = default!;
         public string Description { get; set; } = "No Description";
+        public string Profession { get; set; } = "GENERAL";
         public double CoefficientAgility { get; set; }
         public double CoefficientStrength { get; set; }
         public double CoefficientIntelligence { get; set; }
