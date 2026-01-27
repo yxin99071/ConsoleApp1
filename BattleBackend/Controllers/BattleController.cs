@@ -1,15 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BattleBackend.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace BattleBackend.Controllers
 {
     public class BattleController : Controller
     {
         private readonly JwtService _jwtService;
+        private readonly BattleService _battleService;
 
         // 通过构造函数注入
-        public BattleController(JwtService jwtService)
+        public BattleController(JwtService jwtService, BattleService battleService)
         {
             _jwtService = jwtService;
+            _battleService = battleService;
+
         }
         [HttpGet("start")]
         public IActionResult StartBattle([FromHeader(Name = "Authorization")] string authHeader)
@@ -26,5 +34,31 @@ namespace BattleBackend.Controllers
             var username = principal.Identity?.Name;
             return Ok($"战斗开始，当前用户：{username}");
         }
+        [HttpGet("GetWeaponAward")]
+        [Authorize]
+        public async Task<IActionResult> GetWeaponAward()
+        {
+            if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+            {
+                var Awards =await _battleService.GetAwardsList(id);
+                return Ok(Awards);
+
+            }
+            return BadRequest("找不到Id");
+        }
+        [HttpPost("fight")]
+        [Authorize]
+        public async Task<IActionResult> GetWeaponAward(int enemyId)
+        {
+            if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+            {
+                var result = _battleService.ExecuteFight(id, enemyId);//json
+                return Ok(result);
+            }
+            return BadRequest("无法战斗");
+        }
+
+
+
     }
 }

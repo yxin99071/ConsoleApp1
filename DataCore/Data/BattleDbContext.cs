@@ -15,6 +15,7 @@ namespace DataCore.Data
         public DbSet<Weapon> Weapons { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Buff> Buffs { get; set; }
+        public DbSet<TempAwardList> TempAwardLists { get; set; }
 
         public BattleDbContext(DbContextOptions<BattleDbContext> options) : base(options) { }
 

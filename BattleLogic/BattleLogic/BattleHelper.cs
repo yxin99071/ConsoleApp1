@@ -39,7 +39,7 @@ namespace BattleCore.BattleLogic
             //伤害细节
             var detail = new DamageDetail
             {
-                DamageType = StaticData.WeaponDamage,
+                DamageType = StaticDataHelper.WeaponDamage,
                 DirectSource = weapon.Name,
                 tags = new List<String>(weapon.Tags),
             };
@@ -54,7 +54,7 @@ namespace BattleCore.BattleLogic
             if (weapon.WeaponBuffs.Count > 0)
             {
                 damageInfo = new DamageInfo(source, taker, finalDamage);
-                detail.buffs = BattleDataBridge.ExtractBuffs(null, weapon.WeaponBuffs);
+                detail.buffs = StaticDataHelper.ExtractBuffs(null, weapon.WeaponBuffs);
             }
             else
                 damageInfo = new DamageInfo(source, taker, finalDamage);
@@ -124,9 +124,9 @@ namespace BattleCore.BattleLogic
                     //来自Buff的伤害不可反击
                     var detail = new DamageDetail
                     {
-                        DamageType = StaticData.BuffDamage,
+                        DamageType = StaticDataHelper.BuffDamage,
                         DirectSource = buffStatus.buff.Name,
-                        tags = [StaticData.UnDodgeable,StaticData.UnFightBackable,StaticData.BuffDamage]
+                        tags = [StaticDataHelper.UnDodgeable,StaticDataHelper.UnFightBackable,StaticDataHelper.BuffDamage]
                     };
                     damageInfo.damageDetail = detail;
 
@@ -171,7 +171,7 @@ namespace BattleCore.BattleLogic
                 var todoSkills = new List<Skill>();
                 foreach(var tag in chosenSkill.Tags)
                 {
-                    if (StaticData.SpecialSkillMap.TryGetValue(tag, out var action))
+                    if (StaticDataHelper.SpecialSkillMap.TryGetValue(tag, out var action))
                         action(source, taker, chosenSkill);
                 }
             }
@@ -194,14 +194,14 @@ namespace BattleCore.BattleLogic
                 var detail = new DamageDetail
                 {
                     DirectSource = skill.Name,
-                    DamageType = StaticData.SkillDamage,
+                    DamageType = StaticDataHelper.SkillDamage,
                     tags = new List<string>(skill.Tags)
                 };
                 //UNSURECHANGED : 原本没有导航属性
                 if (skill.SkillBuffs.Count() > 0)
                 {
                     damageInfo = new DamageInfo(source, taker, finalDamage);
-                    detail.buffs = BattleDataBridge.ExtractBuffs(skill.SkillBuffs);
+                    detail.buffs = StaticDataHelper.ExtractBuffs(skill.SkillBuffs);
                 }
                 else
                     damageInfo = new DamageInfo(source, taker, finalDamage);
@@ -249,10 +249,10 @@ namespace BattleCore.BattleLogic
             var newSkillBuffs = new List<SkillBuff>();
             do
             {
-                var buffChoice = random.Next(0, StaticData.BuffPool.Count);
-                if (StaticData.BuffPool[buffChoice].IsOnSelf)
+                var buffChoice = random.Next(0, StaticDataHelper.BuffPool.Count);
+                if (StaticDataHelper.BuffPool[buffChoice].IsOnSelf)
                     continue;
-                newSkillBuffs.Add(new SkillBuff {Buff = StaticData.BuffPool[buffChoice],Level = 3 });
+                newSkillBuffs.Add(new SkillBuff {Buff = StaticDataHelper.BuffPool[buffChoice],Level = 3 });
                 buffCount++;
             } while (buffCount < 4);
             skill.SkillBuffs.Concat(newSkillBuffs);

@@ -13,7 +13,7 @@ namespace BattleCore.BattleLogic
     public class BattleManager
     {
         #region BattleManage
-        public static async Task BattleSimulation(Fighter source, Fighter taker)
+        public static bool BattleSimulation(Fighter source, Fighter taker)
         {
             Console.Write("");
             while (true)
@@ -37,14 +37,12 @@ namespace BattleCore.BattleLogic
                 if (source.IsDead)
                 {
                     Console.WriteLine($"Game Over, {taker.Name} win!");
-                    await BattleDataBridge.SetBattleResult(source.Id, taker.Id, false);
-                    break;
+                    return false;
                 }
                 if (taker.IsDead)
                 {
                     Console.WriteLine($"Game Over, {source.Name} win!");
-                    await BattleDataBridge.SetBattleResult(source.Id, taker.Id, true);
-                    break;
+                    return true;
                 }
 
 
@@ -63,17 +61,54 @@ namespace BattleCore.BattleLogic
                 if (source.IsDead)
                 {
                     Console.WriteLine($"Game Over, {taker.Name} win!");
-                    await BattleDataBridge.SetBattleResult(source.Id, taker.Id, false);
-                    break;
+                    //todo 结算
+                    //await BattleDataBridge.SetBattleResult(source.Id, taker.Id, false);
+                    return false;
                 }
                 if (taker.IsDead)
                 {
                     Console.WriteLine($"Game Over, {source.Name} win!");
-                    await BattleDataBridge.SetBattleResult(source.Id, taker.Id, true);
-                    break;
+                    return true; 
                 }
 
             }
+        }
+        public static bool SetBattleResult(User challenger, User opponent, bool isWin,bool isHome = true)
+        {
+            var challenger_copy = challenger.Copy();
+            if (challenger is null || opponent is null)
+                return false;
+            //当前经验
+            var exp = challenger.Exp + CalculateGainedExp(challenger.Level, opponent.Level, isWin,isHome);
+            var finalLevel = challenger.Level;
+            while (true)
+            {
+                // 计算下一级所需的总经验门槛
+                int nextLevel = finalLevel + 1;
+                double threshold = 50.0 * nextLevel * nextLevel + 50.0 * nextLevel;
+
+                // 如果当前总经验达到了下一级的门槛，则等级自增
+                if (exp >= threshold)
+                {
+                    finalLevel++;
+                }
+                else
+                {
+                    break; // 未达到门槛，退出循环
+                }
+            }
+
+            if (LevelUp(challenger, finalLevel - challenger.Level))
+            {
+                //同步经验值
+                challenger.Exp = exp;
+                //todo 结算,应当在函数外部完成
+                //await dataService.UpgradeSinlgeUser(challenger);
+                //日志结算信息
+            }
+            if(isHome)
+                JsonLogger.LogBattleEnd(challenger_copy!, challenger);
+            return true;
         }
         /// <summary>
         /// 重要：fighters的长度只能为2，并且第一个为挑战者，第二个为被挑战者
@@ -101,15 +136,15 @@ namespace BattleCore.BattleLogic
                 fighters[i].TakeDamageEA += TakeDamageHandlers.DamageOnHp;
 
 
-                if (fighters[i].Skills.Any(s => s.Name == StaticData.PassivePretendDeath))
+                if (fighters[i].Skills.Any(s => s.Name == StaticDataHelper.PassivePretendDeath))
                     fighters[i].TakeDamageEA += TakeDamageHandlers.PassivePretendDeath;
-                if (fighters[i].Skills.Any(s => s.Name == StaticData.PassiveUndeadWill))
+                if (fighters[i].Skills.Any(s => s.Name == StaticDataHelper.PassiveUndeadWill))
                     fighters[i].TakeDamageEA += TakeDamageHandlers.PassiveUndeadWill;
 
                 fighters[i].TakeDamageEA += TakeDamageHandlers.FightBack;
                 fighters[i].TakeDamageEA += TakeDamageHandlers.JudgeDeath;
             }
-            JsonLogger.LogBattleStart(fighters[0], fighters[1], StaticData.BuffPool);
+            JsonLogger.LogBattleStart(fighters[0], fighters[1], StaticDataHelper.BuffPool);
         }
         /**
          * 【经验值与等级核心公式】
@@ -130,7 +165,7 @@ namespace BattleCore.BattleLogic
          * * 5. 最终单场经验获得 (Final Exp Gain):
          * FinalExp = BaseExp * Factor * (IsWin ? 1.0 : 0.5)
          */
-        public static double CalculateGainedExp(int playerLvl, int enemyLvl, bool isWin)
+        public static double CalculateGainedExp(int playerLvl, int enemyLvl, bool isWin,bool isHome = true)
         {
             // 1. 基础经验基数 (保持不变)
             // 限制敌人等级对经验贡献的有效上限（玩家等级 + 5）
@@ -171,8 +206,8 @@ namespace BattleCore.BattleLogic
                     factor = Math.Max(0.1, 0.4 - (deltaL * 0.06));
             }
 
-            // 3. 最终计算
-            return baseExp * factor * levelBonus;
+            // 3. 最终计算是否为主场
+            return baseExp * factor * levelBonus * (isHome?1:0.5);
         }
         /// <summary>
         /// 如果upgradeLevel为0返回false，否则就处理升级逻辑，包括加点与等级同步
@@ -240,10 +275,35 @@ namespace BattleCore.BattleLogic
                     user.Intelligence++;
                 propertyPoint--;
             }
-            user.Level += upgradeLevel;
+            //判断是否有升级奖励
+            for(int i = 0; i < upgradeLevel;i++)
+            {
+                user.Level++;
+                if (user.Level % 4 == 1)
+                    GetWeaponAward(user,true);//处理特殊武器逻辑
+                else if (user.Level % 2 == 1)
+                    GetWeaponAward(user, false);//处理普通武器逻辑
+                if (user.Level % 4 == 0)
+                    GetSkillAward(user,true);//处理特殊技能逻辑
+                else if (user.Level % 2 == 0)
+                    GetSkillAward(user,false);//处理普通技能逻辑
+
+            }
             user.Health = 5 * user.Level + 10 * user.Strength + 7 * user.Intelligence + 5 * user.Agility;
             return true;
         }
+        private static void GetWeaponAward(User user, bool professionFlag)
+        {
+            throw new NotImplementedException();
+            var awardWeaponChoice = new List<Weapon>();
+
+        }
+        private static void GetSkillAward(User user, bool professionFlag)
+        {
+            
+        }
+
+
 
 
         #endregion

@@ -23,9 +23,9 @@ namespace BattleCore.DataModel.Fighters
             Intelligence = user.Intelligence;
             Weapons = user.Weapons;
             Skills = user.Skills;
-            CraticalRate = 0.08 + StaticData.CalculateCriticalRate(user.Agility)/2;//如果是游侠则不用除以2
-            CraticalDamage = 1.5 + StaticData.CalculateCriticalDamage(user.Strength) / 2;//如果是战士则不用除以2
-            DamageInreasement = 1 + StaticData.CalculateDamageIncreasement(user.Intelligence) / 2;//如果是法师则不用除以2
+            CraticalRate = 0.08 + StaticDataHelper.CalculateCriticalRate(user.Agility)/2;//如果是游侠则不用除以2
+            CraticalDamage = 1.5 + StaticDataHelper.CalculateCriticalDamage(user.Strength) / 2;//如果是战士则不用除以2
+            DamageInreasement = 1 + StaticDataHelper.CalculateDamageIncreasement(user.Intelligence) / 2;//如果是法师则不用除以2
         }
         public readonly int Id;
         public readonly double MaxHealth;

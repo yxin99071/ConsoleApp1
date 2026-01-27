@@ -21,7 +21,7 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Agility*0.71 + Strength*0.71 + Intelligence * 0.71;
             var detail = new DamageDetail
             {
-                DamageType = StaticData.FistDamage,
+                DamageType = StaticDataHelper.FistDamage,
                 DirectSource = $"{this.Profession}'s Fist",
             };
             damageInfo.damageDetail = detail;

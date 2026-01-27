@@ -1,8 +1,12 @@
 ﻿using BattleBackend.Controllers;
 using BattleBackend.DTOs;
+using BattleCore;
 using BattleCore.BattleLogic;
+using BattleCore.DataModel.Fighters;
 using DataCore.Models;
 using DataCore.Services;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace BattleBackend.Services
 {
@@ -12,6 +16,43 @@ namespace BattleBackend.Services
         public BattleService(DataHelper dataHelper)
         {
             _dataHelper = dataHelper;
+        }
+
+        private static Fighter InitialFighter(User? user)
+        {
+            if (user is not null)
+            {
+                if (user.Profession == "MAGICIAN")
+                    return new Magician(user);
+                if (user.Profession == "WARRIOR")
+                    return new Warrior(user);
+                if (user.Profession == "RANGER")
+                    return new Ranger(user);
+                else
+                    return new Mortal(user);
+            }
+            else
+                throw new Exception();//出错
+
+        }
+
+        internal async Task<string> ExecuteFight(int id, int enemyId)
+        {
+            var user = await _dataHelper.GetUserById(id);
+            var enemy = await _dataHelper.GetUserById(enemyId);
+            if (user is null || enemy is null)
+                return "";
+            Fighter user_fighter = InitialFighter(user);
+            Fighter enemy_fighter = InitialFighter(enemy);
+            //战斗与结果
+
+            var isWin =BattleManager.BattleSimulation(user_fighter, enemy_fighter);
+            BattleManager.SetBattleResult(user, enemy, isWin);
+            BattleManager.SetBattleResult(enemy, user, !isWin, false);
+            await _dataHelper.UpgradeSinlgeUser(user);
+            await _dataHelper.UpgradeSinlgeUser(enemy);
+
+            return JsonLogger.GetJson();
         }
 
         internal async Task<List<User>> GetAllFighter(string? exclusiveId)
@@ -29,6 +70,38 @@ namespace BattleBackend.Services
                 users.AddRange(allUsers);
             }
             return users;
+        }
+
+        internal async Task<AwardListDto> GetAwardsList(int id)
+        {
+            //返回奖励列表
+            var result = new AwardListDto();
+            var user = await _dataHelper.GetUserById(id);
+            if (user == null)
+                return new AwardListDto();
+            var awardList = await _dataHelper.GetAwardList(id);
+            foreach (var award in awardList)
+            {
+                if (award.skillIds.Count > 0)
+                {
+                    foreach (var skillId in award.skillIds)
+                    {
+                        var skill = await _dataHelper.GetSkillById(skillId);
+                        if (skill != null)
+                            result.Skills.Add(skill);
+                    }
+                }
+                if (award.weaponIds.Count > 0)
+                {
+                    foreach (var weaponId in award.weaponIds)
+                    {
+                        var weapon = await _dataHelper.GetSkillById(weaponId);
+                        if (weapon != null)
+                            result.Skills.Add(weapon);
+                    }
+                }
+            }
+            return result;
         }
 
         internal async Task<User?> GetUserById(int id)
@@ -83,5 +156,8 @@ namespace BattleBackend.Services
             return false;
             
         }
+
+
+
     }
 }

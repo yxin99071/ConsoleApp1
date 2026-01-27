@@ -13,8 +13,8 @@ namespace BattleCore.DataModel.Fighters
         public Warrior(User user): base(user)
         {
             Profession = "WARRIOR";
-            CraticalDamage += StaticData.CalculateCriticalDamage(Strength) / 2;
-            CraticalRate += StaticData.CalculateCriticalRate(0.8 * Strength) / 2;
+            CraticalDamage += StaticDataHelper.CalculateCriticalDamage(Strength) / 2;
+            CraticalRate += StaticDataHelper.CalculateCriticalRate(0.8 * Strength) / 2;
         }
 
         public override void SetFitDamage(DamageInfo damageInfo)
@@ -22,7 +22,7 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Strength * 2.0;
             var detail = new DamageDetail
             {
-                DamageType = StaticData.FistDamage,
+                DamageType = StaticDataHelper.FistDamage,
                 DirectSource = $"{this.Profession}'s Fist",
             };
             damageInfo.damageDetail = detail;

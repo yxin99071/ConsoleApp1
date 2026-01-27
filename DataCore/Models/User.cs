@@ -1,4 +1,5 @@
-﻿namespace DataCore.Models
+﻿
+namespace DataCore.Models
 {
     public class User
     {
@@ -18,5 +19,28 @@
         public double Intelligence { get; set; }
         public List<Weapon> Weapons { get; set; } = new();
         public List<Skill> Skills { get; set; } = new();
+
+        public User Copy()
+        {
+            return new User
+            {
+                Id = this.Id,
+                Account = this.Account,
+                Password = this.Password,
+                Name = this.Name,
+                Profession = this.Profession,
+                SecondProfession = this.SecondProfession,
+                Exp = this.Exp,
+                Level = this.Level,
+                LastWeaponAward = this.LastWeaponAward,
+                LastSkillAward = this.LastSkillAward,
+                Health = this.Health,
+                Agility = this.Agility,
+                Strength = this.Strength,
+                Intelligence = this.Intelligence,
+                Weapons = new List<Weapon>(this.Weapons), // 浅拷贝列表
+                Skills = new List<Skill>(this.Skills) // 浅拷贝列表
+            };
+        }
     }
 }

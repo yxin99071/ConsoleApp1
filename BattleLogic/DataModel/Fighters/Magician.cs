@@ -16,7 +16,7 @@ namespace BattleCore.DataModel.Fighters
                 new Buff {Name="FakeHealth", LastRound=2,IsOnSelf= true, DamageCorrection = 1.2,
                     SpecialTag= (Intelligence * 2.5).ToString().Split(',').ToList()},this,null
                 ));
-            DamageInreasement += StaticData.CalculateDamageIncreasement(Intelligence)/2;
+            DamageInreasement += StaticDataHelper.CalculateDamageIncreasement(Intelligence)/2;
         }
 
         public override void SetFitDamage(DamageInfo damageInfo)
@@ -24,12 +24,12 @@ namespace BattleCore.DataModel.Fighters
             damageInfo.Damage += Intelligence * 1.0;
             //添加buff
             Random random = new Random();
-            var buff_1 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)].Clone();
-            var buff_2 = StaticData.BuffPool[random.Next(0, StaticData.BuffPool.Count)].Clone();
-            var buffs = BattleDataBridge.ExtractBuffs(new List<SkillBuff> { new SkillBuff { Buff = buff_1,Level=4 }, new SkillBuff { Buff = buff_2,Level=4 } });
+            var buff_1 = StaticDataHelper.BuffPool[random.Next(0, StaticDataHelper.BuffPool.Count)].Clone();
+            var buff_2 = StaticDataHelper.BuffPool[random.Next(0, StaticDataHelper.BuffPool.Count)].Clone();
+            var buffs = StaticDataHelper.ExtractBuffs(new List<SkillBuff> { new SkillBuff { Buff = buff_1,Level=4 }, new SkillBuff { Buff = buff_2,Level=4 } });
             var detail = new DamageDetail
             {
-                DamageType = StaticData.FistDamage,
+                DamageType = StaticDataHelper.FistDamage,
                 DirectSource = $"{this.Profession}'s Fist",
             };
             foreach(var buff in buffs)

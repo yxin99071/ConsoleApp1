@@ -14,17 +14,17 @@ namespace BattleCore.DataModel.Fighters
         public Ranger(User user): base(user)
         {
             Profession = "RANGER";
-            CraticalRate += StaticData.CalculateCriticalRate(Agility) / 2;
-            CraticalDamage += StaticData.CalculateCriticalDamage(0.2*Agility) / 2;
+            CraticalRate += StaticDataHelper.CalculateCriticalRate(Agility) / 2;
+            CraticalDamage += StaticDataHelper.CalculateCriticalDamage(0.2*Agility) / 2;
         }
         public override void SetFitDamage(DamageInfo damageInfo)
         {
             damageInfo.Damage += Agility * 1.3;
             var detail = new DamageDetail
             {
-                DamageType = StaticData.FistDamage,
+                DamageType = StaticDataHelper.FistDamage,
                 DirectSource = $"{this.Profession}'s Fist",
-                tags = [StaticData.UnFightBackable, StaticData.UnDodgeable]
+                tags = [StaticDataHelper.UnFightBackable, StaticDataHelper.UnDodgeable]
             };
             damageInfo.damageDetail = detail;
         }

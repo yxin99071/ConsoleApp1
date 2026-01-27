@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BattleCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2aa6259e1b29010f4421459a4a755f586ed26ae3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe9a0eb2b147e8c70507a7d638cbba3afbd61228")]
 [assembly: System.Reflection.AssemblyProductAttribute("BattleCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BattleCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

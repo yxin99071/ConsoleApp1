@@ -31,7 +31,7 @@ namespace BattleCore.BattleLogic.EventHandlers
             if (choice <= e.damageInfo.Source.CraticalRate*100)
             {
                 e.damageInfo.Damage *= e.damageInfo.Source.CraticalDamage;
-                e.damageInfo.damageDetail.tags.Add(StaticData.CriticalDamage);
+                e.damageInfo.damageDetail.tags.Add(StaticDataHelper.CriticalDamage);
             }
         }
         public static void CorrectDamageByIncreasement(object? sender, CauseDamageEventArgs e)

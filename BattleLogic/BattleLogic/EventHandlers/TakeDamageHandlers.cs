@@ -17,10 +17,10 @@ namespace BattleCore.BattleLogic.EventHandlers
         } 
         public static void AvoidanceOrDamage(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.damageDetail.tags.Contains(StaticData.UnDodgeable))
+            if (e.damageInfo.damageDetail.tags.Contains(StaticDataHelper.UnDodgeable))
                 return;
 
-            double AvoidChance = StaticData.CalculateDodge(e.damageInfo.Target.Agility);
+            double AvoidChance = StaticDataHelper.CalculateDodge(e.damageInfo.Target.Agility);
             var random = new Random();
             int choice = random.Next(0, 101);       
             if (choice / 100.0 < AvoidChance)
@@ -61,7 +61,7 @@ namespace BattleCore.BattleLogic.EventHandlers
             BattleLogger.LogDamage(e.damageInfo.Target.Name, e.damageInfo.Damage, e.damageInfo.Target.Health);
             #region 日志逻辑
             //如果是来自Buff的
-            if (e.damageInfo.damageDetail.tags.Contains(StaticData.BuffDamage))
+            if (e.damageInfo.damageDetail.tags.Contains(StaticDataHelper.BuffDamage))
             {
                 JsonLogger.LogBuffTick(e.damageInfo.Target.Name, e.damageInfo.damageDetail.DirectSource, (int)e.damageInfo.Damage);
                 //来自buff的伤害，buff会被添加进伤害信息
@@ -72,7 +72,7 @@ namespace BattleCore.BattleLogic.EventHandlers
                 JsonLogger.LogDamage(e.damageInfo.Target.Name
                     , (int)e.damageInfo.Damage
                     , (int)e.damageInfo.Target.Health
-                    , e.damageInfo.damageDetail.tags.Contains(StaticData.CriticalDamage));
+                    , e.damageInfo.damageDetail.tags.Contains(StaticDataHelper.CriticalDamage));
 
             }
             #endregion
@@ -105,7 +105,7 @@ namespace BattleCore.BattleLogic.EventHandlers
             e.damageInfo.Target.Heal(Math.Abs(e.damageInfo.Target.Health)+1,new List<string>());
             e.damageInfo.Target.BuffStatuses.Clear();
             e.damageInfo.Target.TakeDamageEA -= PassivePretendDeath;
-            e.damageInfo.damageDetail.tags.Add(StaticData.UnFightBackable);
+            e.damageInfo.damageDetail.tags.Add(StaticDataHelper.UnFightBackable);
         }
         public static void PassiveUndeadWill(object? sender, TakeDamageEventArgs e)
         {
@@ -119,7 +119,7 @@ namespace BattleCore.BattleLogic.EventHandlers
 
             var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
             e.damageInfo.Target.LoadBuff(new Buff { Name="UNDEADWILL",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
-            e.damageInfo.damageDetail.tags.Add(StaticData.UnFightBackable);
+            e.damageInfo.damageDetail.tags.Add(StaticDataHelper.UnFightBackable);
             e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWill;
 
             BattleHelper.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
@@ -134,7 +134,7 @@ namespace BattleCore.BattleLogic.EventHandlers
 
         public static void FightBack(object? sender, TakeDamageEventArgs e)
         {
-            if (e.damageInfo.damageDetail.tags.Contains(StaticData.UnFightBackable))
+            if (e.damageInfo.damageDetail.tags.Contains(StaticDataHelper.UnFightBackable))
                 return;
                 
             if (e.damageInfo.Damage == -1)
@@ -142,7 +142,7 @@ namespace BattleCore.BattleLogic.EventHandlers
                 e.damageInfo.Damage = 0;
                 return;
             }
-            double FightBackChance = StaticData.CalculateCounterRate(e.damageInfo.Target.Agility, e.damageInfo.Target.Strength, e.damageInfo.Target.Intelligence);
+            double FightBackChance = StaticDataHelper.CalculateCounterRate(e.damageInfo.Target.Agility, e.damageInfo.Target.Strength, e.damageInfo.Target.Intelligence);
             //最高20%概率反击
             var random = new Random();
             int choice = random.Next(0, 101);
