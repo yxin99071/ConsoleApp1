@@ -1,10 +1,13 @@
 ﻿using BattleBackend.DTOs;
 using BattleBackend.Services;
+using DataCore.Models;
 using DataCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static BattleBackend.DTOs.InformationDTO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BattleBackend.Controllers
 {
@@ -42,16 +45,28 @@ namespace BattleBackend.Controllers
 
         [HttpGet("profile")]
         [Authorize]
-        public async Task<IActionResult> GetSkillAndWeapon()
+        public async Task<IActionResult> GetProfiles(string id)
         {
-            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (claim is null)
-                return Unauthorized("凭证过期");
-            int.TryParse(claim.Value, out int id);
-
-            var user = await _battleService.GetUserById(id);
-
-            var information = new InformationDTO(user!);
+            var information = new InformationDto();
+            if(id == null)
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(userId, out int SelectedId))
+                {
+                    var user = await _battleService.GetUserById(SelectedId);
+                    if(user is null) return BadRequest("GetUserError");
+                     information = MappingExtensions.ToDto(user);
+                }
+            }
+            if(id != null)
+            {
+                if (int.TryParse(id, out int SelectedId))
+                {
+                    var user = await _battleService.GetUserById(SelectedId);
+                    if (user is null) return BadRequest("GetUserError");
+                    information = MappingExtensions.ToDto(user);
+                }
+            }
             return Ok(information);
         }
         [HttpPost("init")]
@@ -60,32 +75,39 @@ namespace BattleBackend.Controllers
         {
             // 从 JWT Token 中获取用户 ID
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-            bool success = await _battleService.InitializeUserProfile(
-                userId,
-                dto.name,
-                dto.account ?? userId, // 如果 account 为空则默认为 ID
-                dto.profession,
-                dto.secondProfession,
-                dto.initialSkills
-            );
-
-            return success ? Ok(new { message = "初始化成功" }) : BadRequest();
+            if(int.TryParse(userId,out int id))
+            {
+                await _battleService.InitializeUserProfile(id,dto);
+            }
+            throw new NotImplementedException();
         }
         [HttpGet("battle")]
         [Authorize]
         public async Task<IActionResult> BattleList()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId is null)
-                return Unauthorized("未授权ID");
-            var users = await _battleService.GetAllFighter(userId);
+            throw new NotImplementedException();
+        }
+
+
+        [HttpGet("fighters")]
+        [Authorize]
+        public async Task<IActionResult> GetAllFighter()
+        {
+            //todo mapto dto
+            var users = await _battleService.GetAllFighter(exclusiveId:null);
+            List<FighterDto> fighters = new List<FighterDto>();
             foreach (var user in users)
             {
-                
+                fighters.Add(new FighterDto
+                {
+                    Id = user.Id,
+                    Level = user.Level,
+                    Name = user.Name,
+                    Profession = user.Profession!,
+                    SecondProfession = user.SecondProfession
+                });
             }
+            return Ok(fighters);
         }
     }
 }

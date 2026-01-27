@@ -10,6 +10,8 @@
         public string? SecondProfession { get; set; } = null;
         public double Exp { get; set; }
         public int Level { get; set; }
+        public int LastWeaponAward { get; set; } = 1;
+        public int LastSkillAward { get; set; } = 1;
         public double Health { get; set; }
         public double Agility { get; set; }
         public double Strength { get; set; }

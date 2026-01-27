@@ -27,6 +27,16 @@
   },
   {
     "ContainingType": "BattleBackend.Controllers.UserController",
+    "Method": "GetAllFighter",
+    "RelativePath": "User/fighters",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BattleBackend.Controllers.UserController",
     "Method": "InitProfile",
     "RelativePath": "User/init",
     "HttpMethod": "POST",
@@ -59,43 +69,18 @@
   },
   {
     "ContainingType": "BattleBackend.Controllers.UserController",
-    "Method": "GetSkillAndWeapon",
+    "Method": "GetProfiles",
     "RelativePath": "User/profile",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BattleBackend.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
+    "Parameters": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[BattleBackend.WeatherForecast, BattleBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
-    "EndpointName": "GetWeatherForecast"
-  },
-  {
-    "ContainingType": "BattleBackend.Controllers.WeatherForecastController",
-    "Method": "Test",
-    "RelativePath": "WeatherForecast/test",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   }
 ]

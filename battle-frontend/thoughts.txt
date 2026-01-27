@@ -1,0 +1,20 @@
+skill choice =>
+    Front:
+        SkillChoiceVue : Skills Can Be Selected
+    Back:
+        GetUnlockedSkill : ProfessionLimit? Rare?  => When? Every 3
+        GetSpecialUnlockedSkill : BossWin? Gotten? 
+weapon choice =>
+    Front:
+        WeaponChoiceVue : Weapons can be Selected
+    Back:
+        GetUnlockedWeapon : ProfessionLimit? Rare? Special? => When? Every 2
+
+New Field:
+    User : LastGetWeapon, LastGetSkill, 
+    Weapon: RareLevel 
+    Skill : RareLevel
+
+New Table:
+    UserToBoss
+    UserId, BossId, IsWin, IsGotten

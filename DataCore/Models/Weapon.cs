@@ -7,6 +7,8 @@ namespace DataCore.Models
         public string Name { get; set; } = default!;
         public string Description { get; set; } = "No Description";
         public string Profession { get; set; } = "GENERAL";
+        public string? SecondProfession { get; set; }
+        public int RareLevel { get; set; }
         public double CoefficientAgility { get; set; }
         public double CoefficientStrength { get; set; }
         public double CoefficientIntelligence { get; set; }
@@ -20,10 +22,13 @@ namespace DataCore.Models
             {
                 Id = this.Id,
                 Name = this.Name,
+                Description = this.Description,
+                Profession = this.Profession,
+                SecondProfession = this.SecondProfession,
                 CoefficientAgility = this.CoefficientAgility,
                 CoefficientStrength = this.CoefficientStrength,
                 CoefficientIntelligence = this.CoefficientIntelligence,
-
+                RareLevel = this.RareLevel,
                 Tags = this.Tags?.ToList() ?? new(),
 
                 // 重要：深拷贝 Buff，保证每个玩家拿到的武器 Buff 状态独立

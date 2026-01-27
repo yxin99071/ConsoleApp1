@@ -1,6 +1,6 @@
 ﻿namespace BattleBackend.DTOs
 {
-    public class InitProfileDto
+    public record InitProfileDto
     {
         public string? name { get; set; }
         public string? account { get; set; }

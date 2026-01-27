@@ -1,4 +1,5 @@
 ﻿using BattleBackend.Controllers;
+using BattleBackend.DTOs;
 using BattleCore.BattleLogic;
 using DataCore.Models;
 using DataCore.Services;
@@ -13,13 +14,18 @@ namespace BattleBackend.Services
             _dataHelper = dataHelper;
         }
 
-        internal async Task<List<User>> GetAllFighter(string id)
+        internal async Task<List<User>> GetAllFighter(string? exclusiveId)
         {
             var users = new List<User>();
-            if (int.TryParse(id, out int userId))
+            if (int.TryParse(exclusiveId, out int userId))
             {
                 var allUsers = await _dataHelper.GetAllUser();
                 allUsers.Remove(allUsers.SingleOrDefault(u => u.Id == userId)!);
+                users.AddRange(allUsers);
+            }
+            else
+            {
+                var allUsers = await _dataHelper.GetAllUser();
                 users.AddRange(allUsers);
             }
             return users;
@@ -36,41 +42,42 @@ namespace BattleBackend.Services
             return await _dataHelper.IdentifyUser(account, password);
         }
 
-        internal async Task<bool> InitializeUserProfile(string userId, string? name, string account, string profession, string? secondProfession, List<string> initialSkills)
+        internal async Task<bool> InitializeUserProfile(int userId, InitProfileDto dto)
         {
-            if (!int.TryParse(userId, out int id))
-                return false;
-            var user = await _dataHelper.GetUserById(id, true);
+            var user = await _dataHelper.GetUserById(userId, true);
             if (user is null)
                 return false;
-            user.Profession = profession;
-            user.SecondProfession = secondProfession;
+            //职业转换，这列可能会出错
+            Console.WriteLine(dto.ToString());
+            user.Profession = MappingExtensions.professionDict.GetValueOrDefault(dto.profession);
+            user.SecondProfession = dto.secondProfession == null?null: MappingExtensions.professionDict.GetValueOrDefault(dto.secondProfession);
             user.Level = 1;
-            user.Name = name ?? user.Id.ToString();
-            user.Account = account ?? user.Id.ToString();
-
+            user.Name = dto.name ?? user.Id.ToString();
+            user.Account = dto.account ?? user.Id.ToString();
             user.Agility = 10;
             user.Strength = 10;
             user.Intelligence = 10;
             user.Exp = 0;
-            //获得两级的属性点
-            BattleManager.LevelUp(user, 2);
+            //获得一级的属性点
+            BattleManager.LevelUp(user, 1);
             user.Level = 1;
             var skillPD = await _dataHelper.FindSkillByName("假死");
             var skillUD = await _dataHelper.FindSkillByName("亡者意志");
             if (skillPD == null && skillUD == null)
                 return false;
+            //添加技能
             List<string> skills = ["FEIGN_DEATH", "WILL_OF_THE_DEAD"] ;
-            if (initialSkills.Count == 2)
+            if (dto.initialSkills.Count == 2)
                 user.Skills.AddRange([skillUD!, skillPD!]);
             else
             {
-                if (initialSkills.Contains(skills[0]))
+                if (dto.initialSkills.Contains(skills[0]))
                     user.Skills.Add(skillPD!);
                 else
                     user.Skills.Add(skillUD!);
             }
-            //todo 添加武器认领
+            //添加武器
+
             if (await _dataHelper.SaveChangesAsync() > 0)
                 return true;
             return false;

@@ -30,6 +30,8 @@ namespace DataCore.Models
             {
                 Id = this.Id,
                 Name = this.Name,
+                Description = this.Description,
+           
                 LastRound = this.LastRound,
                 DirectDamage = this.DirectDamage,
                 DamageCorrection = this.DamageCorrection,

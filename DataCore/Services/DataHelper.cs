@@ -309,7 +309,7 @@ namespace DataCore.Services
 
         }
 
-        public async Task<List<User>> GetAllUser()=> await _context.Users.AsNoTracking().ToListAsync();
+        public async Task<List<User>> GetAllUser()=> await _context.Users.AsNoTracking().Where(u=>u.Profession!=null).ToListAsync();
 
     }
 }
