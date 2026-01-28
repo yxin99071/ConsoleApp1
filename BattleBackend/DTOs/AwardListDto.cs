@@ -4,8 +4,8 @@ namespace BattleBackend.DTOs
 {
     public record AwardListDto 
     {
-        public List<Weapon> Weapons { get; set; } = new List<Weapon>();
-        public List<Skill> Skills { get; set; } = new List<Skill>();
+        public String Type { get; set; }
+        public List<Item> Items { get; set; } = new List<Item>();
     }
 }
     

@@ -1,6 +1,7 @@
 ﻿using BattleCore.BattleLogic.EventHandlers;
 using BattleCore.DataModel;
 using BattleCore.DataModel.Fighters;
+using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Collections.Generic;
@@ -73,42 +74,81 @@ namespace BattleCore.BattleLogic
 
             }
         }
-        public static bool SetBattleResult(User challenger, User opponent, bool isWin,bool isHome = true)
+        public static List<AwardInfo> SetBattleResult(User challenger, User opponent, bool isWin,bool isHome = true)
         {
-            var challenger_copy = challenger.Copy();
+            //重写逻辑
             if (challenger is null || opponent is null)
-                return false;
-            //当前经验
-            var exp = challenger.Exp + CalculateGainedExp(challenger.Level, opponent.Level, isWin,isHome);
-            var finalLevel = challenger.Level;
-            while (true)
+                return new List<AwardInfo>();
+            //影子挑战
+            if (challenger.Id == opponent.Id)
             {
-                // 计算下一级所需的总经验门槛
-                int nextLevel = finalLevel + 1;
-                double threshold = 50.0 * nextLevel * nextLevel + 50.0 * nextLevel;
-
-                // 如果当前总经验达到了下一级的门槛，则等级自增
-                if (exp >= threshold)
+                var exp = challenger.Exp
+                    + CalculateGainedExp(challenger, opponent, isWin, isHome)
+                    + CalculateGainedExp(opponent, challenger, !isWin, !isHome);
+                //合并处理单个对象即可
+                var finalLevel = challenger.Level;
+                while (true)
                 {
-                    finalLevel++;
-                }
-                else
-                {
-                    break; // 未达到门槛，退出循环
-                }
-            }
+                    // 计算下一级所需的总经验门槛
+                    int nextLevel = finalLevel + 1;
+                    double threshold = 50.0 * nextLevel * nextLevel + 50.0 * nextLevel;
 
-            if (LevelUp(challenger, finalLevel - challenger.Level))
-            {
-                //同步经验值
+                    // 如果当前总经验达到了下一级的门槛，则等级自增
+                    if (exp >= threshold)
+                    {
+                        finalLevel++;
+                    }
+                    else
+                    {
+                        break; // 未达到门槛，退出循环
+                    }
+                }
+                //todo 回血
+                //todo 武器吃
+                var awardInfo = LevelUp(challenger, finalLevel - challenger.Level);
                 challenger.Exp = exp;
-                //todo 结算,应当在函数外部完成
-                //await dataService.UpgradeSinlgeUser(challenger);
-                //日志结算信息
+                //opponent就是旧数据,不再需要copy后对比战斗前后角色数据
+                JsonLogger.LogBattleEnd(opponent, challenger);
+                return new List<AwardInfo> { awardInfo};
             }
-            if(isHome)
-                JsonLogger.LogBattleEnd(challenger_copy!, challenger);
-            return true;
+            else
+            {
+                //核心处理
+                Func<User, User, Boolean, Boolean, AwardInfo> SettleResult = (challenger, opponent, isWin, isHome) =>
+                {
+                    var challenger_copy = challenger.Copy();
+                    //当前经验
+                    var exp = challenger.Exp + CalculateGainedExp(challenger, opponent, isWin, isHome);
+                    var finalLevel = challenger.Level;
+                    while (true)
+                    {
+                        // 计算下一级所需的总经验门槛
+                        int nextLevel = finalLevel + 1;
+                        double threshold = 50.0 * nextLevel * nextLevel + 50.0 * nextLevel;
+
+                        // 如果当前总经验达到了下一级的门槛，则等级自增
+                        if (exp >= threshold)
+                        {
+                            finalLevel++;
+                        }
+                        else
+                        {
+                            break; // 未达到门槛，退出循环
+                        }
+                    }
+                    var awardInfo = LevelUp(challenger, finalLevel - challenger.Level);
+                    //同步经验值
+                    challenger.Exp = exp;
+                    if (isHome)
+                        JsonLogger.LogBattleEnd(challenger_copy!, challenger);
+                    return awardInfo;
+                };
+                return new List<AwardInfo>
+                {
+                    SettleResult(challenger,opponent,isWin,isHome),
+                    SettleResult(opponent,challenger,!isWin,!isHome)
+                };
+            }
         }
         /// <summary>
         /// 重要：fighters的长度只能为2，并且第一个为挑战者，第二个为被挑战者
@@ -165,9 +205,11 @@ namespace BattleCore.BattleLogic
          * * 5. 最终单场经验获得 (Final Exp Gain):
          * FinalExp = BaseExp * Factor * (IsWin ? 1.0 : 0.5)
          */
-        public static double CalculateGainedExp(int playerLvl, int enemyLvl, bool isWin,bool isHome = true)
+        public static double CalculateGainedExp(User challenger, User enemy, bool isWin,bool isHome = true)
         {
             // 1. 基础经验基数 (保持不变)
+            int enemyLvl = enemy.Level;
+            int playerLvl = challenger.Level;
             // 限制敌人等级对经验贡献的有效上限（玩家等级 + 5）
             int effectiveEnemyLvl = Math.Min(enemyLvl, playerLvl + 5);
 
@@ -191,7 +233,7 @@ namespace BattleCore.BattleLogic
                 if (deltaL <= -5) factor = 0.05;
                 else if (deltaL >= 5) factor = 2.5;
                 else if (deltaL < 0) factor = 0.05 + (0.95 / 5.0) * (deltaL + 5);
-                else factor = 1.0 + (1.5 / 5.0) * deltaL;
+                else factor = 1.2 + (1.5 / 5.0) * deltaL;
             }
             else
             {
@@ -206,8 +248,8 @@ namespace BattleCore.BattleLogic
                     factor = Math.Max(0.1, 0.4 - (deltaL * 0.06));
             }
 
-            // 3. 最终计算是否为主场
-            return baseExp * factor * levelBonus * (isHome?1:0.5);
+            // 3. 最终计算是否为主场，是否为影子挑战
+            return baseExp * factor * levelBonus * (isHome?1:0.5) * (challenger.Id == enemy.Id?0.5:1);
         }
         /// <summary>
         /// 如果upgradeLevel为0返回false，否则就处理升级逻辑，包括加点与等级同步
@@ -215,10 +257,10 @@ namespace BattleCore.BattleLogic
         /// <param name="user"></param>
         /// <param name="upgradeLevel"></param>
         /// <returns></returns>
-        public static bool LevelUp(User user, int upgradeLevel)
+        public static AwardInfo LevelUp(User user, int upgradeLevel)
         {
             if (upgradeLevel == 0)
-                return true;
+                return new AwardInfo();
             int GetIndex(string? jobName) => jobName switch
             {
                 "WARRIOR" => 0, // 力量
@@ -233,7 +275,7 @@ namespace BattleCore.BattleLogic
             int subIdx = GetIndex(user.SecondProfession?.ToUpper());
 
             // 如果主职业无效，直接返回不处理
-            if (mainIdx == -1) return false;
+            if (mainIdx == -1) return new AwardInfo();
 
             //  确定权重比例=>0力量，1敏捷，2智力
             double[] weights = new double[3];
@@ -276,25 +318,25 @@ namespace BattleCore.BattleLogic
                 propertyPoint--;
             }
             //判断是否有升级奖励
+            var awardInfo = new AwardInfo {user = user };
             for(int i = 0; i < upgradeLevel;i++)
             {
                 user.Level++;
                 if (user.Level % 4 == 1)
-                    GetWeaponAward(user,true);//处理特殊武器逻辑
+                    awardInfo.SpecialWeaponCount++;//处理特殊武器逻辑
                 else if (user.Level % 2 == 1)
-                    GetWeaponAward(user, false);//处理普通武器逻辑
+                    awardInfo.NormalWeaponCount++;//处理普通武器逻辑
                 if (user.Level % 4 == 0)
-                    GetSkillAward(user,true);//处理特殊技能逻辑
+                    awardInfo.SpecialSkillCount++;//处理特殊技能逻辑
                 else if (user.Level % 2 == 0)
-                    GetSkillAward(user,false);//处理普通技能逻辑
-
+                    awardInfo.NormalSkillCount++;//处理普通技能逻辑
             }
             user.Health = 5 * user.Level + 10 * user.Strength + 7 * user.Intelligence + 5 * user.Agility;
-            return true;
+            return awardInfo;
+            
         }
         private static void GetWeaponAward(User user, bool professionFlag)
         {
-            throw new NotImplementedException();
             var awardWeaponChoice = new List<Weapon>();
 
         }

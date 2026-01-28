@@ -82,9 +82,27 @@ namespace DataCore.Services
             var user = _context.Users.SingleOrDefaultAsync(b => b.Account == account && b.Password == password);
             return await user;
         }
+        public async Task<List<Weapon>> GetLockedWeapons(User user)
+        {
+            if (user?.Profession == null) return new List<Weapon>();
+            var tempAwards = await _context.TempAwardLists.Where(ta=>ta.UserId == user.Id).ToListAsync();
+            // 1. 合并查询：一次数据库往返查出所有潜在候选武器
+            var weapons = await _context.Weapons
+                .Where(w=>!user.Weapons.Contains(w)&&!tempAwards.Any(ta=>ta.Id == w.Id))
+                .ToListAsync();
+            return weapons;
+        }
+        public async Task<List<Skill>> GetLockedSkills(User user)
+        {
+            if (user?.Profession == null) return new List<Skill>();
 
+            // 1. 合并查询：一次数据库往返查出所有潜在候选武器
+            var skills = await _context.Skills
+                .Where(s => !user.Skills.Contains(s))
+                .ToListAsync();
+            return skills;
 
-
+        }
 
         //seedData
         public async Task SeedData()
@@ -752,9 +770,12 @@ namespace DataCore.Services
 
         public async Task<List<TempAwardList>> GetAwardList(int id)
         {
-            return await _context.TempAwardLists.Where(t => t.UserId == id).ToListAsync();
+            return await _context.TempAwardLists
+                .Include(b=>b.Skills)
+                .Include(b=>b.Weapons)
+                .Where(t => t.UserId == id).ToListAsync();
         }
-
+        public async Task InsertAwardList(TempAwardList tempAwardList) =>await _context.TempAwardLists.AddAsync(tempAwardList);
         public async Task<Skill?> GetSkillById(int skillId, bool noTracking = true) =>await _context.Skills.SingleOrDefaultAsync(s=>s.Id == skillId);
         public async Task<Weapon?> GetWeaponById(int weaponId, bool noTracking = true) => await _context.Weapons.SingleOrDefaultAsync(w => w.Id == weaponId);
     }

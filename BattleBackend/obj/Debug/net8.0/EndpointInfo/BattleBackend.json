@@ -17,6 +17,40 @@
         }
       }
     },
+    "/GetWeaponAward": {
+      "get": {
+        "tags": [
+          "Battle"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/fight": {
+      "post": {
+        "tags": [
+          "Battle"
+        ],
+        "parameters": [
+          {
+            "name": "enemyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/User/login": {
       "post": {
         "tags": [

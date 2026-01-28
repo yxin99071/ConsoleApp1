@@ -90,6 +90,19 @@ namespace DataCore.Data
                 .HasMany(u => u.Skills)
                 .WithMany(s => s.Users)
                 .UsingEntity(j => j.ToTable("UserSkills"));
+
+            modelBuilder.Entity<TempAwardList>(entity =>
+            {
+                // 设置自增主键
+                entity.HasKey(t => t.Id);
+
+                // 配置多对多关系（EF Core 会自动创建中间表）
+                entity.HasMany(t => t.Weapons)
+                      .WithMany(); // 不需要 Weapon 类中有 List<TempAwardList>
+
+                entity.HasMany(t => t.Skills)
+                      .WithMany();
+            });
         }
     }
 }

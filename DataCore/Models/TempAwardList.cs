@@ -8,9 +8,10 @@ namespace DataCore.Models
 {
     public class TempAwardList
     {
+        public int Id { get; set; }
         public int UserId { get; set; }
-        public List<int> weaponIds { get; set; } = new List<int>();
-        public List<int> skillIds { get; set; } = new List<int>();
+        public List<Weapon> Weapons { get; set; } = new List<Weapon>();
+        public List<Skill> Skills { get; set; } = new List<Skill>();
         public int AwardLevel { get; set; }
     }
 }

@@ -68,6 +68,13 @@ namespace BattleCore
             Console.WriteLine("\n[JSON PREVIEW]\n" + json);
             return json;
         }
+        public static List<BattleEvent> GetEvents()
+        {
+            // 返回一个副本，防止在序列化过程中 _events 被 Clear() 导致报错
+            return _events.ToList();
+        }
+
+
 
         public static void Clear() => _events.Clear();
 

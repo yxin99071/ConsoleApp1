@@ -1,4 +1,5 @@
 ﻿using BattleBackend.Services;
+using BattleCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -48,12 +49,12 @@ namespace BattleBackend.Controllers
         }
         [HttpPost("fight")]
         [Authorize]
-        public async Task<IActionResult> GetWeaponAward(int enemyId)
+        public async Task<IActionResult> Fight(int enemyId)
         {
             if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
             {
-                var result = _battleService.ExecuteFight(id, enemyId);//json
-                return Ok(result);
+                await _battleService.ExecuteFight(id, enemyId);//json
+                return Ok(JsonLogger.GetEvents());
             }
             return BadRequest("无法战斗");
         }
