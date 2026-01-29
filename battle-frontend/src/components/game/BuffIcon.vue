@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import type { BuffSummaryDto } from '../../types/battle';
 
 const props = defineProps<{
-  buff: BuffSummaryDto & { isDamage: boolean } // 包含你新加的 isDamage 字段
+  buff: BuffSummaryDto // 包含你新加的 isDamage 字段
 }>();
 
 // 状态对应的临时文字或占位符（等图标资源到位后替换为 <img>）
@@ -15,23 +15,25 @@ const statusIcons = computed(() => [
 </script>
 
 <template>
-  <div class="group relative flex items-center p-1 bg-slate-800/50 rounded border border-slate-700 hover:bg-slate-700 transition-colors">
-    <span class="text-xs font-bold text-slate-200 mr-2">{{ buff.name }}</span>
-
-    <div class="flex gap-1">
+  <div class="flex flex-col min-w-max max-w-50 p-2 bg-slate-900/95 backdrop-blur-md rounded-lg border border-slate-700 shadow-2xl ring-1 ring-white/10">
+    <div class="flex items-center justify-between gap-4 mb-1">
+      <span class="text-[12px] font-black text-white whitespace-nowrap">{{ buff.name }}</span>
+      <span class="px-1.5 py-0.5 bg-blue-500/20 rounded text-[10px] text-blue-400 border border-blue-500/30">
+        {{ buff.lastRound }}R
+      </span>
+    </div>
+    
+    <div class="flex gap-2 mb-1.5">
       <template v-for="item in statusIcons" :key="item.text">
-        <span v-if="item.show" :title="item.text" :class="['text-[10px]', item.color]">
-          {{ item.icon }}
-        </span>
+        <div v-if="item.show" :class="['flex items-center gap-1 text-[10px]', item.color]">
+          <span>{{ item.icon }}</span>
+          <span class="font-bold">{{ item.text }}</span>
+        </div>
       </template>
     </div>
 
-    <div class="ml-2 px-1 bg-slate-900 rounded text-[10px] text-blue-400">
-      {{ buff.lastRound }}R
-    </div>
-
-    <div class="invisible group-hover:visible absolute bottom-full left-0 mb-2 w-32 p-2 bg-black text-white text-[10px] rounded shadow-lg z-10">
+    <p class="text-[11px] text-slate-300 leading-relaxed border-t border-white/10 pt-1.5 italic">
       {{ buff.description }}
-    </div>
+    </p>
   </div>
 </template>

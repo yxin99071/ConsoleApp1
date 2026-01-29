@@ -35,6 +35,8 @@ namespace BattleCore.DataModel.Fighters
                     newBuff.DirectDamage = newBuff.CoefficientStrength * source.Strength;
                 if (newBuff.CoefficientAgility > 0)
                     newBuff.DirectDamage = newBuff.CoefficientAgility * source.Agility;
+                if (newBuff.CoefficientIntelligence > 0)
+                    newBuff.DirectDamage = newBuff.CoefficientAgility * source.Intelligence;
             }
             base.LoadBuff(newBuff, source, buffLevel);
         }

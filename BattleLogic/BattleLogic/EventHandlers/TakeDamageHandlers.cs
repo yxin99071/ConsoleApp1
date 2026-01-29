@@ -86,7 +86,7 @@ namespace BattleCore.BattleLogic.EventHandlers
             //判断吸血类buff生效
             if(e.damageInfo.Source is not null)
             {
-                if (e.damageInfo.Source.BuffStatuses.Any(b => b.buff.Name == "UNDEADWILL"))
+                if (e.damageInfo.Source.BuffStatuses.Any(b => b.buff.Name == "亡者意志"))
                 {
                     //UndeadWilling有50%的吸血
                     e.damageInfo.Source.Heal(e.damageInfo.Damage/2,new List<string>());
@@ -99,10 +99,13 @@ namespace BattleCore.BattleLogic.EventHandlers
             
             if (e.damageInfo.Target.Health > 0)
                 return;
-            BattleLogger.PassiveSkillInvoke("PretendDeath");
-            JsonLogger.LogPassive(e.damageInfo.Target.Name, "PretendDeath");
+            BattleLogger.PassiveSkillInvoke("假死");
+            JsonLogger.LogPassive(e.damageInfo.Target.Name, "假死");
             //生命值回复至1，清除所有buff
             e.damageInfo.Target.Heal(Math.Abs(e.damageInfo.Target.Health)+1,new List<string>());
+            foreach (var buffstatus in e.damageInfo.Target.BuffStatuses)
+                JsonLogger.LogBuffUpdate(e.damageInfo.Target.Name, buffstatus.buff.Name);
+
             e.damageInfo.Target.BuffStatuses.Clear();
             e.damageInfo.Target.TakeDamageEA -= PassivePretendDeath;
             e.damageInfo.damageDetail.tags.Add(StaticDataHelper.UnFightBackable);
@@ -114,18 +117,18 @@ namespace BattleCore.BattleLogic.EventHandlers
                 return;
             if (e.damageInfo.Source == null)
                 return;
-            BattleLogger.PassiveSkillInvoke("UndeadWill");
-            JsonLogger.LogPassive(e.damageInfo.Target.Name, "UndeadWill");
+            BattleLogger.PassiveSkillInvoke("亡者意志");
+            JsonLogger.LogPassive(e.damageInfo.Target.Name, "亡者意志");
 
             var damageCorrection = 2*Math.Abs(e.damageInfo.Target.Health) / e.damageInfo.Target.MaxHealth;
-            e.damageInfo.Target.LoadBuff(new Buff { Name="UNDEADWILL",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
+            e.damageInfo.Target.LoadBuff(new Buff { Name="亡者意志",LastRound = 0,IsOnSelf = true,DamageCorrection = 1 + damageCorrection },null);
             e.damageInfo.damageDetail.tags.Add(StaticDataHelper.UnFightBackable);
             e.damageInfo.Target.TakeDamageEA -= PassiveUndeadWill;
 
             BattleHelper.DecideAction(e.damageInfo.Target, e.damageInfo.Source);
 
             //跳过一个回合
-            e.damageInfo.Target.LoadBuff(new Buff { Name = "BLOCK", LastRound = 0, IsOnSelf = true, DamageCorrection = 1 + damageCorrection }, null);
+            e.damageInfo.Target.LoadBuff(new Buff { Name = "锁定", LastRound = 0, IsOnSelf = true, DamageCorrection = 1 + damageCorrection }, null);
             
 
             if (e.damageInfo.Source.IsDead)

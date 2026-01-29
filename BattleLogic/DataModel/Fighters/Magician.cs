@@ -51,6 +51,8 @@ namespace BattleCore.DataModel.Fighters
                     newBuff.DirectDamage = newBuff.CoefficientStrength * source.Strength;
                 if (newBuff.CoefficientAgility > 0)
                     newBuff.DirectDamage = newBuff.CoefficientAgility * source.Agility;
+                if (newBuff.CoefficientIntelligence > 0)
+                    newBuff.DirectDamage = newBuff.CoefficientAgility * source.Intelligence;
             }
             //法师被动
             if (newBuff.DamageCorrection < 1 || newBuff.WoundCorrection > 1 || newBuff.DirectDamage > 0)

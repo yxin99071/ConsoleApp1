@@ -137,6 +137,10 @@ namespace BattleCore
             var buffLibrary = fullBuffList.Select(b => new {
                 b.Id,
                 b.Name,
+                b.IsOnSelf,
+                IsBuff = b.DamageCorrection > 1 || b.WoundCorrection < 1,
+                IsDeBuff = b.DamageCorrection < 1 || b.WoundCorrection > 1,
+                IsDamage = (b.CoefficientAgility + b.CoefficientIntelligence + b.CoefficientStrength) > 0,
                 b.Description
             }).ToList();
 
@@ -159,12 +163,18 @@ namespace BattleCore
                     f.Intelligence
                 },
                 Weapons = f.Weapons.Select(w => new {
+                    w.Profession,
+                    w.SecondProfession,
+                    w.RareLevel,
                     w.Name,
                     w.Description,
                     // 这里只存 ID，前端通过 ID 去 BuffLibrary 匹配
                     BuffIds = w.WeaponBuffs.Select(wb => wb.BuffId)
                 }),
                 Skills = f.Skills.Select(s => new {
+                    s.Profession,
+                    s.SecondProfession,
+                    s.RareLevel,
                     s.Name,
                     s.Description,
                     BuffIds = s.SkillBuffs.Select(sb => sb.BuffId)

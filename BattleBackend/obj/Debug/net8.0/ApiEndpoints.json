@@ -2,15 +2,15 @@
   {
     "ContainingType": "BattleBackend.Controllers.BattleController",
     "Method": "Fight",
-    "RelativePath": "fight",
+    "RelativePath": "battle/fight",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "enemyId",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "fightRequestDto",
+        "Type": "BattleBackend.DTOs.FightRequestDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -18,7 +18,7 @@
   {
     "ContainingType": "BattleBackend.Controllers.BattleController",
     "Method": "GetWeaponAward",
-    "RelativePath": "GetWeaponAward",
+    "RelativePath": "battle/GetWeaponAward",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -28,7 +28,7 @@
   {
     "ContainingType": "BattleBackend.Controllers.BattleController",
     "Method": "StartBattle",
-    "RelativePath": "start",
+    "RelativePath": "battle/start",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -39,16 +39,6 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BattleBackend.Controllers.UserController",
-    "Method": "BattleList",
-    "RelativePath": "User/battle",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {

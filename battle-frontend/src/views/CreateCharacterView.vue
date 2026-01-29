@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import ItemCard from '../components/game/ItemCard.vue';
 import type { InitProfileDto } from '../types/battle';
-import { initProfile } from '../api/battle';
+import { getProfile, initProfile } from '../api/battle';
 
 const router = useRouter();
 const account = ref(''); // 改为响应式 ref，初始可尝试从 localStorage 取
@@ -14,17 +14,17 @@ const canConfirm = computed(() => {
 });
 
 function keyToString(key: any): string {
-  var stringKey = key.toString()
-  if(stringKey === 'agi'){
-    return '敏捷'
-  }
-  if(stringKey == 'str'){
-    return '力量'
-  }
-  if(stringKey == 'int'){
-    return '智力'
-  }
-  return 'UNKONWN'
+    var stringKey = key.toString()
+    if (stringKey === 'agi') {
+        return '敏捷'
+    }
+    if (stringKey == 'str') {
+        return '力量'
+    }
+    if (stringKey == 'int') {
+        return '智力'
+    }
+    return 'UNKONWN'
 }
 
 
@@ -81,29 +81,32 @@ const SKILL_DATABASE: Record<string, any> = {
 };
 
 const handleCreate = async () => {
-  if (!canConfirm.value) return;
+    if (!canConfirm.value) return;
 
-  const dto: InitProfileDto = {
-    name: name.value,
-    account: account.value,
-    profession: mainJob.value,
-    secondProfession: mainJob.value === '凡人' ? null : (subJob.value || null),
-    initialSkills: mainJob.value === '凡人' 
-      ? ['假死', '亡者意志'] 
-      : [selectedSkill.value]
-  };
+    const dto: InitProfileDto = {
+        name: name.value,
+        account: account.value,
+        profession: mainJob.value,
+        secondProfession: mainJob.value === '凡人' ? null : (subJob.value || null),
+        initialSkills: mainJob.value === '凡人'
+            ? ['假死', '亡者意志']
+            : [selectedSkill.value]
+    };
 
-  try {
-    const res = await initProfile(dto);
-    // 假设后端成功返回 200 或自定义状态码
-    if (res) {
-      console.log('Profile Initialized');
-      router.push('/lobby'); // 跳转到大厅
+    try {
+        const res = await initProfile(dto);
+        console.log('initProfile 的原始返回:', res, '类型:', typeof res);
+        // 假设后端成功返回 200 或自定义状态码
+        if (res) {
+            
+            getProfile()
+            console.log('Profile Initialized');
+            router.push('/lobby'); // 跳转到大厅
+        }
+    } catch (error) {
+        // 拦截器通常会处理通用错误，此处可处理业务逻辑冲突
+        console.error('Initialization failed', error);
     }
-  } catch (error) {
-    // 拦截器通常会处理通用错误，此处可处理业务逻辑冲突
-    console.error('Initialization failed', error);
-  }
 };
 
 
@@ -135,8 +138,9 @@ const handleCreate = async () => {
                 <div class="bg-slate-900/40 border border-white/5 p-8 rounded-3xl space-y-6">
                     <div v-for="(val, key) in stats" :key="key" class="space-y-2">
                         <div class="flex justify-between items-end px-1">
-                            <span class="text-[14px] font-black uppercase tracking-widest text-slate-500">{{ keyToString(key)
-                            }}</span>
+                            <span class="text-[14px] font-black uppercase tracking-widest text-slate-500">{{
+                                keyToString(key)
+                                }}</span>
                             <span class="font-mono text-2xl font-bold"
                                 :class="key === 'str' ? 'text-red-500' : key === 'agi' ? 'text-green-500' : 'text-purple-500'">{{
                                     val }}</span>
@@ -167,7 +171,7 @@ const handleCreate = async () => {
                     <div class="w-full space-y-4">
                         <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Initial Skills
                             Preview</h4>
-                        <div class="flex gap-8 items-start min-h-[240px]">
+                        <div class="flex gap-8 items-start min-h-60">
                             <template v-if="mainJob === '凡人'">
                                 <ItemCard :item="SKILL_DATABASE['假死']" type="技能" class="scale-[0.85] origin-top-left" />
                                 <ItemCard :item="SKILL_DATABASE['亡者意志']" type="技能"

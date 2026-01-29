@@ -10,10 +10,10 @@ namespace DataCore.Services
     public class DataHelper
     {
         private readonly BattleDbContext _context;
-        public DataHelper()
-        {
-            _context = DatabaseHelper.GetDbContext();
-        }
+        //public DataHelper()
+        //{
+        //    _context = DatabaseHelper.GetDbContext();
+        //}已经通过依赖注入初始化
         public DataHelper(BattleDbContext context)
         {
             _context = context;
@@ -85,21 +85,47 @@ namespace DataCore.Services
         public async Task<List<Weapon>> GetLockedWeapons(User user)
         {
             if (user?.Profession == null) return new List<Weapon>();
-            var tempAwards = await _context.TempAwardLists.Where(ta=>ta.UserId == user.Id).ToListAsync();
-            // 1. 合并查询：一次数据库往返查出所有潜在候选武器
-            var weapons = await _context.Weapons
-                .Where(w=>!user.Weapons.Contains(w)&&!tempAwards.Any(ta=>ta.Id == w.Id))
+
+            // 1. 获取该用户所有已存在的待领取奖励中包含的武器 ID (Flatten 操作)
+            var tempAwardWeaponIds = await _context.TempAwardLists
+                .Where(ta => ta.UserId == user.Id)
+                .SelectMany(ta => ta.Weapons.Select(w => w.Id)) // 假设 TempAwardList 有 Weapons 导航属性
                 .ToListAsync();
+
+            // 2. 获取用户已经拥有的武器 ID
+            var ownedWeaponIds = user.Weapons.Select(w => w.Id).ToList();
+
+            // 3. 合并所有需要排除的 ID
+            var excludeIds = ownedWeaponIds.Concat(tempAwardWeaponIds).Distinct().ToList();
+
+            // 4. 执行单次、干净的数据库查询
+            var weapons = await _context.Weapons
+                .Where(w => !excludeIds.Contains(w.Id)) // 翻译为 SQL: WHERE Id NOT IN (...)
+                .ToListAsync();
+
             return weapons;
         }
         public async Task<List<Skill>> GetLockedSkills(User user)
         {
             if (user?.Profession == null) return new List<Skill>();
 
-            // 1. 合并查询：一次数据库往返查出所有潜在候选武器
-            var skills = await _context.Skills
-                .Where(s => !user.Skills.Contains(s))
+            // 1. 获取已拥有的技能 ID
+            var ownedSkillIds = user.Skills.Select(s => s.Id).ToList();
+
+            // 2. 获取待领取列表中的技能 ID (平铺集合)
+            var tempAwardSkillIds = await _context.TempAwardLists
+                .Where(ta => ta.UserId == user.Id)
+                .SelectMany(ta => ta.Skills.Select(s => s.Id))
                 .ToListAsync();
+
+            // 3. 合并所有需要排除的 ID
+            var excludeIds = ownedSkillIds.Concat(tempAwardSkillIds).Distinct().ToList();
+
+            // 4. 执行过滤查询
+            var skills = await _context.Skills
+                .Where(s => !excludeIds.Contains(s.Id))
+                .ToListAsync();
+
             return skills;
 
         }
@@ -115,6 +141,7 @@ namespace DataCore.Services
             // --- 1. 初始化 Buff 池 ---
             var buffMap = new Dictionary<string, Buff>
             {
+                #region buff池
                 // === 力量系 Buff ===
                 ["BLEED"] = new Buff
                 {
@@ -281,7 +308,7 @@ namespace DataCore.Services
                 },
 
             };
-
+            #endregion
 
             _context.Buffs.AddRange(buffMap.Values);
             _context.SaveChanges(); // 先保存 Buff 才能拿到数据库 ID

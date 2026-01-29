@@ -27,6 +27,7 @@ namespace BattleBackend.DTOs
             public string Profession { get; init; } = string.Empty;
             public string? SecondProfession { get; init; }
             public string Description { get; init; } = string.Empty;
+            public int RareLevel { get; init; }
             public List<BuffSummaryDto> Buffs { get; init; } = new();
         }
 

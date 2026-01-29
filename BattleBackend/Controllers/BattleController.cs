@@ -1,4 +1,5 @@
-﻿using BattleBackend.Services;
+﻿using BattleBackend.DTOs;
+using BattleBackend.Services;
 using BattleCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace BattleBackend.Controllers
 {
+    [Route("battle")]
     public class BattleController : Controller
     {
         private readonly JwtService _jwtService;
@@ -49,17 +51,25 @@ namespace BattleBackend.Controllers
         }
         [HttpPost("fight")]
         [Authorize]
-        public async Task<IActionResult> Fight(int enemyId)
+        public async Task<IActionResult> Fight([FromBody]FightRequestDto fightRequestDto)
         {
-            if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+            
+            if (fightRequestDto.history == null)
             {
-                await _battleService.ExecuteFight(id, enemyId);//json
-                return Ok(JsonLogger.GetEvents());
+                if (fightRequestDto.attacker != null && fightRequestDto.defender != null)
+                {
+                    if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id)
+                        && int.TryParse(fightRequestDto.defender,out int enemyId))
+                    {
+                        await _battleService.ExecuteFight(id, enemyId);//json
+                        return Ok(JsonLogger.GetEvents());
+                    }
+
+                }
             }
+            //todo查找历史对局
             return BadRequest("无法战斗");
         }
-
-
 
     }
 }

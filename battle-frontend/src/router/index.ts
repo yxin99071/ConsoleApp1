@@ -25,6 +25,17 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/login'
+    },
+    {
+      path: '/fight/:battleId?',
+      name: 'FightCenter',
+      component: () => import('../views/FightCenterView.vue'),
+      meta: { requiresAuth: true },
+      // 仅在有路径参数时读取 params，否则读取 state
+      props: (route) => ({
+        battleId: route.params.battleId,
+        battleInitData: window.history.state?.battleInitData
+      })
     }
   ]
 });
@@ -52,17 +63,30 @@ router.beforeEach((to, _from, next) => {
       // 没登录，强制去登录
       return next('/login');
     }
-    
+
     // 已登录，但没职业，且目的地不是创建页
     if (!hasProfession && to.path !== '/create-character') {
       return next('/create-character');
     }
+    if (to.name === 'FightCenter') {
+      const hasInitData = !!window.history.state?.battleInitData;
+      const hasBattleId = !!to.params.battleId;
 
-    return next(); // 校验通过
+      // 如果是从 PK 按钮过来的，确保数据存在；如果是直接访问，则交给组件内部处理“留空”状态
+      if (to.path === '/fight' && !hasInitData && !hasBattleId) {
+        // 允许进入，但在组件内提示“请选择对局”
+      }
+    }
+    // ----------------------------
+
+    if (!hasProfession && to.path !== '/create-character') {
+      return next('/create-character');
+    }
   }
 
   // 3. 其他默认放行
   next();
 });
+
 
 export default router;

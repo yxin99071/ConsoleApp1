@@ -81,8 +81,12 @@ namespace BattleCore.BattleLogic
         public static void DecideAction(Fighter source, Fighter? taker)
         {
 
-            if (taker == null || source.BuffStatuses.Any(b => b.buff.Name == "BLOCK"))
-                return;
+            if (taker == null || source.BuffStatuses.Any(b => b.buff.Name == "锁定"))
+                {
+                //todo 跳过回合的json输出    
+                return; 
+            }
+
             //计算权重
             var weaponRight = source.Weapons.Count;
             var skillRight = source.Skills.Where(s=>!s.IsPassive).ToList().Count;
@@ -110,11 +114,13 @@ namespace BattleCore.BattleLogic
             if(fighter.BuffStatuses.Count()>0)
             {
                 List<BuffStatus> damagedBuffs = new List<BuffStatus>();
+                List<BuffStatus> healingBuffs = new List<BuffStatus>();
                 foreach(var buffStatus in fighter.BuffStatuses)
                 {
-                    if(buffStatus.buff.DirectDamage !=0)
+                    if(buffStatus.buff.DirectDamage > 0)
                         damagedBuffs.Add(buffStatus);
-
+                    if (buffStatus.buff.DirectDamage < 0)
+                        healingBuffs.Add(buffStatus);
                 }
                 //先遍历完再结算伤害，否则可能出现遍历时清除buff的而错误
                 foreach(var buffStatus in damagedBuffs)
@@ -132,6 +138,11 @@ namespace BattleCore.BattleLogic
 
                     buffStatus.Source?.CauseDamage(damageInfo);
                     fighter.TakeDamage(damageInfo);
+                }
+                foreach (var buffStatus in healingBuffs)
+                {
+                    BattleLogger.LogBuffDamage(buffStatus.buff);
+                    fighter.Heal(Math.Abs(buffStatus.buff.DirectDamage), new List<string>());
                 }
             }
         }
@@ -163,7 +174,7 @@ namespace BattleCore.BattleLogic
             
 
             //normalSkill
-            if (chosenSkill.Tags[0] == "GENERAL")
+            if (chosenSkill.Tags[0] == "普通")
                 ActionWithNormalSkill(source, taker, chosenSkill);
             //specialSkill
             else

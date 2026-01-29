@@ -35,11 +35,13 @@ namespace BattleBackend.DTOs
             Profession = skill.Profession,
             Description = skill.Description,
             isPassive = skill.IsPassive,
+            RareLevel = skill.RareLevel,
             SecondProfession = skill.SecondProfession,
             Buffs = skill.SkillBuffs.Select(sb => sb.Buff.ToDto()).ToList()
         };
         public static WeaponDto ToDto(this Weapon weapon) => new()
         {
+            RareLevel = weapon.RareLevel,
             Name = weapon.Name,
             Profession = weapon.Profession,
             Description = weapon.Description,
@@ -52,7 +54,7 @@ namespace BattleBackend.DTOs
             Description = buff.Description,
             IsBuff = buff.DamageCorrection > 1 || buff.WoundCorrection < 1,
             IsDeBuff = buff.DamageCorrection < 1 || buff.WoundCorrection > 1,
-            IsDamage = (buff.CoefficientAgility + buff.CoefficientIntelligence + buff.CoefficientStrength) >1,
+            IsDamage = (buff.CoefficientAgility + buff.CoefficientIntelligence + buff.CoefficientStrength) >0,
             LastRound = buff.LastRound
         };
     }

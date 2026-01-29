@@ -63,8 +63,18 @@ const handleSelectFighter = async (fighter: FighterDto) => {
 
 const handlePK = () => {
   if (!myProfile.value || !targetProfile.value) return;
-  console.log('⚔️ 开始对战:', myProfile.value.name, 'VS', targetProfile.value.name);
-  // router.push...
+  
+  router.push({
+    name: 'FightCenter',
+    // 使用 state 传递关键参数，刷新页面后 state 会变空
+    state: { 
+      battleInitData: {
+        attackerId: myProfile.value.id,
+        defenderId: targetProfile.value.id,
+        timestamp: Date.now()
+      } 
+    }
+  });
 };
 
 // 辅助：技能排序
@@ -222,6 +232,7 @@ const isNpc = (name: string) => name.startsWith('NPC__') && name.endsWith('__NPC
 
     <aside class="w-24 border-l border-white/5 bg-slate-900 flex flex-col items-center py-8 gap-6 shrink-0 z-30">
       <button v-for="icon in ['🎒', '🏆', '⚙️']" :key="icon"
+      @click="router.push({ name: 'FightCenter' })"
         class="w-12 h-12 rounded-full bg-white/5 hover:bg-indigo-600 hover:text-white transition-all text-xl flex items-center justify-center border border-white/10">{{
         icon }}</button>
       <div class="mt-auto"></div>

@@ -8,7 +8,7 @@ weapon choice =>
     Front:
         WeaponChoiceVue : Weapons can be Selected
     Back:
-        GetUnlockedWeapon : ProfessionLimit? Rare? Special? => When? Every 2
+        GetUnlockedWeapon : ProfessionLimit? Rare? Special? => When? Every 2(random)/4(ProfessionLimit)
 
 New Field:
     User : LastGetWeapon, LastGetSkill, 
@@ -18,3 +18,7 @@ New Field:
 New Table:
     UserToBoss
     UserId, BossId, IsWin, IsGotten
+
+AWARD:
+    List<Skills>
+    List<Weapons>

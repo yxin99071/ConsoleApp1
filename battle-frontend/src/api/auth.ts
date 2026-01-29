@@ -4,7 +4,7 @@ import type { LoginDTO, LoginResponse } from '../types/auth';
 // 创建 axios 实例
 const api = axios.create({
   baseURL: 'https://localhost:7024', // 根据你的后端地址配置
-  timeout: 5000
+  timeout: 50000
 });
 
 // 登录方法

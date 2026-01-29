@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/start": {
+    "/battle/start": {
       "get": {
         "tags": [
           "Battle"
@@ -17,7 +17,7 @@
         }
       }
     },
-    "/GetWeaponAward": {
+    "/battle/GetWeaponAward": {
       "get": {
         "tags": [
           "Battle"
@@ -29,21 +29,30 @@
         }
       }
     },
-    "/fight": {
+    "/battle/fight": {
       "post": {
         "tags": [
           "Battle"
         ],
-        "parameters": [
-          {
-            "name": "enemyId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FightRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FightRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FightRequestDto"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -134,18 +143,6 @@
         }
       }
     },
-    "/User/battle": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/User/fighters": {
       "get": {
         "tags": [
@@ -161,6 +158,24 @@
   },
   "components": {
     "schemas": {
+      "FightRequestDto": {
+        "type": "object",
+        "properties": {
+          "attacker": {
+            "type": "string",
+            "nullable": true
+          },
+          "defender": {
+            "type": "string",
+            "nullable": true
+          },
+          "history": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "InitProfileDto": {
         "type": "object",
         "properties": {

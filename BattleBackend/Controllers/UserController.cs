@@ -79,16 +79,8 @@ namespace BattleBackend.Controllers
             {
                 await _battleService.InitializeUserProfile(id,dto);
             }
-            throw new NotImplementedException();
+            return Ok(new { success = true });
         }
-        [HttpGet("battle")]
-        [Authorize]
-        public async Task<IActionResult> BattleList()
-        {
-            throw new NotImplementedException();
-        }
-
-
         [HttpGet("fighters")]
         [Authorize]
         public async Task<IActionResult> GetAllFighter()

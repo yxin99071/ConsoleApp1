@@ -7,6 +7,11 @@ export interface BuffSummaryDto {
   lastRound: number;
   description: string;
 }
+export interface FightRequestDto {
+  attacker: string|undefined; // 对应 attackerId
+  defender: string|undefined; // 对应 defenderId
+  history: string|undefined;//对应历史对战
+}
 
 // 2. 技能与武器的基类 (对应 C# 的 ItemDto)
 export interface ItemDto {
@@ -14,6 +19,7 @@ export interface ItemDto {
   profession: string;
   secondProfession?: string; // C# 的 string? 对应 TS 的可选属性或联合类型
   description: string;
+  rareLevel:number;
   buffs: BuffSummaryDto[];
 }
 

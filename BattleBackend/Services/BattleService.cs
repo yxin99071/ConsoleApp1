@@ -275,7 +275,7 @@ namespace BattleBackend.Services
             if (skillPD == null && skillUD == null)
                 return false;
             //添加技能
-            List<string> skills = ["FEIGN_DEATH", "WILL_OF_THE_DEAD"] ;
+            List<string> skills = ["假死", "亡者意志"] ;
             if (dto.initialSkills.Count == 2)
                 user.Skills.AddRange([skillUD!, skillPD!]);
             else
@@ -290,11 +290,12 @@ namespace BattleBackend.Services
             if (await _dataHelper.SaveChangesAsync() > 0)
                 return true;
             return false;
-            
+         
         }
         //初始化武器和技能
         private async Task InitialWeaponAndSkillList(User user)
         {
+            
             var unLockedWeapons = await _dataHelper.GetLockedWeapons(user);
             var unLockedSkills = await _dataHelper.GetLockedSkills(user);
             if (unLockedWeapons.Count <= 2 || unLockedSkills.Count<=2)
@@ -308,6 +309,9 @@ namespace BattleBackend.Services
             // 随机打乱并取前 N 个
             var selectedWeapons = initialWeapons.OrderBy(x => random.Next()).Take(1).ToList();
             var selectedSkills = initialSkills.OrderBy(x => random.Next()).Take(1).ToList();
+
+            user.Weapons.AddRange(selectedWeapons);
+            user.Skills.AddRange(selectedSkills);
         }
 
         private List<T> FilterSkillOrWeapon<T>(List<T> origin, List<string> professions, List<int> rareLevels) 

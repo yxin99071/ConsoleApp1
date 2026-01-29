@@ -22,8 +22,8 @@ namespace BattleCore.DataModel
         public static readonly string SkillTagTorture = "折磨";
         #endregion
         #region PassiveSkillName
-        public static readonly string PassiveUndeadWill = "UNDEAD_WILL";
-        public static readonly string PassivePretendDeath = "FEIGN_DEATH";
+        public static readonly string PassiveUndeadWill = "亡者意志";
+        public static readonly string PassivePretendDeath = "假死";
         #endregion
 
         public static readonly Dictionary<string, Action<Fighter, Fighter, Skill>> SpecialSkillMap
