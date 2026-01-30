@@ -18,6 +18,9 @@ namespace BattleBackend
             // --- 1. 注册认证服务 (必须配置如何验证 Token) ---
             var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key 未配置");
             var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
+            var recordPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MyProject", "Record");
+            if (!Directory.Exists(recordPath)) Directory.CreateDirectory(recordPath);
+
 
             builder.Services.AddAuthentication(options =>
             {

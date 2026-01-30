@@ -1,8 +1,11 @@
 ﻿using BattleBackend.DTOs;
 using BattleBackend.Services;
 using BattleCore;
+using DataCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -14,29 +17,15 @@ namespace BattleBackend.Controllers
     {
         private readonly JwtService _jwtService;
         private readonly BattleService _battleService;
+        //对局目录
 
         // 通过构造函数注入
         public BattleController(JwtService jwtService, BattleService battleService)
         {
             _jwtService = jwtService;
             _battleService = battleService;
-
         }
-        [HttpGet("start")]
-        public IActionResult StartBattle([FromHeader(Name = "Authorization")] string authHeader)
-        {
-            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-                return Unauthorized("缺少或无效的 Authorization");
-            var principal = _jwtService.ValidateToken(authHeader);
-            //
-
-
-            if (principal == null)
-                return Unauthorized("Token 无效或过期");
-
-            var username = principal.Identity?.Name;
-            return Ok($"战斗开始，当前用户：{username}");
-        }
+        
         [HttpGet("GetWeaponAward")]
         [Authorize]
         public async Task<IActionResult> GetWeaponAward()
@@ -62,13 +51,31 @@ namespace BattleBackend.Controllers
                         && int.TryParse(fightRequestDto.defender,out int enemyId))
                     {
                         await _battleService.ExecuteFight(id, enemyId);//json
-                        return Ok(JsonLogger.GetEvents());
+                        var jsonEvents = JsonLogger.GetEvents();
+                        return Ok(jsonEvents);
                     }
 
                 }
             }
             //todo查找历史对局
+
             return BadRequest("无法战斗");
+        }
+        [HttpGet("battlelist")]
+        [Authorize]
+        public async Task<IActionResult> GetBattleList([FromBody]int id)
+        {
+            var history = _battleService.GetBattleRecordListAsync(id);
+            return Ok(history);
+        }
+        [HttpGet("replay")]
+        public async Task<IActionResult> GetReplay([FromBody]int id)
+        {
+            // 1. 从数据库获取元数据
+            var recordJson = await _battleService.GetBattleRecordByIdAsync(id);
+            if (recordJson.IsNullOrEmpty())
+                return BadRequest("can't find battle file");
+            return Content(recordJson, "application/json");
         }
 
     }

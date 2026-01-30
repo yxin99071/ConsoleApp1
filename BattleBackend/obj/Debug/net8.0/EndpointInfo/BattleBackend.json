@@ -5,18 +5,6 @@
     "version": "v1"
   },
   "paths": {
-    "/battle/start": {
-      "get": {
-        "tags": [
-          "Battle"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/battle/GetWeaponAward": {
       "get": {
         "tags": [
@@ -53,6 +41,28 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/battle/battlelist": {
+      "get": {
+        "tags": [
+          "Battle"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

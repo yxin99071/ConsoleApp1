@@ -805,5 +805,32 @@ namespace DataCore.Services
         public async Task InsertAwardList(TempAwardList tempAwardList) =>await _context.TempAwardLists.AddAsync(tempAwardList);
         public async Task<Skill?> GetSkillById(int skillId, bool noTracking = true) =>await _context.Skills.SingleOrDefaultAsync(s=>s.Id == skillId);
         public async Task<Weapon?> GetWeaponById(int weaponId, bool noTracking = true) => await _context.Weapons.SingleOrDefaultAsync(w => w.Id == weaponId);
+        //返回某个玩家的所有对战记录的文件目录dto
+        public async Task<List<BattleRecord>> GetUserBattleHistoryAsync(int userId)
+        {
+            // 这里的 _context 是你的 EF DbContext
+            return await _context.BattleRecords
+                .Where(r => r.WinnerId == userId.ToString() || r.LoserId == userId.ToString())
+                .OrderByDescending(r => r.CreatedTime) // 按时间倒序，最新的在前面
+                .ToListAsync();
+        }
+        //根据对局id返回单条对战记录dto
+        public async Task<BattleRecord?> GetBattleRecordByIdAsync(int recordId)
+        {
+            return await _context.BattleRecords.FindAsync(recordId);
+        }
+        public async Task AddRecordAsync( int winnerId,  int loserId,  string fileName,  DateTime dateTime)
+        {
+
+            await _context.BattleRecords.AddAsync(
+                new BattleRecord
+                {
+                    CreatedTime = dateTime,
+                    WinnerId = winnerId.ToString(),
+                    LoserId = loserId.ToString(),
+                    JsonFileName = fileName
+                }
+                );
+        }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace BattleBackend.Services
 {
@@ -39,7 +40,7 @@ namespace BattleBackend.Services
                 throw new Exception();//出错
 
         }
-
+        internal async Task<List<BattleRecord>> GetBattleRecordListAsync(int id) => await _dataHelper.GetUserBattleHistoryAsync(id);
         internal async Task<string> ExecuteFight(int id, int enemyId)
         {
             StaticDataHelper.BuffPool = await _dataHelper.GetAllBuffs();
@@ -65,8 +66,10 @@ namespace BattleBackend.Services
             await _dataHelper.UpgradeSinlgeUser(user);
             if (user.Id != enemy.Id)
                 await _dataHelper.UpgradeSinlgeUser(enemy);
-
+            await SaveRecords(id, enemyId,isWin, JsonLogger.GetEvents());
+            await _dataHelper.SaveChangesAsync();
             return JsonLogger.GetJson();
+
             async Task SetAward(AwardInfo award)
             {
                 if (!award.HasAward)
@@ -186,9 +189,36 @@ namespace BattleBackend.Services
                 }
 
             }
+            async Task SaveRecords(int id, int enemyId,bool isWin, List<JsonLogger.BattleEvent> battleEvents)
+            {
+                int winnerId = isWin ? id : enemyId;
+                int loserId = isWin ? enemyId : id;
+
+                // 2. 配置物理路径（建议从配置文件读取，这里演示硬编码）
+                string folderPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "MyProject", "Record");
+
+                // 确保目录存在
+                if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+                // 3. 序列化并写入 JSON 文件
+                // 生成唯一文件名：战斗时间_胜者ID_随机码.json
+                string fileName = $"battle_{DateTime.Now:yyyyMMddHHmmss}_{winnerId}.json";
+                string fullPath = Path.Combine(folderPath, fileName);
+
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    WriteIndented = false, // 生产环境建议关闭缩进以节省空间
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                string jsonString = JsonSerializer.Serialize(battleEvents, jsonOptions);
+                await File.WriteAllTextAsync(fullPath, jsonString);
+                await _dataHelper.AddRecordAsync( winnerId, loserId, fileName, DateTime.Now);
+
+            }
         }
-
-
         internal async Task<List<User>> GetAllFighter(string? exclusiveId)
         {
             var users = new List<User>();
@@ -205,7 +235,6 @@ namespace BattleBackend.Services
             }
             return users;
         }
-
         internal async Task<List<AwardListDto>> GetAwardsList(int id)
         {
             //返回奖励列表
@@ -239,14 +268,11 @@ namespace BattleBackend.Services
             }
             return result;
         }
-
         internal async Task<User?> GetUserById(int id)
         {
             return await _dataHelper.GetUserById(id);
         }
-
         internal async Task<User?> IdentifyUser(string account, string password) => await _dataHelper.IdentifyUser(account, password);
-        
         internal async Task<bool> InitializeUserProfile(int userId, InitProfileDto dto)
         {
             var user = await _dataHelper.GetUserById(userId, true);
@@ -287,33 +313,32 @@ namespace BattleBackend.Services
             }
             //添加武器
             await InitialWeaponAndSkillList(user);
+            
             if (await _dataHelper.SaveChangesAsync() > 0)
                 return true;
             return false;
-         
+            async Task InitialWeaponAndSkillList(User user)
+            {
+
+                var unLockedWeapons = await _dataHelper.GetLockedWeapons(user);
+                var unLockedSkills = await _dataHelper.GetLockedSkills(user);
+                if (unLockedWeapons.Count <= 2 || unLockedSkills.Count <= 2)
+                    throw new Exception("InitialError");
+                var initialWeapons = FilterSkillOrWeapon<Weapon>(unLockedWeapons, new List<string> { user.Profession!, "MORTAL" }, [1]);
+                var initialSkills = FilterSkillOrWeapon<Skill>(unLockedSkills, new List<string> { user.Profession!, "MORTAL" }, [1]);
+
+                if (initialWeapons.Count <= 1 || initialSkills.Count <= 1)
+                    throw new Exception("InitialError");
+                var random = new Random();
+                // 随机打乱并取前 N 个
+                var selectedWeapons = initialWeapons.OrderBy(x => random.Next()).Take(1).ToList();
+                var selectedSkills = initialSkills.OrderBy(x => random.Next()).Take(1).ToList();
+
+                user.Weapons.AddRange(selectedWeapons);
+                user.Skills.AddRange(selectedSkills);
+            }
         }
         //初始化武器和技能
-        private async Task InitialWeaponAndSkillList(User user)
-        {
-            
-            var unLockedWeapons = await _dataHelper.GetLockedWeapons(user);
-            var unLockedSkills = await _dataHelper.GetLockedSkills(user);
-            if (unLockedWeapons.Count <= 2 || unLockedSkills.Count<=2)
-                throw new Exception("InitialError");
-            var initialWeapons = FilterSkillOrWeapon<Weapon>(unLockedWeapons, new List<string> { user.Profession!, "MORTAL" }, [1]);
-            var initialSkills = FilterSkillOrWeapon<Skill>(unLockedSkills, new List<string> { user.Profession!, "MORTAL" }, [1]);
-
-            if (initialWeapons.Count <= 2 || initialSkills.Count <= 2)
-                throw new Exception("InitialError");
-            var random = new Random();
-            // 随机打乱并取前 N 个
-            var selectedWeapons = initialWeapons.OrderBy(x => random.Next()).Take(1).ToList();
-            var selectedSkills = initialSkills.OrderBy(x => random.Next()).Take(1).ToList();
-
-            user.Weapons.AddRange(selectedWeapons);
-            user.Skills.AddRange(selectedSkills);
-        }
-
         private List<T> FilterSkillOrWeapon<T>(List<T> origin, List<string> professions, List<int> rareLevels) 
             where T: Item
         {
@@ -324,6 +349,26 @@ namespace BattleBackend.Services
             ).ToList();
         }
 
+        internal async Task<string> GetBattleRecordByIdAsync(int id)
+        {
+            string _recordFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "MyProject", "Record");
+            var record = await _dataHelper.GetBattleRecordByIdAsync(id);
+            if (record == null)
+                return "";
+
+            // 2. 拼接物理路径
+            string fullPath = Path.Combine(_recordFolder, record.JsonFileName);
+
+            if (!System.IO.File.Exists(fullPath))
+                return "";
+
+            // 3. 读取并直接返回 JSON
+            // 使用 ContentResult 确保前端接收到的是 application/json 格式
+            var jsonContent = await System.IO.File.ReadAllTextAsync(fullPath);
+            return jsonContent;
+        }
 
 
     }

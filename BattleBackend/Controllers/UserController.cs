@@ -77,6 +77,7 @@ namespace BattleBackend.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(int.TryParse(userId,out int id))
             {
+                dto.account = id.ToString();
                 await _battleService.InitializeUserProfile(id,dto);
             }
             return Ok(new { success = true });

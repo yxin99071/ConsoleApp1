@@ -16,6 +16,7 @@ namespace DataCore.Data
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Buff> Buffs { get; set; }
         public DbSet<TempAwardList> TempAwardLists { get; set; }
+        public DbSet<BattleRecord> BattleRecords { get; set; }
 
         public BattleDbContext(DbContextOptions<BattleDbContext> options) : base(options) { }
 
@@ -42,6 +43,9 @@ namespace DataCore.Data
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
                 );
+
+            modelBuilder.Entity<UserWeapon>()
+                .HasKey(uw => new { uw.UserId, uw.WeaponId });
 
             // 2. 配置 User <-> Weapon (纯多对多，EF Core 会自动生成中间表 UserWeapon)
             modelBuilder.Entity<User>()

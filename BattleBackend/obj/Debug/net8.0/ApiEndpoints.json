@@ -1,6 +1,22 @@
 [
   {
     "ContainingType": "BattleBackend.Controllers.BattleController",
+    "Method": "GetBattleList",
+    "RelativePath": "battle/battlelist",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BattleBackend.Controllers.BattleController",
     "Method": "Fight",
     "RelativePath": "battle/fight",
     "HttpMethod": "POST",
@@ -23,22 +39,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BattleBackend.Controllers.BattleController",
-    "Method": "StartBattle",
-    "RelativePath": "battle/start",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "Authorization",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
     "ReturnTypes": []
   },
   {
