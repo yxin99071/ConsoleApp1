@@ -17,11 +17,25 @@ namespace DataCore.Models
         public double Agility { get; set; }
         public double Strength { get; set; }
         public double Intelligence { get; set; }
-        public List<Weapon> Weapons { get; set; } = new();
-        public List<Skill> Skills { get; set; } = new();
+        public int WeaponLotteryPoint { get; set; } = 1000;
+        public int SkillLotteryPoint { get; set; } = 1000;
+        public List<UserWeapon> UserWeaponLinks { get; set; } = new List<UserWeapon>();
+        public List<UserSkill> UserSkillLinks { get; set; } = new List<UserSkill>();
 
         public User Copy()
         {
+
+            var wlists = new List<UserWeapon>();
+            foreach(var w in  this.UserWeaponLinks)
+            {
+                wlists.Add(w.Clone());
+            }
+            var slists = new List<UserSkill>();
+            foreach(var s in this.UserSkillLinks)
+            {
+                slists.Add(s.Clone());
+            }
+
             return new User
             {
                 Id = this.Id,
@@ -38,8 +52,8 @@ namespace DataCore.Models
                 Agility = this.Agility,
                 Strength = this.Strength,
                 Intelligence = this.Intelligence,
-                Weapons = new List<Weapon>(this.Weapons), // 浅拷贝列表
-                Skills = new List<Skill>(this.Skills) // 浅拷贝列表
+                UserSkillLinks = slists,
+                UserWeaponLinks = wlists,
             };
         }
     }

@@ -1,5 +1,8 @@
-﻿using DataCore.Models;
+﻿using BattleCore.BattleLogic;
+using BattleCore.DataModel.Fighters;
+using DataCore.Models;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using static BattleBackend.DTOs.InformationDTO;
 
 namespace BattleBackend.DTOs
@@ -13,21 +16,41 @@ namespace BattleBackend.DTOs
             {"法师","MAGICIAN"},
             { "凡人","MORTAL"}
         };
-        public static InformationDto ToDto(this User user) => new()
+        public static InformationDto ToDto(this User user)
         {
-            Id = user.Id,
-            Name = user.Name,
-            Exp = user.Exp,
-            Level = user.Level,
-            Profession = user.Profession,
-            Health = user.Health,
-            Agility = user.Agility,
-            Strength = user.Strength,
-            Intelligence = user.Intelligence,
-            SecondProfession = user.SecondProfession,
-            Skills = user.Skills.Select(s => s.ToDto()).ToList(),
-            Weapons = user.Weapons.Select(w => w.ToDto()).ToList()
-        };
+
+            var fighter = UserToFighter(user);
+            if (fighter is null)
+                return new InformationDto();
+            return new InformationDto
+            {
+                Id = fighter.Id,
+                Name = fighter.Name,
+                Exp = user.Exp,
+                Level = user.Level,
+                Profession = fighter.Profession,
+                Health = fighter.Health,
+                Agility = fighter.Agility,
+                Strength = fighter.Strength,
+                Intelligence = fighter.Intelligence,
+                SecondProfession = user.SecondProfession,
+                Skills = fighter.Skills.Select(s => s.ToDto()).ToList(),
+                Weapons = fighter.Weapons.Select(w => w.ToDto()).ToList()
+            };
+            Fighter? UserToFighter(User user)
+            {
+                if (user.Profession == "WARRIOR")
+                    return new Warrior(user);
+                if (user.Profession == "RANGER")
+                    return new Ranger(user);
+                if (user.Profession == "MAGICIAN")
+                    return new Magician(user);
+                if (user.Profession == "MORTAL")
+                    return new Mortal(user);
+                return null;
+            }
+        }
+        
 
         public static SkillDto ToDto(this Skill skill) => new()
         {

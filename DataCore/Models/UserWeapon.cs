@@ -9,7 +9,18 @@ namespace DataCore.Models
     public class UserWeapon
     {
         public int UserId { get; set; }
+        public User User { get; set; } = default!;
         public int WeaponId { get; set; }
-        public int Count { get; set; } // 数量
+        public Weapon Weapon { get; set; } = default!;
+        public int Count { get; set; } = 1;// 数量
+        public UserWeapon Clone()
+        {
+            return new UserWeapon
+            {
+                UserId = this.UserId,
+                Weapon = this.Weapon.Clone(),
+                Count = this.Count
+            };
+        }
     }
 }

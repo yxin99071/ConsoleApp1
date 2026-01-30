@@ -32,20 +32,24 @@ namespace DataCore.Services
         {
             if(isTracking)
                 return await _context.Users
-                .Include(u => u.Weapons)
+                .Include(u => u.UserWeaponLinks)
+                .ThenInclude(w=>w.Weapon)
                 .ThenInclude(w => w.WeaponBuffs)
                 .ThenInclude(wb => wb.Buff)
-                .Include(u => u.Skills)
+                .Include(u=>u.UserSkillLinks)
+                .ThenInclude(u => u.Skill)
                 .ThenInclude(s => s.SkillBuffs)
                 .ThenInclude(sb => sb.Buff)
                 .SingleOrDefaultAsync(u => u.Id == UserId);
 
             return await _context.Users
                 .AsNoTracking()
-                .Include(u => u.Weapons)
+                .Include(u => u.UserWeaponLinks)
+                .ThenInclude(w=>w.Weapon)
                 .ThenInclude(w => w.WeaponBuffs)
                 .ThenInclude(wb => wb.Buff)
-                .Include(u => u.Skills)
+                .Include(u => u.UserSkillLinks)
+                .ThenInclude(u => u.Skill)
                 .ThenInclude(s => s.SkillBuffs)
                 .ThenInclude(sb => sb.Buff)
                 .SingleOrDefaultAsync(u => u.Id == UserId);
@@ -86,48 +90,45 @@ namespace DataCore.Services
         {
             if (user?.Profession == null) return new List<Weapon>();
 
-            // 1. 获取该用户所有已存在的待领取奖励中包含的武器 ID (Flatten 操作)
-            var tempAwardWeaponIds = await _context.TempAwardLists
+            // 1. 汇总所有“已占位”的武器 ID（背包 + 待领奖池）
+            var ownedIds = user.UserWeaponLinks.Select(uw => uw.WeaponId);
+            var tempAwardIds = await _context.TempAwardLists
                 .Where(ta => ta.UserId == user.Id)
-                .SelectMany(ta => ta.Weapons.Select(w => w.Id)) // 假设 TempAwardList 有 Weapons 导航属性
+                .SelectMany(ta => ta.Weapons.Select(w => w.Id))
                 .ToListAsync();
 
-            // 2. 获取用户已经拥有的武器 ID
-            var ownedWeaponIds = user.Weapons.Select(w => w.Id).ToList();
+            var occupiedIds = ownedIds.Concat(tempAwardIds).Distinct().ToList();
 
-            // 3. 合并所有需要排除的 ID
-            var excludeIds = ownedWeaponIds.Concat(tempAwardWeaponIds).Distinct().ToList();
-
-            // 4. 执行单次、干净的数据库查询
+            // 2. 执行查询：
+            // 如果是普通武器 (IsUnique = false) -> 直接进入池子
+            // 如果是独特武器 (IsUnique = true) -> 必须不在 occupiedIds 中
             var weapons = await _context.Weapons
-                .Where(w => !excludeIds.Contains(w.Id)) // 翻译为 SQL: WHERE Id NOT IN (...)
+                .Where(w => !w.IsUnique || !occupiedIds.Contains(w.Id))
                 .ToListAsync();
 
             return weapons;
         }
+
         public async Task<List<Skill>> GetLockedSkills(User user)
         {
             if (user?.Profession == null) return new List<Skill>();
 
-            // 1. 获取已拥有的技能 ID
-            var ownedSkillIds = user.Skills.Select(s => s.Id).ToList();
-
-            // 2. 获取待领取列表中的技能 ID (平铺集合)
+            // 1. 获取所有“已占位”的技能 ID（技能栏 + 待领奖池）
+            var ownedSkillIds = user.UserSkillLinks.Select(us => us.SkillId);
             var tempAwardSkillIds = await _context.TempAwardLists
                 .Where(ta => ta.UserId == user.Id)
                 .SelectMany(ta => ta.Skills.Select(s => s.Id))
                 .ToListAsync();
 
-            // 3. 合并所有需要排除的 ID
-            var excludeIds = ownedSkillIds.Concat(tempAwardSkillIds).Distinct().ToList();
+            var occupiedSkillIds = ownedSkillIds.Concat(tempAwardSkillIds).Distinct().ToList();
 
-            // 4. 执行过滤查询
+            // 2. 执行查询
+            // 逻辑：(不是唯一技能) 或者 (是唯一技能且不在占位列表中)
             var skills = await _context.Skills
-                .Where(s => !excludeIds.Contains(s.Id))
+                .Where(s => !s.IsUnique || !occupiedSkillIds.Contains(s.Id))
                 .ToListAsync();
 
             return skills;
-
         }
 
         //seedData
@@ -720,75 +721,149 @@ namespace DataCore.Services
 
             // 通用武器列表 (MORTAL的武器)
             var universalWeapons = GetListW("长枪", "硬木棍", "符文长戟", "守护战棍", "生命之杖", "平衡之刃");
+            var warrior_weapon = universalWeapons.Concat(GetListW("铁斧", "重锤", "破甲战斧", "嗜血巨剑")).ToList();
+            var magician_weapon = universalWeapons.Concat(GetListW("学徒法杖", "水晶魔杖", "烈焰法杖", "寒霜魔典")).ToList();
+            var mortal_weapon = allWeapons;
+            var ranger_weapon = universalWeapons.Concat(GetListW("猎弓", "双刃匕首", "鹰眼长弓", "影袭双刀")).ToList();
+
+
+            var warrior = new User
+            {
+                Id = 1,
+                Account = "1",
+                Name = "战士_凯尔",
+                Password = "1234",
+                Health = 820,
+                Exp = 0,
+                Level = 10,
+                Profession = "WARRIOR",
+                Agility = 15,
+                Strength = 57,
+                Intelligence = 15,
+            };
+            foreach(var weapon in warrior_weapon)
+            {
+                warrior.UserWeaponLinks.Add(new UserWeapon
+                {
+                    UserId = warrior.Id,
+                    WeaponId = weapon.Id,
+                    Count = 1
+                });
+            }
+            foreach(var skill in warriorSkill)
+            {
+                warrior.UserSkillLinks.Add(new UserSkill
+                {
+                    UserId = warrior.Id,
+                    SkillId = skill.Id,
+                    Count = 1
+                });
+            }
+            //新用户
+            var ranger = new User
+            {
+                Id = 2,
+                Account = "2",
+                Name = "游侠_莱拉",
+                Password = "1234",
+                Health = 590,
+                Exp = 0,
+                Level = 10,
+                Profession = "RANGER",
+                Agility = 57,
+                Strength = 15,
+                Intelligence = 15,
+            };
+            foreach (var weapon in ranger_weapon)
+            {
+                ranger.UserWeaponLinks.Add(new UserWeapon
+                {
+                    UserId = ranger.Id,
+                    WeaponId = weapon.Id,
+                    Count = 1
+                });
+            }
+            foreach (var skill in rangerSkill)
+            {
+                ranger.UserSkillLinks.Add(new UserSkill
+                {
+                    UserId = ranger.Id,
+                    SkillId = skill.Id,
+                    Count = 1
+                });
+            }
+            //新用户
+            var magician = new User
+            {
+                Id = 3,
+                Account = "3",
+                Name = "法师_赞",
+                Password = "1234",
+                Health = 674,
+                Exp = 0,
+                Level = 10,
+                Profession = "MAGICIAN",
+                Agility = 15,
+                Strength = 15,
+                Intelligence = 57,
+            };
+            foreach (var weapon in magician_weapon)
+            {
+                magician.UserWeaponLinks.Add(new UserWeapon
+                {
+                    UserId = magician.Id,
+                    WeaponId = weapon.Id,
+                    Count = 1
+                });
+
+            }
+            foreach (var skill in magicianSkill)
+            {
+                magician.UserSkillLinks.Add(new UserSkill
+                {
+                    UserId = magician.Id,
+                    SkillId = skill.Id,
+                    Count = 1
+                });
+            }
+            //新用户
+            var mortal = new User
+            {
+                Id = 4,
+                Account = "4",
+                Name = "凡人_艾里斯",
+                Password = "1234",
+                Health = 754,
+                Exp = 0,
+                Level = 10,
+                Profession = "MORTAL",
+                Agility = 32,
+                Strength = 32,
+                Intelligence = 32,
+            };
+            foreach (var weapon in universalWeapons)
+            {
+                mortal.UserWeaponLinks.Add(new UserWeapon
+                {
+                    UserId = mortal.Id,
+                    WeaponId = weapon.Id,
+                    Count = 1
+                });
+            }
+            foreach (var skill in mortalSkill)
+            {
+                mortal.UserSkillLinks.Add(new UserSkill
+                {
+                    UserId = mortal.Id,
+                    SkillId = skill.Id,
+                    Count = 1
+                });
+            }
+
+
 
             // --- 创建并保存 User ---
-            _context.Users.AddRange(
-                new User
-                {
-                    Id = 1,
-                    Account = "1",
-                    Name = "战士_凯尔",
-                    Password = "1234",
-                    Health = 820,
-                    Exp = 0,
-                    Level = 10,
-                    Profession = "WARRIOR",
-                    Agility = 15,
-                    Strength = 57,
-                    Intelligence = 15,
-                    Weapons = universalWeapons.Concat(GetListW("铁斧", "重锤", "破甲战斧", "嗜血巨剑")).ToList(),
-                    Skills = warriorSkill
-                },
-                new User
-                {
-                    Id = 2,
-                    Account = "2",
-                    Name = "游侠_莱拉",
-                    Password = "1234",
-                    Health = 590,
-                    Exp = 0,
-                    Level = 10,
-                    Profession = "RANGER",
-                    Agility = 57,
-                    Strength = 15,
-                    Intelligence = 15,
-                    Weapons = universalWeapons.Concat(GetListW("猎弓", "双刃匕首", "鹰眼长弓", "影袭双刀")).ToList(),
-                    Skills = rangerSkill
-                },
-                new User
-                {
-                    Id = 3,
-                    Account = "3",
-                    Name = "法师_赞",
-                    Password = "1234",
-                    Health = 674,
-                    Exp = 0,
-                    Level = 10,
-                    Profession = "MAGICIAN",
-                    Agility = 15,
-                    Strength = 15,
-                    Intelligence = 57,
-                    Weapons = universalWeapons.Concat(GetListW("学徒法杖", "水晶魔杖", "烈焰法杖", "寒霜魔典")).ToList(),
-                    Skills = magicianSkill
-                },
-                new User
-                {
-                    Id = 4,
-                    Account = "4",
-                    Name = "凡人_艾里斯",
-                    Password = "1234",
-                    Health = 754,
-                    Exp = 0,
-                    Level = 10,
-                    Profession = "MORTAL",
-                    Agility = 32,
-                    Strength = 32,
-                    Intelligence = 32,
-                    Weapons = allWeapons, // 凡人掌握所有武器
-                    Skills = mortalSkill
-                }
-            );
-
+            _context.Users.AddRange(warrior,ranger,magician,mortal);
             _context.SaveChanges();
 
         }

@@ -4,6 +4,7 @@ namespace DataCore.Models
     public class Weapon:Item
     {
         public List<WeaponBuff> WeaponBuffs { get; set; } = new();
+        public List<UserWeapon> UserWeaponLink { get; set; } = new();
         public Weapon Clone()
         {
             return new Weapon
@@ -24,7 +25,7 @@ namespace DataCore.Models
 
                 // 重要：浅拷贝 User 列表（仅复制引用）
                 // 因为查询是 玩家 -> 武器，武器不需要“拥有”全新的玩家副本
-                Users = this.Users?.ToList() ?? new()
+                UserWeaponLink = new List<UserWeapon>()
             };
         }
     }

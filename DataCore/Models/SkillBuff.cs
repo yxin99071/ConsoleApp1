@@ -21,6 +21,8 @@ namespace DataCore.Models
         {
             return new SkillBuff
             {
+                Buff = this.Buff,
+                BuffId = this.BuffId,
                 Level = this.Level
             };
         }

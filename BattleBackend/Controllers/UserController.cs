@@ -86,7 +86,7 @@ namespace BattleBackend.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllFighter()
         {
-            //todo mapto dto
+            
             var users = await _battleService.GetAllFighter(exclusiveId:null);
             List<FighterDto> fighters = new List<FighterDto>();
             foreach (var user in users)

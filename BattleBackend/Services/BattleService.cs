@@ -7,6 +7,7 @@ using BattleCore.DataModel.Fighters;
 using BattleCore.DataModel.States;
 using DataCore.Models;
 using DataCore.Services;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections;
@@ -302,41 +303,24 @@ namespace BattleBackend.Services
                 return false;
             //添加技能
             List<string> skills = ["假死", "亡者意志"] ;
+            //创建
+            var UDrecord = new UserSkill { User = user, SkillId = skillUD?.Id ?? 0, Count = 1 };
+            var PDrecord = new UserSkill { User = user, SkillId = skillPD?.Id ?? 0, Count = 1 };
+
             if (dto.initialSkills.Count == 2)
-                user.Skills.AddRange([skillUD!, skillPD!]);
+                user.UserSkillLinks.AddRange([UDrecord, PDrecord]);
             else
             {
                 if (dto.initialSkills.Contains(skills[0]))
-                    user.Skills.Add(skillPD!);
+                    user.UserSkillLinks.Add(PDrecord!);
                 else
-                    user.Skills.Add(skillUD!);
+                    user.UserSkillLinks.Add(UDrecord!);
             }
-            //添加武器
-            await InitialWeaponAndSkillList(user);
+            //todo 添加武器改到抽奖中
             
             if (await _dataHelper.SaveChangesAsync() > 0)
                 return true;
             return false;
-            async Task InitialWeaponAndSkillList(User user)
-            {
-
-                var unLockedWeapons = await _dataHelper.GetLockedWeapons(user);
-                var unLockedSkills = await _dataHelper.GetLockedSkills(user);
-                if (unLockedWeapons.Count <= 2 || unLockedSkills.Count <= 2)
-                    throw new Exception("InitialError");
-                var initialWeapons = FilterSkillOrWeapon<Weapon>(unLockedWeapons, new List<string> { user.Profession!, "MORTAL" }, [1]);
-                var initialSkills = FilterSkillOrWeapon<Skill>(unLockedSkills, new List<string> { user.Profession!, "MORTAL" }, [1]);
-
-                if (initialWeapons.Count <= 1 || initialSkills.Count <= 1)
-                    throw new Exception("InitialError");
-                var random = new Random();
-                // 随机打乱并取前 N 个
-                var selectedWeapons = initialWeapons.OrderBy(x => random.Next()).Take(1).ToList();
-                var selectedSkills = initialSkills.OrderBy(x => random.Next()).Take(1).ToList();
-
-                user.Weapons.AddRange(selectedWeapons);
-                user.Skills.AddRange(selectedSkills);
-            }
         }
         //初始化武器和技能
         private List<T> FilterSkillOrWeapon<T>(List<T> origin, List<string> professions, List<int> rareLevels) 
@@ -348,7 +332,6 @@ namespace BattleBackend.Services
                 rareLevels.Contains(item.RareLevel)
             ).ToList();
         }
-
         internal async Task<string> GetBattleRecordByIdAsync(int id)
         {
             string _recordFolder = Path.Combine(

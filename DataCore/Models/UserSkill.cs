@@ -9,7 +9,18 @@ namespace DataCore.Models
     public class UserSkill
     {
         public int UserId { get; set; }
-        public int Skill { get; set; }
-        public int Count { get; set; } // 数量
+        public User User { get; set; } = default!;
+        public int SkillId { get; set; }
+        public Skill Skill { get; set; } = default!;
+        public int Count { get; set; } = 1;// 数量
+        public UserSkill Clone()
+        {
+            return new UserSkill
+            {
+                UserId = this.UserId,
+                Skill = this.Skill.Clone(),
+                Count = this.Count
+            };
+        }
     }
 }

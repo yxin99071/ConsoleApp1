@@ -21,6 +21,8 @@ namespace DataCore.Models
         {
             return new WeaponBuff
             {
+                Buff = this.Buff,
+                BuffId = this.BuffId,
                 Level = this.Level
                 // 注意：导航属性通常不需要在 Clone 中手动赋值，
                 // 除非你在克隆后立刻需要通过 wb.Buff 访问数据。

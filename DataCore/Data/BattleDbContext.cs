@@ -47,16 +47,6 @@ namespace DataCore.Data
             modelBuilder.Entity<UserWeapon>()
                 .HasKey(uw => new { uw.UserId, uw.WeaponId });
 
-            // 2. 配置 User <-> Weapon (纯多对多，EF Core 会自动生成中间表 UserWeapon)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Weapons)
-                .WithMany(w => w.Users);
-
-            // 3. 配置 User <-> Skill (纯多对多，EF Core 会自动生成中间表 UserSkill)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Skills)
-                .WithMany(s => s.Users);
-
             // 4. 配置 Weapon <-> Buff (显式中间表，带 Level)
             modelBuilder.Entity<WeaponBuff>()
                 .HasKey(wb => new { wb.WeaponId, wb.BuffId }); // 复合主键
@@ -85,16 +75,6 @@ namespace DataCore.Data
                 .WithMany(b => b.SkillBuffs)
                 .HasForeignKey(sb => sb.BuffId);
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Weapons)
-                .WithMany(w => w.Users)
-                .UsingEntity(j => j.ToTable("UserWeapons")); // 显式命名中间表
-
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Skills)
-                .WithMany(s => s.Users)
-                .UsingEntity(j => j.ToTable("UserSkills"));
-
             modelBuilder.Entity<TempAwardList>(entity =>
             {
                 // 设置自增主键
@@ -107,6 +87,51 @@ namespace DataCore.Data
                 entity.HasMany(t => t.Skills)
                       .WithMany();
             });
+
+            // --- UserWeapon 配置 ---
+            modelBuilder.Entity<UserWeapon>(entity =>
+            {
+                // 1. 定义复合主键 (由用户ID和武器ID共同组成)
+                entity.HasKey(uw => new { uw.UserId, uw.WeaponId });
+
+                // 2. 配置 User -> UserWeapon (1:N)
+                entity.HasOne(uw => uw.User)
+                      .WithMany(u => u.UserWeaponLinks)
+                      .HasForeignKey(uw => uw.UserId)
+                      .OnDelete(DeleteBehavior.Cascade); // 删除玩家时，自动删除其武器拥有记录
+
+                // 3. 配置 Weapon -> UserWeapon (1:N)
+                entity.HasOne(uw => uw.Weapon)
+                      .WithMany(w => w.UserWeaponLink) // 对应你 Weapon 类里的属性名
+                      .HasForeignKey(uw => uw.WeaponId)
+                      .OnDelete(DeleteBehavior.Cascade); // 删除武器模板时，自动删除所有玩家拥有的该武器记录
+
+                // 4. 设置 Count 默认值
+                entity.Property(uw => uw.Count).HasDefaultValue(1);
+            });
+
+            // --- UserSkill 配置 ---
+            modelBuilder.Entity<UserSkill>(entity =>
+            {
+                // 复合主键
+                entity.HasKey(us => new { us.UserId, us.SkillId });
+
+                // 用户 -> 技能关联
+                entity.HasOne(us => us.User)
+                      .WithMany(u => u.UserSkillLinks) // 确保 User 类中有 List<UserSkill> UserSkillLinks
+                      .HasForeignKey(us => us.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // 技能 -> 用户关联
+                entity.HasOne(us => us.Skill)
+                      .WithMany() // 如果 Skill 类里没写 List<UserSkill>，这里留空
+                      .HasForeignKey(us => us.SkillId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(us => us.Count).HasDefaultValue(1);
+            });
+
+
         }
     }
 }

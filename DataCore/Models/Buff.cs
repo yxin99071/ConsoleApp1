@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -43,8 +44,8 @@ namespace DataCore.Models
 
                 // 列表必须 new，防止引用污染
                 SpecialTag = this.SpecialTag?.ToList() ?? new(),
-                WeaponBuffs = this.WeaponBuffs?.Select(wb => wb.Clone()).ToList() ?? new(),
-                SkillBuffs = this.SkillBuffs?.Select(sb => sb.Clone()).ToList() ?? new()
+                WeaponBuffs = new List<WeaponBuff>(),
+                SkillBuffs = new List<SkillBuff>()
             };
         }
     }

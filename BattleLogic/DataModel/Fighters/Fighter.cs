@@ -21,11 +21,25 @@ namespace BattleCore.DataModel.Fighters
             Strength = user.Strength;
             BuffStatuses = new List<BuffStatus>();
             Intelligence = user.Intelligence;
-            Weapons = user.Weapons;
-            Skills = user.Skills;
             CraticalRate = 0.08 + StaticDataHelper.CalculateCriticalRate(user.Agility)/2;//如果是游侠则不用除以2
             CraticalDamage = 1.5 + StaticDataHelper.CalculateCriticalDamage(user.Strength) / 2;//如果是战士则不用除以2
             DamageInreasement = 1 + StaticDataHelper.CalculateDamageIncreasement(user.Intelligence) / 2;//如果是法师则不用除以2
+
+            foreach(var weaponInfo in user.UserWeaponLinks)
+            {
+                for(int i = 0;i< weaponInfo.Count;i++)
+                {
+                    Weapons.Add(weaponInfo.Weapon.Clone());
+                }
+            }
+            foreach (var skillInfo in user.UserSkillLinks)
+            {
+                for (int i = 0; i < skillInfo.Count; i++)
+                {
+                    Skills.Add(skillInfo.Skill.Clone());
+                }
+            }
+
         }
         public readonly int Id;
         public readonly double MaxHealth;

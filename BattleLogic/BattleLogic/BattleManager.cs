@@ -62,8 +62,6 @@ namespace BattleCore.BattleLogic
                 if (source.IsDead)
                 {
                     Console.WriteLine($"Game Over, {taker.Name} win!");
-                    //todo 结算
-                    //await BattleDataBridge.SetBattleResult(source.Id, taker.Id, false);
                     return false;
                 }
                 if (taker.IsDead)
@@ -103,8 +101,6 @@ namespace BattleCore.BattleLogic
                         break; // 未达到门槛，退出循环
                     }
                 }
-                //todo 回血
-                //todo 武器吃
                 var awardInfo = LevelUp(challenger, finalLevel - challenger.Level);
                 challenger.Exp = exp;
                 //opponent就是旧数据,不再需要copy后对比战斗前后角色数据
@@ -335,18 +331,6 @@ namespace BattleCore.BattleLogic
             return awardInfo;
             
         }
-        private static void GetWeaponAward(User user, bool professionFlag)
-        {
-            var awardWeaponChoice = new List<Weapon>();
-
-        }
-        private static void GetSkillAward(User user, bool professionFlag)
-        {
-            
-        }
-
-
-
 
         #endregion
 

@@ -17,7 +17,7 @@ namespace DataCore.Models
         public double CoefficientAgility { get; set; }
         public double CoefficientStrength { get; set; }
         public double CoefficientIntelligence { get; set; }
+        public bool IsUnique { get; set; } = false;
         public List<string> Tags { get; set; } = default!;
-        public List<User> Users { get; set; } = new();
     }
 }

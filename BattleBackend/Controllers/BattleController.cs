@@ -1,14 +1,11 @@
 ﻿using BattleBackend.DTOs;
 using BattleBackend.Services;
 using BattleCore;
-using DataCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
+
 
 namespace BattleBackend.Controllers
 {
