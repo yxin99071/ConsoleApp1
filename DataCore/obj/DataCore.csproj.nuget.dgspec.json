@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\DataCore.csproj": {}
+    "D:\\WorkSpace\\Net\\DataCore\\DataCore.csproj": {}
   },
   "projects": {
-    "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\DataCore.csproj": {
+    "D:\\WorkSpace\\Net\\DataCore\\DataCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\DataCore.csproj",
+        "projectUniqueName": "D:\\WorkSpace\\Net\\DataCore\\DataCore.csproj",
         "projectName": "DataCore",
-        "projectPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\DataCore.csproj",
-        "packagesPath": "C:\\Users\\huang.yuexin\\.nuget\\packages\\",
-        "outputPath": "D:\\Workspace\\Test\\Consoles\\ConsoleApp1\\DataCore\\obj\\",
+        "projectPath": "D:\\WorkSpace\\Net\\DataCore\\DataCore.csproj",
+        "packagesPath": "C:\\Users\\jcm96\\.nuget\\packages\\",
+        "outputPath": "D:\\WorkSpace\\Net\\DataCore\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\huang.yuexin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\jcm96\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

@@ -82,7 +82,7 @@ namespace BattleCore
         public static void LogAction(string actor, string type, string name)
         {
             Emit("Action", new Dictionary<string, object> {
-            { "Actor", actor }, { "Category", type }, { "Name", name }
+            { "Actor", actor }, { "Type", type }, { "Name", name }
         });
         }
 
@@ -128,7 +128,6 @@ namespace BattleCore
         #region 对局开始与结束
         public static void LogBattleStart(Fighter p1, Fighter p2, List<Buff> fullBuffList)
         {
-
             _events.Clear();
             // 1. 玩家快照
             var players = new[] { SerializeFighter(p1), SerializeFighter(p2) };
@@ -141,6 +140,7 @@ namespace BattleCore
                 IsBuff = b.DamageCorrection > 1 || b.WoundCorrection < 1,
                 IsDeBuff = b.DamageCorrection < 1 || b.WoundCorrection > 1,
                 IsDamage = (b.CoefficientAgility + b.CoefficientIntelligence + b.CoefficientStrength) > 0,
+                b.LastRound,
                 b.Description
             }).ToList();
 
@@ -174,6 +174,7 @@ namespace BattleCore
                 Skills = f.Skills.Select(s => new {
                     s.Profession,
                     s.SecondProfession,
+                    s.IsPassive,
                     s.RareLevel,
                     s.Name,
                     s.Description,

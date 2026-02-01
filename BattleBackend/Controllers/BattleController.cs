@@ -39,8 +39,10 @@ namespace BattleBackend.Controllers
         [Authorize]
         public async Task<IActionResult> Fight([FromBody]FightRequestDto fightRequestDto)
         {
+            if (fightRequestDto == null)
+                return BadRequest("Null Param");
             
-            if (fightRequestDto.history == null)
+            if (fightRequestDto.history.IsNullOrEmpty())
             {
                 if (fightRequestDto.attacker != null && fightRequestDto.defender != null)
                 {

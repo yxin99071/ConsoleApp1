@@ -2,7 +2,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { PROFESSION_MAP } from '../../utils/constants'; // 确保路径正确
 import gsap from 'gsap';
-import type { BuffSummaryDto } from '../../types/battle';
+import type { ItemDto } from '../../types/battle';
 import BuffIcon from './BuffIcon.vue';
 // 1. 稀有度视觉配置表
 const RARE_CONFIG = {
@@ -40,16 +40,6 @@ const RARE_CONFIG = {
   }
 } as const;
 
-
-interface ItemDto {
-  name: string;
-  profession: string;
-  secondProfession?: string;
-  description: string;
-  buffs: BuffSummaryDto[];
-  isPassive?: boolean;
-  rareLevel: number;
-}
 
 const props = defineProps<{
   item: ItemDto;

@@ -13,14 +13,25 @@ export interface FightRequestDto {
   history: string|undefined;//对应历史对战
 }
 
+export interface PlayerBattleInstance {
+  id: number;
+  name: string;
+  maxHealth: number;
+  currentHealth: number;
+  weapons: string[];
+  skills: string[];
+  activeBuffs: BuffSummaryDto[]; // 确保这里引用的是接口名，而不是手动写的对象结构
+}
+
 // 2. 技能与武器的基类 (对应 C# 的 ItemDto)
 export interface ItemDto {
   name: string;
   profession: string;
-  secondProfession?: string; // C# 的 string? 对应 TS 的可选属性或联合类型
+  secondProfession?: string;
   description: string;
-  rareLevel:number;
   buffs: BuffSummaryDto[];
+  isPassive?: boolean;
+  rareLevel: number;
 }
 
 // 3. 具体实现 (目前字段与基类一致)
