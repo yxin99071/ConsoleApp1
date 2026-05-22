@@ -8,6 +8,7 @@ import type { FighterDto } from '../api/battle';
 import CharacterCard from '../components/game/CharacterCard.vue';
 import ItemCard from '../components/game/ItemCard.vue';
 import BackpackView from '../components/game/BackpackView.vue';
+import DeckSelectModal from '../components/game/DeckSelectModal.vue';
 import { getAwardCount } from '../api/award';
 
 const router = useRouter();
@@ -24,6 +25,9 @@ const isTargetLoading = ref(false);
 // --- 背包 ---
 const showBackpack = ref(false);
 const pendingAwardCount = ref(0);
+
+// --- 出战卡组弹窗 ---
+const showDeckModal = ref(false);
 
 async function refreshAwardCount() {
   try {
@@ -83,16 +87,23 @@ const handleSelectFighter = async (fighter: FighterDto) => {
 
 const handlePK = () => {
   if (!myProfile.value || !targetProfile.value) return;
-  
+  // 打开卡组选择弹窗
+  showDeckModal.value = true;
+};
+
+const handleDeckConfirm = (deckWeaponIds: number[], deckSkillIds: number[]) => {
+  showDeckModal.value = false;
+  if (!myProfile.value || !targetProfile.value) return;
   router.push({
     name: 'FightCenter',
-    // 使用 state 传递关键参数，刷新页面后 state 会变空
-    state: { 
+    state: {
       battleInitData: {
         attackerId: myProfile.value.id,
         defenderId: targetProfile.value.id,
+        deckWeaponIds,
+        deckSkillIds,
         timestamp: Date.now()
-      } 
+      }
     }
   });
 };
@@ -272,8 +283,8 @@ const isNpc = (name: string) => name.startsWith('NPC__') && name.endsWith('__NPC
         🏆
       </button>
 
-      <!-- 设置（占位） -->
-      <button title="设置"
+      <!-- 设置 -->
+      <button @click="router.push({ name: 'settings' })" title="设置"
               class="w-12 h-12 rounded-full bg-white/5 hover:bg-indigo-600 hover:text-white
                      transition-all text-xl flex items-center justify-center border border-white/10">
         ⚙️
@@ -294,6 +305,16 @@ const isNpc = (name: string) => name.startsWith('NPC__') && name.endsWith('__NPC
 
   <!-- 背包弹层 -->
   <BackpackView v-if="showBackpack" @close="handleBackpackClose" />
+
+  <!-- 出战卡组选择弹窗 -->
+  <DeckSelectModal
+    v-if="myProfile && targetProfile"
+    :visible="showDeckModal"
+    :myProfile="myProfile"
+    :target="{ id: targetProfile.id, name: targetProfile.name }"
+    @confirm="handleDeckConfirm"
+    @cancel="showDeckModal = false"
+  />
 </template>
 <style scoped>
 /* 背景纹理 */

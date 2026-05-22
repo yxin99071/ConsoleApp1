@@ -3,6 +3,7 @@ using DataCore.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 
 namespace DataCore.Services
@@ -77,7 +78,9 @@ namespace DataCore.Services
                     user.Strength,
                     user.Intelligence,
                     user.LotteryPoint,
-                    user.LastBattleTime
+                    user.LastBattleTime,
+                    user.DefaultDeckWeaponIds,
+                    user.DefaultDeckSkillIds
                 });
 
                 await _context.SaveChangesAsync();
@@ -320,8 +323,20 @@ namespace DataCore.Services
             var weapons = new List<Weapon>();
             var skills = new List<Skill>();  // 在函数外声明
 
+            // 根据武器名称推断伤害类型
+            static string InferWeaponDamageType(string name)
+            {
+                // MAGIC 优先：含法/魔/典/珠/杖/书/心 的武器视为法器
+                string[] magicKeywords = { "法", "魔", "典", "珠", "杖", "书", "心" };
+                // BLUNT：锤/棍/棒/盾
+                string[] bluntKeywords = { "锤", "棍", "棒", "盾" };
+                if (magicKeywords.Any(k => name.Contains(k))) return "MAGIC";
+                if (bluntKeywords.Any(k => name.Contains(k))) return "BLUNT";
+                return "SHARP"; // 其余：刀/剑/斧/弓/弩/枪/戟等
+            }
+
             // 定义一个辅助动作方便快速添加武器
-            void AddWeapon(string name, string profession, double agi, double str, double intel, List<string> buffNames, int rareLevel = 1, string? secondProf = null, string desc = "暂无描述")
+            void AddWeapon(string name, string profession, double agi, double str, double intel, List<string> buffNames, int rareLevel = 1, string? secondProf = null, string desc = "暂无描述", string? damageType = null, string? exclusiveGroup = null)
             {
                 var w = new Weapon
                 {
@@ -333,7 +348,9 @@ namespace DataCore.Services
                     CoefficientAgility = agi,
                     CoefficientStrength = str,
                     CoefficientIntelligence = intel,
-                    Tags = new List<string>()  // Tags可以后续根据需要添加
+                    Tags = new List<string>(),
+                    DamageType = damageType ?? InferWeaponDamageType(name),
+                    ExclusiveGroup = exclusiveGroup
                 };
                 foreach (var bName in buffNames)
                 {
@@ -346,7 +363,7 @@ namespace DataCore.Services
             }
             
 
-            void AddSkill(string name, string profession, bool isPassive, double agi, double str, double intel, List<string> buffNames, int rareLevel = 1, string? secondProf = null, string desc = "暂无描述")
+            void AddSkill(string name, string profession, bool isPassive, double agi, double str, double intel, List<string> buffNames, int rareLevel = 1, string? secondProf = null, string desc = "暂无描述", string? exclusiveGroup = null, List<string>? tags = null)
             {
                 var s = new Skill
                 {
@@ -359,7 +376,8 @@ namespace DataCore.Services
                     CoefficientAgility = agi,
                     CoefficientStrength = str,
                     CoefficientIntelligence = intel,
-                    Tags = new List<string>()
+                    Tags = tags ?? new List<string>(),
+                    ExclusiveGroup = exclusiveGroup
                 };
                 foreach (var bName in buffNames)
                 {
@@ -761,6 +779,9 @@ namespace DataCore.Services
                     Count = 1
                 });
             }
+            warrior.DefaultDeckWeaponIds = JsonSerializer.Serialize(warrior.UserWeaponLinks.Select(uw => uw.WeaponId).ToList());
+            warrior.DefaultDeckSkillIds  = JsonSerializer.Serialize(warrior.UserSkillLinks.Select(us => us.SkillId).ToList());
+
             //新用户
             var ranger = new User
             {
@@ -794,6 +815,9 @@ namespace DataCore.Services
                     Count = 1
                 });
             }
+            ranger.DefaultDeckWeaponIds = JsonSerializer.Serialize(ranger.UserWeaponLinks.Select(uw => uw.WeaponId).ToList());
+            ranger.DefaultDeckSkillIds  = JsonSerializer.Serialize(ranger.UserSkillLinks.Select(us => us.SkillId).ToList());
+
             //新用户
             var magician = new User
             {
@@ -828,6 +852,9 @@ namespace DataCore.Services
                     Count = 1
                 });
             }
+            magician.DefaultDeckWeaponIds = JsonSerializer.Serialize(magician.UserWeaponLinks.Select(uw => uw.WeaponId).ToList());
+            magician.DefaultDeckSkillIds  = JsonSerializer.Serialize(magician.UserSkillLinks.Select(us => us.SkillId).ToList());
+
             //新用户
             var mortal = new User
             {
@@ -861,8 +888,8 @@ namespace DataCore.Services
                     Count = 1
                 });
             }
-
-
+            mortal.DefaultDeckWeaponIds = JsonSerializer.Serialize(mortal.UserWeaponLinks.Select(uw => uw.WeaponId).ToList());
+            mortal.DefaultDeckSkillIds  = JsonSerializer.Serialize(mortal.UserSkillLinks.Select(us => us.SkillId).ToList());
 
             // --- 创建并保存 User ---
             _context.Users.AddRange(warrior,ranger,magician,mortal);
@@ -1046,6 +1073,34 @@ namespace DataCore.Services
                 return await _context.UserWeapons.AnyAsync(uw => uw.UserId == userId && uw.WeaponId == itemId);
             else
                 return await _context.UserSkills.AnyAsync(us => us.UserId == userId && us.SkillId == itemId);
+        }
+
+        // ── 默认出战卡组 ──────────────────────────────────────────────────────
+
+        public record DefaultDeckData(List<int> WeaponIds, List<int> SkillIds);
+
+        /// <summary>读取玩家的默认卡组。若未设置（两个列表均为空），返回 null。</summary>
+        public async Task<DefaultDeckData?> GetDefaultDeckAsync(int userId)
+        {
+            var user = await _context.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return null;
+
+            var wIds = JsonSerializer.Deserialize<List<int>>(user.DefaultDeckWeaponIds) ?? new();
+            var sIds = JsonSerializer.Deserialize<List<int>>(user.DefaultDeckSkillIds)  ?? new();
+            // 两个列表都为空 → 视为未设置
+            if (wIds.Count == 0 && sIds.Count == 0) return null;
+            return new DefaultDeckData(wIds, sIds);
+        }
+
+        /// <summary>保存玩家的默认卡组。</summary>
+        public async Task SetDefaultDeckAsync(int userId, List<int> weaponIds, List<int> skillIds)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return;
+            user.DefaultDeckWeaponIds = JsonSerializer.Serialize(weaponIds);
+            user.DefaultDeckSkillIds  = JsonSerializer.Serialize(skillIds);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>获取某稀有度下所有 R4 Unique 武器是否都已被玩家拥有。</summary>

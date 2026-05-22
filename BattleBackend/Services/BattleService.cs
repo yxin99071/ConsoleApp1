@@ -68,7 +68,8 @@ namespace BattleBackend.Services
             }
             return result;
         }
-        internal async Task<string> ExecuteFight(int id, int enemyId)
+        internal async Task<string> ExecuteFight(int id, int enemyId,
+            List<int>? deckWeaponIds = null, List<int>? deckSkillIds = null)
         {
             StaticDataHelper.BuffPool = await _dataHelper.GetAllBuffs();
             var user = await _dataHelper.GetUserById(id);
@@ -82,10 +83,23 @@ namespace BattleBackend.Services
             int enemyLevelBefore = enemy.Level;
 
             Fighter user_fighter = InitialFighter(user);
+
+            // 应用攻击方卡组（前端明确传入时使用，否则保留全部道具）
+            if (deckWeaponIds != null || deckSkillIds != null)
+                user_fighter.ApplyDeck(deckWeaponIds ?? new(), deckSkillIds ?? new());
+
             Fighter enemy_fighter = InitialFighter(enemy);
             // 影子对决：两个 Fighter 来自同一个 User，前端按名字区分，必须保证名字唯一
             if (user.Id == enemy.Id)
                 enemy_fighter.Name += " (影)";
+
+            // 应用防守方的默认卡组（设置了才应用；未设置则保留全部道具保持向后兼容）
+            if (user.Id != enemy.Id)
+            {
+                var enemyDeck = await _dataHelper.GetDefaultDeckAsync(enemy.Id);
+                if (enemyDeck != null)
+                    enemy_fighter.ApplyDeck(enemyDeck.WeaponIds, enemyDeck.SkillIds);
+            }
 
             BattleManager.Initial(new List<Fighter> { user_fighter, enemy_fighter });
             //战斗与结果
@@ -105,7 +119,7 @@ namespace BattleBackend.Services
                                   (now - user.LastBattleTime.Value.ToUniversalTime()).TotalSeconds >= 30;
             if (userCooldownOk)
             {
-                user.LotteryPoint  += isWin ? 8 : 3;
+                user.LotteryPoint  += isWin ? 8 : 5;
                 user.LastBattleTime = now;
             }
             user.LotteryPoint += (user.Level - userLevelBefore) * 15;
@@ -117,10 +131,10 @@ namespace BattleBackend.Services
                                        (now - enemy.LastBattleTime.Value.ToUniversalTime()).TotalSeconds >= 30;
                 if (enemyCooldownOk)
                 {
-                    enemy.LotteryPoint  += isWin ? 3 : 8;   // enemy 输/赢与 isWin 相反
+                    enemy.LotteryPoint  += isWin ? 5 : 8;   // enemy 输/赢与 isWin 相反
                     enemy.LastBattleTime = now;
                 }
-                enemy.LotteryPoint += (enemy.Level - enemyLevelBefore) * 15;
+                enemy.LotteryPoint += (enemy.Level - enemyLevelBefore) * 25;
             }
 
             //更新数据库

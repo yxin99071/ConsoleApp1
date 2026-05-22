@@ -9,6 +9,9 @@ export interface AwardItemDto {
   rareLevel: number
   isPassive: boolean
   isUnique: boolean
+  exclusiveGroup?: string | null
+  /** 仅武器有效：SHARP / BLUNT / MAGIC */
+  damageType?: string
   buffs: BuffSummaryDto[]
 }
 

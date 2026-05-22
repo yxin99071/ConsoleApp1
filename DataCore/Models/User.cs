@@ -21,6 +21,10 @@ namespace DataCore.Models
         public int LotteryPoint { get; set; } = 0;
         public DateTime? LastBattleTime { get; set; } = null;
 
+        // ── 默认出战卡组（JSON 序列化存储，如 "[1,2,3]"）─────────────
+        public string DefaultDeckWeaponIds { get; set; } = "[]";
+        public string DefaultDeckSkillIds { get; set; } = "[]";
+
         public List<UserWeapon> UserWeaponLinks { get; set; } = new List<UserWeapon>();
         public List<UserSkill> UserSkillLinks { get; set; } = new List<UserSkill>();
         public List<UserDailyShopSlot> DailyShopSlots { get; set; } = new();

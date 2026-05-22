@@ -14,6 +14,9 @@ export interface OwnedItemDto {
   isUnique: boolean
   count: number
   itemType: 'WEAPON' | 'SKILL'
+  exclusiveGroup?: string | null
+  /** 仅武器有效：SHARP / BLUNT / MAGIC */
+  damageType?: string
   buffs: BuffSummaryDto[]
 }
 

@@ -23,19 +23,26 @@ namespace BattleBackend.DTOs
         // 提取公共特性的基类
         public abstract record ItemDto
         {
+            public int Id { get; init; }
             public string Name { get; init; } = string.Empty;
             public string Profession { get; init; } = string.Empty;
             public string? SecondProfession { get; init; }
             public string Description { get; init; } = string.Empty;
             public int RareLevel { get; init; }
+            public string? ExclusiveGroup { get; init; }
             public List<BuffSummaryDto> Buffs { get; init; } = new();
         }
 
         public record SkillDto : ItemDto
         {
-           public bool isPassive { get; set; }
+            public bool isPassive { get; set; }
         }
-        public record WeaponDto : ItemDto;
+
+        public record WeaponDto : ItemDto
+        {
+            /// <summary>SHARP 锐器 / BLUNT 钝器 / MAGIC 法器</summary>
+            public string DamageType { get; init; } = "BLUNT";
+        }
         
         public record BuffSummaryDto
         {

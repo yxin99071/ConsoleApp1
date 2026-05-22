@@ -61,6 +61,9 @@ namespace BattleBackend.DTOs
         public bool IsUnique { get; set; }
         public int Count { get; set; }
         public string ItemType { get; set; } = string.Empty;   // "WEAPON" | "SKILL"
+        public string? ExclusiveGroup { get; set; }
+        /// <summary>仅武器有效：SHARP / BLUNT / MAGIC</summary>
+        public string? DamageType { get; set; }
         public List<BuffSummaryDto> Buffs { get; set; } = new();
     }
 

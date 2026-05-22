@@ -11,6 +11,8 @@ const props = defineProps<{
   battleInitData?: {
     attackerId: string;
     defenderId: string;
+    deckWeaponIds?: number[];
+    deckSkillIds?: number[];
     timestamp?: number;
   };
 }>();
@@ -80,6 +82,8 @@ async function runLiveFight() {
       props.battleInitData.attackerId,
       props.battleInitData.defenderId,
       undefined,
+      props.battleInitData.deckWeaponIds,
+      props.battleInitData.deckSkillIds,
     );
     if (res) {
       battleEvents.value = res;

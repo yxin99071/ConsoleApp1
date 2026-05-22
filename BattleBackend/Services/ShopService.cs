@@ -276,36 +276,39 @@ namespace BattleBackend.Services
 
             var weapons = user.UserWeaponLinks.Select(uw => new OwnedItemDto
             {
-                Id          = uw.Weapon.Id,
-                Name        = uw.Weapon.Name,
-                Description = uw.Weapon.Description,
-                Profession  = uw.Weapon.Profession,
+                Id               = uw.Weapon.Id,
+                Name             = uw.Weapon.Name,
+                Description      = uw.Weapon.Description,
+                Profession       = uw.Weapon.Profession,
                 SecondProfession = uw.Weapon.SecondProfession,
-                RareLevel   = uw.Weapon.RareLevel,
-                IsPassive   = false,
-                IsUnique    = uw.Weapon.IsUnique,
-                Count       = uw.Count,
-                ItemType    = "WEAPON",
-                Buffs       = uw.Weapon.WeaponBuffs
-                                .Select(wb => wb.Buff.ToDto())
-                                .ToList()
+                RareLevel        = uw.Weapon.RareLevel,
+                IsPassive        = false,
+                IsUnique         = uw.Weapon.IsUnique,
+                Count            = uw.Count,
+                ItemType         = "WEAPON",
+                DamageType       = uw.Weapon.DamageType,
+                ExclusiveGroup   = uw.Weapon.ExclusiveGroup,
+                Buffs            = uw.Weapon.WeaponBuffs
+                                     .Select(wb => wb.Buff.ToDto())
+                                     .ToList()
             }).ToList();
 
             var skills = user.UserSkillLinks.Select(us => new OwnedItemDto
             {
-                Id          = us.Skill.Id,
-                Name        = us.Skill.Name,
-                Description = us.Skill.Description,
-                Profession  = us.Skill.Profession,
+                Id               = us.Skill.Id,
+                Name             = us.Skill.Name,
+                Description      = us.Skill.Description,
+                Profession       = us.Skill.Profession,
                 SecondProfession = us.Skill.SecondProfession,
-                RareLevel   = us.Skill.RareLevel,
-                IsPassive   = us.Skill.IsPassive,
-                IsUnique    = us.Skill.IsUnique,
-                Count       = us.Count,
-                ItemType    = "SKILL",
-                Buffs       = us.Skill.SkillBuffs
-                                .Select(sb => sb.Buff.ToDto())
-                                .ToList()
+                RareLevel        = us.Skill.RareLevel,
+                IsPassive        = us.Skill.IsPassive,
+                IsUnique         = us.Skill.IsUnique,
+                Count            = us.Count,
+                ItemType         = "SKILL",
+                ExclusiveGroup   = us.Skill.ExclusiveGroup,
+                Buffs            = us.Skill.SkillBuffs
+                                     .Select(sb => sb.Buff.ToDto())
+                                     .ToList()
             }).ToList();
 
             return new InventoryDto

@@ -10,7 +10,9 @@ export interface BuffSummaryDto {
 export interface FightRequestDto {
   attacker: string|undefined; // 对应 attackerId
   defender: string|undefined; // 对应 defenderId
-  history: string|undefined;//对应历史对战
+  history: string|undefined;  // 对应历史对战
+  deckWeaponIds?: number[];   // 攻击方携带的武器 ID 列表
+  deckSkillIds?: number[];    // 攻击方携带的技能 ID 列表
 }
 
 export interface PlayerBattleInstance {
@@ -25,6 +27,7 @@ export interface PlayerBattleInstance {
 
 // 2. 技能与武器的基类 (对应 C# 的 ItemDto)
 export interface ItemDto {
+  id: number;
   name: string;
   profession: string;
   secondProfession?: string;
@@ -32,13 +35,17 @@ export interface ItemDto {
   buffs: BuffSummaryDto[];
   isPassive?: boolean;
   rareLevel: number;
+  exclusiveGroup?: string | null;
 }
 
-// 3. 具体实现 (目前字段与基类一致)
+// 3. 具体实现
 export interface SkillDto extends ItemDto {
-    isPassive:boolean
+  isPassive: boolean;
 }
-export interface WeaponDto extends ItemDto {}
+export interface WeaponDto extends ItemDto {
+  /** SHARP 锐器 / BLUNT 钝器 / MAGIC 法器 */
+  damageType: string;
+}
 
 // 4. 玩家/大厅个人信息 (对应 InformationDto)
 export interface InformationDto {

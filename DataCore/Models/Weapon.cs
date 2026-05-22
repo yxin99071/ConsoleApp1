@@ -3,6 +3,8 @@ namespace DataCore.Models
 {
     public class Weapon:Item
     {
+        /// <summary>武器伤害类型：SHARP 锐器 / BLUNT 钝器 / MAGIC 法器</summary>
+        public string DamageType { get; set; } = "BLUNT";
         public List<WeaponBuff> WeaponBuffs { get; set; } = new();
         public List<UserWeapon> UserWeaponLink { get; set; } = new();
         public Weapon Clone()
@@ -19,6 +21,8 @@ namespace DataCore.Models
                 CoefficientIntelligence = this.CoefficientIntelligence,
                 RareLevel = this.RareLevel,
                 Tags = this.Tags?.ToList() ?? new(),
+                DamageType = this.DamageType,
+                ExclusiveGroup = this.ExclusiveGroup,
 
                 // 重要：深拷贝 Buff，保证每个玩家拿到的武器 Buff 状态独立
                 WeaponBuffs = this.WeaponBuffs?.Select(wb => wb.Clone()).ToList() ?? new(),

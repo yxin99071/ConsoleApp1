@@ -1,4 +1,34 @@
 // src/utils/constants.ts
+export const DAMAGE_TYPE_MAP: Record<string, {
+  label:       string
+  icon:        string
+  color:       string   // Tailwind text color
+  bgColor:     string   // Tailwind bg color (faint)
+  borderColor: string   // Tailwind border color
+}> = {
+  SHARP: {
+    label:       '锐器',
+    icon:        '🗡️',
+    color:       'text-red-400',
+    bgColor:     'bg-red-500/10',
+    borderColor: 'border-red-500/40',
+  },
+  BLUNT: {
+    label:       '钝器',
+    icon:        '🔨',
+    color:       'text-yellow-400',
+    bgColor:     'bg-yellow-500/10',
+    borderColor: 'border-yellow-500/40',
+  },
+  MAGIC: {
+    label:       '法器',
+    icon:        '✨',
+    color:       'text-violet-400',
+    bgColor:     'bg-violet-500/10',
+    borderColor: 'border-violet-500/40',
+  },
+}
+
 
 export const PROFESSION_MAP: Record<string, {
   icon:         string  // emoji icon

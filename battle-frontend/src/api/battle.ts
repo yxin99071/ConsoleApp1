@@ -31,23 +31,26 @@ export const getProfile = async (id?: string): Promise<InformationDto> => {
   return res.data;
 };
 
-export const postFight = async (attackerId:string|undefined,defenderId:string|undefined,historyId:string|undefined) => {
+export const postFight = async (
+  attackerId: string | undefined,
+  defenderId: string | undefined,
+  historyId: string | undefined,
+  deckWeaponIds?: number[],
+  deckSkillIds?: number[]
+) => {
   try {
-    
-    const data:FightRequestDto = 
-    {
-        attacker:attackerId?.toString(),
-        defender:defenderId?.toString(),
-        history:historyId?.toString()      
-    }
-    // 这里的路径根据你的 Vite/Webpack 配置的 proxy 或 baseURL 决定
+    const data: FightRequestDto = {
+      attacker: attackerId?.toString(),
+      defender: defenderId?.toString(),
+      history:  historyId?.toString(),
+      deckWeaponIds,
+      deckSkillIds,
+    };
     const response = await api.post('/battle/fight', data);
-    
-    // 按照你的要求，如果返回为空或异常，由组件层处理
     return response.data;
   } catch (error) {
     console.error('API [postFight] Error:', error);
-    throw error; // 抛出错误供组件内的 try-catch 捕获
+    throw error;
   }
 };
 

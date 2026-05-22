@@ -74,7 +74,10 @@ namespace BattleBackend.Controllers
                     if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id)
                         && int.TryParse(fightRequestDto.defender,out int enemyId))
                     {
-                        await _battleService.ExecuteFight(id, enemyId);//json
+                        await _battleService.ExecuteFight(
+                            id, enemyId,
+                            fightRequestDto.DeckWeaponIds,
+                            fightRequestDto.DeckSkillIds);
                         var jsonEvents = JsonLogger.GetEvents();
                         return Ok(jsonEvents);
                     }

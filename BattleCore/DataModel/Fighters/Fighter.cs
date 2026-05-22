@@ -82,6 +82,35 @@ namespace BattleCore.DataModel.Fighters
         }
         public abstract void SetFitDamage(DamageInfo damageInfo);  
         
+        /// <summary>
+        /// 应用出战卡组：从已加载的武器/技能中只保留卡组指定的内容。
+        /// 传入空列表表示空卡组（只用拳头）；传 null 表示不做限制（保留全部）。
+        /// </summary>
+        public void ApplyDeck(List<int> deckWeaponIds, List<int> deckSkillIds)
+        {
+            // --- 武器 ---
+            var wCounts = deckWeaponIds.GroupBy(id => id)
+                                       .ToDictionary(g => g.Key, g => g.Count());
+            var newWeapons = new List<Weapon>();
+            foreach (var (wId, count) in wCounts)
+            {
+                var copies = Weapons.Where(w => w.Id == wId).Take(count).ToList();
+                newWeapons.AddRange(copies);
+            }
+            Weapons = newWeapons;
+
+            // --- 技能 ---
+            var sCounts = deckSkillIds.GroupBy(id => id)
+                                      .ToDictionary(g => g.Key, g => g.Count());
+            var newSkills = new List<Skill>();
+            foreach (var (sId, count) in sCounts)
+            {
+                var copies = Skills.Where(s => s.Id == sId).Take(count).ToList();
+                newSkills.AddRange(copies);
+            }
+            Skills = newSkills;
+        }
+
         public void ClearAllEA()
         {
             CauseDamageEA = null;

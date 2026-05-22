@@ -54,21 +54,26 @@ namespace BattleBackend.DTOs
 
         public static SkillDto ToDto(this Skill skill) => new()
         {
+            Id = skill.Id,
             Name = skill.Name,
             Profession = skill.Profession,
             Description = skill.Description,
             isPassive = skill.IsPassive,
             RareLevel = skill.RareLevel,
             SecondProfession = skill.SecondProfession,
+            ExclusiveGroup = skill.ExclusiveGroup,
             Buffs = skill.SkillBuffs.Select(sb => sb.Buff.ToDto()).ToList()
         };
         public static WeaponDto ToDto(this Weapon weapon) => new()
         {
+            Id = weapon.Id,
             RareLevel = weapon.RareLevel,
             Name = weapon.Name,
             Profession = weapon.Profession,
             Description = weapon.Description,
             SecondProfession = weapon.SecondProfession,
+            DamageType = weapon.DamageType,
+            ExclusiveGroup = weapon.ExclusiveGroup,
             Buffs = weapon.WeaponBuffs.Select(sb => sb.Buff.ToDto()).ToList()
         };
         public static BuffSummaryDto ToDto(this Buff buff) => new()
@@ -83,28 +88,31 @@ namespace BattleBackend.DTOs
 
         public static AwardItemDto ToAwardItemDto(this Weapon weapon) => new()
         {
-            Id          = weapon.Id,
-            Name        = weapon.Name,
-            Description = weapon.Description,
-            Profession  = weapon.Profession,
+            Id               = weapon.Id,
+            Name             = weapon.Name,
+            Description      = weapon.Description,
+            Profession       = weapon.Profession,
             SecondProfession = weapon.SecondProfession,
-            RareLevel   = weapon.RareLevel,
-            IsPassive   = false,
-            IsUnique    = weapon.IsUnique,
-            Buffs       = weapon.WeaponBuffs.Select(wb => wb.Buff.ToDto()).ToList()
+            RareLevel        = weapon.RareLevel,
+            IsPassive        = false,
+            IsUnique         = weapon.IsUnique,
+            DamageType       = weapon.DamageType,
+            ExclusiveGroup   = weapon.ExclusiveGroup,
+            Buffs            = weapon.WeaponBuffs.Select(wb => wb.Buff.ToDto()).ToList()
         };
 
         public static AwardItemDto ToAwardItemDto(this Skill skill) => new()
         {
-            Id          = skill.Id,
-            Name        = skill.Name,
-            Description = skill.Description,
-            Profession  = skill.Profession,
+            Id               = skill.Id,
+            Name             = skill.Name,
+            Description      = skill.Description,
+            Profession       = skill.Profession,
             SecondProfession = skill.SecondProfession,
-            RareLevel   = skill.RareLevel,
-            IsPassive   = skill.IsPassive,
-            IsUnique    = skill.IsUnique,
-            Buffs       = skill.SkillBuffs.Select(sb => sb.Buff.ToDto()).ToList()
+            RareLevel        = skill.RareLevel,
+            IsPassive        = skill.IsPassive,
+            IsUnique         = skill.IsUnique,
+            ExclusiveGroup   = skill.ExclusiveGroup,
+            Buffs            = skill.SkillBuffs.Select(sb => sb.Buff.ToDto()).ToList()
         };
     }
 }

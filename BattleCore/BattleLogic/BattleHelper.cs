@@ -69,7 +69,8 @@ namespace BattleCore.BattleLogic
             source.CauseDamage(damageInfo);
             taker.TakeDamage(damageInfo);
 
-            
+            // 被动技能联动：检查是否有与该武器伤害类型挂钩的被动
+            TriggerPassiveSkills(source, taker, weapon.DamageType);
         }
         public static void DecideAction(Fighter source, Fighter? taker)
         {
@@ -229,6 +230,64 @@ namespace BattleCore.BattleLogic
                 {
                     var buffLevel = skill.SkillBuffs.SingleOrDefault(sb => sb.Buff.Name == extracted.Name)?.Level ?? 1;
                     source.LoadBuff(extracted, null, buffLevel);
+                }
+            }
+        }
+        #endregion
+
+        #region Passive Skills
+        /// <summary>
+        /// 在武器攻击后触发持有者的被动技能。
+        /// 被动技能的 Tags 用来声明触发条件：
+        ///   - Tags 为空 → 任何武器攻击都触发（通用被动）
+        ///   - Tags 包含 "被动_SHARP" / "被动_BLUNT" / "被动_MAGIC" → 对应伤害类型才触发
+        /// </summary>
+        public static void TriggerPassiveSkills(Fighter source, Fighter taker, string damageType)
+        {
+            var passives = source.Skills.Where(s => s.IsPassive).ToList();
+            if (passives.Count == 0) return;
+
+            foreach (var passive in passives)
+            {
+                // 判断该被动是否响应当前武器的伤害类型
+                if (passive.Tags.Count > 0)
+                {
+                    var requiredTag = $"被动_{damageType}"; // e.g. "被动_SHARP"
+                    if (!passive.Tags.Contains(requiredTag)) continue;
+                }
+
+                // 计算被动附加伤害（系数 × 属性）
+                double bonusDamage = source.Agility * passive.CoefficientAgility
+                                   + source.Strength * passive.CoefficientStrength
+                                   + source.Intelligence * passive.CoefficientIntelligence;
+
+                if (bonusDamage > 0)
+                {
+                    JsonLogger.LogAction(source.Name, "Passive", passive.Name);
+                    var detail = new DamageDetail
+                    {
+                        DirectSource = passive.Name,
+                        DamageType   = StaticDataHelper.SkillDamage,
+                        tags         = new List<string> { StaticDataHelper.UnDodgeable }
+                    };
+                    var damageInfo = new DamageInfo(source, taker, bonusDamage)
+                    {
+                        damageDetail = detail
+                    };
+                    source.CauseDamage(damageInfo);
+                    taker.TakeDamage(damageInfo);
+                }
+
+                // 被动的自身 Buff 效果（如回血、增益）
+                if (passive.SkillBuffs.Count > 0)
+                {
+                    var allExtracted = StaticDataHelper.ExtractBuffs(passive.SkillBuffs);
+                    foreach (var extracted in allExtracted.Where(b => b.IsOnSelf))
+                    {
+                        var buffLevel = passive.SkillBuffs
+                            .SingleOrDefault(sb => sb.Buff.Name == extracted.Name)?.Level ?? 1;
+                        source.LoadBuff(extracted, null, buffLevel);
+                    }
                 }
             }
         }

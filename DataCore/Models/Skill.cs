@@ -25,6 +25,7 @@ namespace DataCore.Models
                 CoefficientIntelligence = this.CoefficientIntelligence,
                 RareLevel = this.RareLevel,
                 Tags = this.Tags?.ToList() ?? new(),
+                ExclusiveGroup = this.ExclusiveGroup,
 
                 // 重要：深拷贝 Buff，保证每个玩家拿到的武器 Buff 状态独立
                 SkillBuffs = this.SkillBuffs?.Select(wb => wb.Clone()).ToList() ?? new(),

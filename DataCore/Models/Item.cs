@@ -18,6 +18,7 @@ namespace DataCore.Models
         public double CoefficientStrength { get; set; }
         public double CoefficientIntelligence { get; set; }
         public bool IsUnique { get; set; } = false;
+        public string? ExclusiveGroup { get; set; } = null;
         public List<string> Tags { get; set; } = default!;
     }
 }
