@@ -873,9 +873,28 @@ namespace DataCore.Services
         public async Task<List<TempAwardList>> GetAwardList(int id)
         {
             return await _context.TempAwardLists
-                .Include(b=>b.Skills)
-                .Include(b=>b.Weapons)
-                .Where(t => t.UserId == id).ToListAsync();
+                .Include(t => t.Skills).ThenInclude(s => s.SkillBuffs).ThenInclude(sb => sb.Buff)
+                .Include(t => t.Weapons).ThenInclude(w => w.WeaponBuffs).ThenInclude(wb => wb.Buff)
+                .Where(t => t.UserId == id)
+                .ToListAsync();
+        }
+
+        public async Task<TempAwardList?> GetTempAwardListByIdAsync(int id)
+        {
+            return await _context.TempAwardLists
+                .Include(t => t.Skills).ThenInclude(s => s.SkillBuffs).ThenInclude(sb => sb.Buff)
+                .Include(t => t.Weapons).ThenInclude(w => w.WeaponBuffs).ThenInclude(wb => wb.Buff)
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public void RemoveTempAwardList(TempAwardList award)
+        {
+            _context.TempAwardLists.Remove(award);
+        }
+
+        public async Task<int> GetPendingAwardCountAsync(int userId)
+        {
+            return await _context.TempAwardLists.CountAsync(t => t.UserId == userId);
         }
         public async Task InsertAwardList(TempAwardList tempAwardList) =>await _context.TempAwardLists.AddAsync(tempAwardList);
         public async Task<Skill?> GetSkillById(int skillId, bool noTracking = true) =>await _context.Skills.SingleOrDefaultAsync(s=>s.Id == skillId);
@@ -883,7 +902,7 @@ namespace DataCore.Services
         //返回某个玩家的所有对战记录的文件目录dto
         public async Task<List<BattleRecord>> GetUserBattleHistoryAsync(int userId)
         {
-            // 这里的 _context 是你的 EF DbContext
+            
             return await _context.BattleRecords
                 .Where(r => r.WinnerId == userId.ToString() || r.LoserId == userId.ToString())
                 .OrderByDescending(r => r.CreatedTime) // 按时间倒序，最新的在前面

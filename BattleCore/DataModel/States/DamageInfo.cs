@@ -1,12 +1,12 @@
-﻿using BattleLogic.DataModel.Fighters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataCore.Models;
+using BattleCore.DataModel.Fighters;
 
-namespace BattleLogic.DataModel.States
+namespace BattleCore.DataModel.States
 {
     public class DamageInfo
     {

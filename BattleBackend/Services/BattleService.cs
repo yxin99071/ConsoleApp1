@@ -42,6 +42,32 @@ namespace BattleBackend.Services
 
         }
         internal async Task<List<BattleRecord>> GetBattleRecordListAsync(int id) => await _dataHelper.GetUserBattleHistoryAsync(id);
+
+        internal async Task<List<BattleRecordDto>> GetBattleRecordListDto(int userId)
+        {
+            var records = await _dataHelper.GetUserBattleHistoryAsync(userId);
+            var result  = new List<BattleRecordDto>();
+
+            foreach (var record in records)
+            {
+                int.TryParse(record.WinnerId, out int winnerId);
+                int.TryParse(record.LoserId,  out int loserId);
+
+                bool isWin     = winnerId == userId;
+                int  opponentId = isWin ? loserId : winnerId;
+
+                var opponent = await _dataHelper.GetUserById(opponentId);
+
+                result.Add(new BattleRecordDto
+                {
+                    Id           = record.Id,
+                    IsWin        = isWin,
+                    OpponentName = opponent?.Name ?? "未知玩家",
+                    CreatedTime  = record.CreatedTime,
+                });
+            }
+            return result;
+        }
         internal async Task<string> ExecuteFight(int id, int enemyId)
         {
             StaticDataHelper.BuffPool = await _dataHelper.GetAllBuffs();
@@ -52,10 +78,12 @@ namespace BattleBackend.Services
                 return "";
             Fighter user_fighter = InitialFighter(user);
             Fighter enemy_fighter = InitialFighter(enemy);
+            // 影子对决：两个 Fighter 来自同一个 User，前端按名字区分，必须保证名字唯一
+            if (user.Id == enemy.Id)
+                enemy_fighter.Name += " (影)";
 
             BattleManager.Initial(new List<Fighter> { user_fighter, enemy_fighter });
             //战斗与结果
-
             var isWin =BattleManager.BattleSimulation(user_fighter, enemy_fighter);
             //包含了《双方》的对战结果的奖励,如果是影子挑战则只包含一个元素
             var awardInfo  =  BattleManager.SetBattleResult(user, enemy, isWin);
@@ -115,9 +143,9 @@ namespace BattleBackend.Services
                 //处理非职业技能
                 if (award.NormalSkillCount > 0)
                 {
-                    for (int i = 0; i < award.NormalWeaponCount; i++)
+                    for (int i = 0; i < award.NormalSkillCount; i++)
                     {
-                        var selectedSkills = await GetAvailibleItems<Skill>(allLockedSkills, new List<string> { award.user.Profession! });
+                        var selectedSkills = await GetAvailibleItems<Skill>(allLockedSkills, new List<string>());
                         if (selectedSkills.Count == 0)
                             break;
                         await _dataHelper.InsertAwardList(new TempAwardList
@@ -131,9 +159,9 @@ namespace BattleBackend.Services
                 //处理职业技能
                 if (award.SpecialSkillCount > 0)
                 {
-                    for (int i = 0; i < award.NormalWeaponCount; i++)
+                    for (int i = 0; i < award.SpecialSkillCount; i++)
                     {
-                        var selectedSkills = await GetAvailibleItems<Skill>(allLockedSkills, new List<string>());
+                        var selectedSkills = await GetAvailibleItems<Skill>(allLockedSkills, new List<string> { award.user.Profession! });
                         if (selectedSkills.Count == 0)
                             break;
                         await _dataHelper.InsertAwardList(new TempAwardList
@@ -238,37 +266,84 @@ namespace BattleBackend.Services
         }
         internal async Task<List<AwardListDto>> GetAwardsList(int id)
         {
-            //返回奖励列表
-            var result = new List<AwardListDto>();
-            var user = await _dataHelper.GetUserById(id);
-            if (user == null)
-                return new List<AwardListDto>();
-
             var awardList = await _dataHelper.GetAwardList(id);
+            var result = new List<AwardListDto>();
+
             foreach (var award in awardList)
             {
-                var tempAward = new AwardListDto();
-                if (award.Skills.Count > 0)
-                {
-                    tempAward.Type = "SKILL";
-                    foreach (var skill in award.Skills)
-                    {
-                        tempAward.Items.Add(skill);
-                    }
-                }
+                var dto = new AwardListDto { Id = award.Id, AwardLevel = award.AwardLevel };
+
                 if (award.Weapons.Count > 0)
                 {
-                    
-                    foreach (var weapon in award.Weapons)
+                    dto.Type = "WEAPON";
+                    dto.Items = award.Weapons.Select(w => new AwardItemDto
                     {
-                        tempAward.Type = "WEAPON";
-                        tempAward.Items.Add(weapon);
-                    }
+                        Id = w.Id,
+                        Name = w.Name,
+                        Description = w.Description,
+                        Profession = w.Profession,
+                        SecondProfession = w.SecondProfession,
+                        RareLevel = w.RareLevel,
+                        IsPassive = false,
+                        Buffs = w.WeaponBuffs.Select(wb => wb.Buff.ToDto()).ToList()
+                    }).ToList();
                 }
-                result.Add(tempAward);
+                else if (award.Skills.Count > 0)
+                {
+                    dto.Type = "SKILL";
+                    dto.Items = award.Skills.Select(s => new AwardItemDto
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        Description = s.Description,
+                        Profession = s.Profession,
+                        SecondProfession = s.SecondProfession,
+                        RareLevel = s.RareLevel,
+                        IsPassive = s.IsPassive,
+                        Buffs = s.SkillBuffs.Select(sb => sb.Buff.ToDto()).ToList()
+                    }).ToList();
+                }
+
+                result.Add(dto);
             }
             return result;
         }
+        internal async Task<bool> ClaimAward(int userId, int awardListId, int itemId)
+        {
+            var award = await _dataHelper.GetTempAwardListByIdAsync(awardListId);
+            if (award == null || award.UserId != userId)
+                return false;
+
+            var user = await _dataHelper.GetUserById(userId, isTracking: true);
+            if (user == null) return false;
+
+            bool isWeapon = award.Weapons.Any(w => w.Id == itemId);
+            bool isSkill  = award.Skills.Any(s => s.Id == itemId);
+            if (!isWeapon && !isSkill)
+                return false;
+
+            if (isWeapon)
+            {
+                var existing = user.UserWeaponLinks.FirstOrDefault(uw => uw.WeaponId == itemId);
+                if (existing != null) existing.Count++;
+                else user.UserWeaponLinks.Add(new UserWeapon { UserId = userId, WeaponId = itemId, Count = 1 });
+                user.LastWeaponAward = award.AwardLevel;
+            }
+            else
+            {
+                var existing = user.UserSkillLinks.FirstOrDefault(us => us.SkillId == itemId);
+                if (existing != null) existing.Count++;
+                else user.UserSkillLinks.Add(new UserSkill { UserId = userId, SkillId = itemId, Count = 1 });
+                user.LastSkillAward = award.AwardLevel;
+            }
+
+            _dataHelper.RemoveTempAwardList(award);
+            await _dataHelper.SaveChangesAsync();
+            return true;
+        }
+
+        internal async Task<int> GetPendingAwardCount(int userId)
+            => await _dataHelper.GetPendingAwardCountAsync(userId);
         internal async Task<User?> GetUserById(int id)
         {
             return await _dataHelper.GetUserById(id);

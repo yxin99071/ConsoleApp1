@@ -1,5 +1,6 @@
 import api from './auth'; // 使用之前封装好的带拦截器的 axios 实例
-import type { InformationDto,InitProfileDto,FightRequestDto } from '../types/battle'; // 假设之前的 InformationDto 在这里
+import type { InformationDto, InitProfileDto, FightRequestDto } from '../types/battle';
+import type { BattleEvent } from '../types/battleEvents';
 
 // 简略玩家信息 DTO
 export interface FighterDto {
@@ -50,7 +51,30 @@ export const postFight = async (attackerId:string|undefined,defenderId:string|un
   }
 };
 
-export const initProfile =async (data: InitProfileDto) => {
+export const initProfile = async (data: InitProfileDto) => {
   const res = await api.post('user/init', data);
+  return res.data;
+};
+
+// ── 历史对局 ──────────────────────────────────────────────
+
+export interface BattleRecordDto {
+  id:           number;
+  isWin:        boolean;
+  opponentName: string;
+  createdTime:  string; // ISO 字符串
+}
+
+/** 获取当前用户的历史对局列表 */
+export const getBattleList = async (): Promise<BattleRecordDto[]> => {
+  const res = await api.get<BattleRecordDto[]>('/battle/battlelist');
+  return res.data;
+};
+
+/** 获取某场对局的完整事件流，直接喂给 FightReviewer */
+export const getBattleReplay = async (id: number): Promise<BattleEvent[]> => {
+  const res = await api.post<BattleEvent[]>('/battle/replay', id, {
+    headers: { 'Content-Type': 'application/json' },
+  });
   return res.data;
 };

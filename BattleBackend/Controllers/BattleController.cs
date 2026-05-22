@@ -23,17 +23,42 @@ namespace BattleBackend.Controllers
             _battleService = battleService;
         }
         
+        [HttpGet("awards")]
+        [Authorize]
+        public async Task<IActionResult> GetAwards()
+        {
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+                return BadRequest("找不到Id");
+            return Ok(await _battleService.GetAwardsList(id));
+        }
+
+        [HttpGet("awards/count")]
+        [Authorize]
+        public async Task<IActionResult> GetAwardCount()
+        {
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+                return BadRequest("找不到Id");
+            return Ok(await _battleService.GetPendingAwardCount(id));
+        }
+
+        [HttpPost("awards/claim")]
+        [Authorize]
+        public async Task<IActionResult> ClaimAward([FromBody] ClaimAwardDto dto)
+        {
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId))
+                return BadRequest("无法识别用户");
+            var success = await _battleService.ClaimAward(userId, dto.AwardListId, dto.ItemId);
+            return success ? Ok() : BadRequest("领取失败：奖励不存在或已过期");
+        }
+
+        // 保留旧路由兼容
         [HttpGet("GetWeaponAward")]
         [Authorize]
         public async Task<IActionResult> GetWeaponAward()
         {
-            if (int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
-            {
-                var Awards =await _battleService.GetAwardsList(id);
-                return Ok(Awards);
-
-            }
-            return BadRequest("找不到Id");
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+                return BadRequest("找不到Id");
+            return Ok(await _battleService.GetAwardsList(id));
         }
         [HttpPost("fight")]
         [Authorize]
@@ -62,12 +87,14 @@ namespace BattleBackend.Controllers
         }
         [HttpGet("battlelist")]
         [Authorize]
-        public async Task<IActionResult> GetBattleList([FromBody]int id)
+        public async Task<IActionResult> GetBattleList()
         {
-            var history = _battleService.GetBattleRecordListAsync(id);
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int id))
+                return BadRequest("找不到Id");
+            var history = await _battleService.GetBattleRecordListDto(id);
             return Ok(history);
         }
-        [HttpGet("replay")]
+        [HttpPost("replay")]
         public async Task<IActionResult> GetReplay([FromBody]int id)
         {
             // 1. 从数据库获取元数据

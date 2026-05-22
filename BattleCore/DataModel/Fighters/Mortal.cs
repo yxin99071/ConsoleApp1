@@ -1,4 +1,5 @@
-﻿using BattleLogic.DataModel.States;
+﻿using BattleCore.DataModel;
+using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Collections.Generic;
@@ -6,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.DataModel.Fighters
+namespace BattleCore.DataModel.Fighters
 {
     public class Mortal :Fighter
     {
         public Mortal(User user): base(user)
         {
-            Profession = "Magician";
+            Profession = "MORTAL";
         }
 
         public override void SetFitDamage(DamageInfo damageInfo)
@@ -20,7 +21,7 @@ namespace BattleLogic.DataModel.Fighters
             damageInfo.Damage += Agility*0.71 + Strength*0.71 + Intelligence * 0.71;
             var detail = new DamageDetail
             {
-                DamageType = StaticData.FistDamage,
+                DamageType = StaticDataHelper.FistDamage,
                 DirectSource = $"{this.Profession}'s Fist",
             };
             damageInfo.damageDetail = detail;
@@ -34,6 +35,8 @@ namespace BattleLogic.DataModel.Fighters
                     newBuff.DirectDamage = newBuff.CoefficientStrength * source.Strength;
                 if (newBuff.CoefficientAgility > 0)
                     newBuff.DirectDamage = newBuff.CoefficientAgility * source.Agility;
+                if (newBuff.CoefficientIntelligence > 0)
+                    newBuff.DirectDamage = newBuff.CoefficientAgility * source.Intelligence;
             }
             base.LoadBuff(newBuff, source, buffLevel);
         }

@@ -1,40 +1,53 @@
-﻿using System.Text.Encodings.Web;
+﻿using BattleCore.DataModel.Fighters;
+using DataCore.Models;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
-namespace BattleLogic
+namespace BattleCore
 {
     public static class JsonLogger
     {
         // 1. 账本：存储所有发生的战斗事件
         private static readonly List<BattleEvent> _events = new List<BattleEvent>();
         public static int _currentDepth = 0;
+
+        #region 回合日志
         private class DepthScope : IDisposable
         {
             public DepthScope() => _currentDepth++;
             public void Dispose() => _currentDepth--;
         }
-        // ---  回合管理 ---
+        // ---  回合管理:开始 ---
         public static void LogRoundBegin(string name)
         {
             Emit("RoundBegin", new Dictionary<string, object> { { "Unit", name } });
         }
-        // ---  伤害性 Buff 结算 (结算名称、等级、伤害) ---
-        public static void LogBuffTick(string unit, string buffName, int damage)
+        
+        // ---  伤害性 Buff 结算 (结算名称、伤害、剩余血量) ---
+        public static void LogBuffTick(string unit, string buffName, int damage, int remainHp)
         {
             Emit("BuffTick", new Dictionary<string, object> {
                 { "Unit", unit },
                 { "BuffName", buffName },
-                { "Damage", damage }
+                { "Damage", damage },
+                { "HP", remainHp }
             });
         }
-        // ---  Buff 时间结算 (结算名称、等级、剩余时间) ---
-        public static void LogBuffUpdate(string unit, string buffName, int level, int remainRound)
+        // ---  Buff 倒计时更新 (每回合结算后剩余回合数) ---
+        public static void LogBuffUpdate(string unit, string buffName, int remain)
         {
             Emit("BuffUpdate", new Dictionary<string, object> {
                 { "Unit", unit },
                 { "BuffName", buffName },
-                { "Level", level },
-                { "Remain", remainRound }
+                { "Remain", remain }
+            });
+        }
+        // ---  Buff 到期移除 ---
+        public static void LogBuffExpire(string target, string buffName)
+        {
+            Emit("BuffExpire", new Dictionary<string, object> {
+                { "Target", target },
+                { "BuffName", buffName }
             });
         }
 
@@ -65,6 +78,13 @@ namespace BattleLogic
             Console.WriteLine("\n[JSON PREVIEW]\n" + json);
             return json;
         }
+        public static List<BattleEvent> GetEvents()
+        {
+            // 返回一个副本，防止在序列化过程中 _events 被 Clear() 导致报错
+            return _events.ToList();
+        }
+
+
 
         public static void Clear() => _events.Clear();
 
@@ -72,32 +92,37 @@ namespace BattleLogic
         public static void LogAction(string actor, string type, string name)
         {
             Emit("Action", new Dictionary<string, object> {
-            { "Actor", actor }, { "Category", type }, { "Name", name }
+            { "Actor", actor }, { "Type", type }, { "Name", name }
         });
         }
 
         // A2 & R3: 挂载 Buff (对自己或对方)
-        public static void LogBuffApply(string target, string buffName,int buffLevel)
+        public static void LogBuffApply(string target, string buffName,int buffLevel,int lastRound)
         {
             Emit("BuffApply", new Dictionary<string, object> {
-            { "Target", target }, { "BuffName", buffName },{"BuffLevel",buffLevel }
+            { "Target", target }, { "BuffName", buffName },{"BuffLevel",buffLevel },{"LastRound",lastRound }
         });
         }
-
         // R1: 闪避
         public static void LogDodge(string target)
         {
             Emit("Dodge", new Dictionary<string, object> { { "Target", target } });
         }
-
         // R2: 扣血
-        public static void LogDamage(string target, int value, int remain)
+        public static void LogDamage(string target, int value, int remain,bool isCritical)
         {
             Emit("Damage", new Dictionary<string, object> {
-            { "Target", target }, { "Value", value }, { "HP", remain }
+            { "Target", target }, { "Value", value }, { "HP", remain },{"Critical", isCritical}
         });
         }
+        // R3: 回血
+        public static void LogHealing(string target, int value, int remain)
+        {
+            Emit("Healing", new Dictionary<string, object> {
+            { "Target", target }, { "Value", value }, { "HP", remain }
+        });
 
+        }
         // C1: 被动保命
         public static void LogPassive(string unit, string skillName)
         {
@@ -105,6 +130,90 @@ namespace BattleLogic
             { "Unit", unit }, { "SkillName", skillName }
         });
         }
+        #endregion
+
+        #region 对局开始与结束
+        public static void LogBattleStart(Fighter p1, Fighter p2, List<Buff> fullBuffList)
+        {
+            _events.Clear();
+            // 1. 玩家快照
+            var players = new[] { SerializeFighter(p1), SerializeFighter(p2) };
+
+            // 2. Buff 池快照（只提取 ID, 名称, 描述）
+            var buffLibrary = fullBuffList.Select(b => new {
+                b.Id,
+                b.Name,
+                b.IsOnSelf,
+                IsBuff = b.DamageCorrection > 1 || b.WoundCorrection < 1,
+                IsDeBuff = b.DamageCorrection < 1 || b.WoundCorrection > 1,
+                IsDamage = (b.CoefficientAgility + b.CoefficientIntelligence + b.CoefficientStrength) > 0,
+                b.LastRound,
+                b.Description
+            }).ToList();
+
+            Emit("BattleStart", new Dictionary<string, object> {
+            { "Players", players },
+            { "BuffLibrary", buffLibrary }
+        });
+        }
+        private static object SerializeFighter(Fighter f)
+        {
+            return new
+            {
+                f.Id,
+                f.Name,
+                Stats = new
+                {
+                    f.MaxHealth,
+                    f.Agility,
+                    f.Strength,
+                    f.Intelligence
+                },
+                Weapons = f.Weapons.Select(w => new {
+                    w.Profession,
+                    w.SecondProfession,
+                    w.RareLevel,
+                    w.Name,
+                    w.Description,
+                    // 这里只存 ID，前端通过 ID 去 BuffLibrary 匹配
+                    BuffIds = w.WeaponBuffs.Select(wb => wb.BuffId)
+                }),
+                Skills = f.Skills.Select(s => new {
+                    s.Profession,
+                    s.SecondProfession,
+                    s.IsPassive,
+                    s.RareLevel,
+                    s.Name,
+                    s.Description,
+                    BuffIds = s.SkillBuffs.Select(sb => sb.BuffId)
+                })
+            };
+        }
+        public static void LogBattleEnd(User preBattleUser, User postBattleUser, string winnerName)
+        {
+            Emit("BattleEnd", new Dictionary<string, object> {
+                { "Winner",   winnerName },
+                { "UserId",   postBattleUser.Id },
+                { "UserName", postBattleUser.Name },
+                { "LevelChange", new {
+                    From       = preBattleUser.Level,
+                    To         = postBattleUser.Level,
+                    IsLeveledUp= postBattleUser.Level > preBattleUser.Level
+                }},
+                { "ExperienceChange", new {
+                    Before = preBattleUser.Exp,
+                    After  = postBattleUser.Exp,
+                    Gained = postBattleUser.Exp - preBattleUser.Exp
+                }},
+                { "StatsChange", new {
+                    Health       = new { From = preBattleUser.Health,       To = postBattleUser.Health },
+                    Strength     = new { From = preBattleUser.Strength,     To = postBattleUser.Strength },
+                    Agility      = new { From = preBattleUser.Agility,      To = postBattleUser.Agility },
+                    Intelligence = new { From = preBattleUser.Intelligence, To = postBattleUser.Intelligence }
+                }}
+            });
+        }
+        #endregion
 
         // 事件的数据结构
         public class BattleEvent

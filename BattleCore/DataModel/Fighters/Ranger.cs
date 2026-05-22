@@ -1,4 +1,5 @@
-﻿using BattleLogic.DataModel.States;
+﻿using BattleCore.DataModel;
+using BattleCore.DataModel.States;
 using DataCore.Models;
 using System;
 using System.Collections.Generic;
@@ -6,22 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleLogic.DataModel.Fighters
+namespace BattleCore.DataModel.Fighters
 {
     public class Ranger : Fighter
     {
         public Ranger(User user): base(user)
         {
-            Profession = "Ranger";
+            Profession = "RANGER";
+            CraticalRate += StaticDataHelper.CalculateCriticalRate(Agility) / 2;
+            CraticalDamage += StaticDataHelper.CalculateCriticalDamage(0.2*Agility) / 2;
         }
         public override void SetFitDamage(DamageInfo damageInfo)
         {
             damageInfo.Damage += Agility * 1.3;
             var detail = new DamageDetail
             {
-                DamageType = StaticData.FistDamage,
+                DamageType = StaticDataHelper.FistDamage,
                 DirectSource = $"{this.Profession}'s Fist",
-                tags = [StaticData.UnFightBackable, StaticData.UnDodgeable]
+                tags = [StaticDataHelper.UnFightBackable, StaticDataHelper.UnDodgeable]
             };
             damageInfo.damageDetail = detail;
         }
@@ -34,6 +37,8 @@ namespace BattleLogic.DataModel.Fighters
                     newBuff.DirectDamage = newBuff.CoefficientStrength * source.Strength;
                 if (newBuff.CoefficientAgility > 0)
                     newBuff.DirectDamage = newBuff.CoefficientAgility * source.Agility;
+                if (newBuff.CoefficientIntelligence > 0)
+                    newBuff.DirectDamage = newBuff.CoefficientAgility * source.Intelligence;
             }
             base.LoadBuff(newBuff, source,buffLevel);
         }

@@ -7,6 +7,8 @@ import type { InformationDto, SkillDto } from '../types/battle';
 import type { FighterDto } from '../api/battle';
 import CharacterCard from '../components/game/CharacterCard.vue';
 import ItemCard from '../components/game/ItemCard.vue';
+import BackpackView from '../components/game/BackpackView.vue';
+import { getAwardCount } from '../api/award';
 
 const router = useRouter();
 
@@ -19,6 +21,23 @@ const myProfile = ref<InformationDto | null>(null);
 const targetProfile = ref<InformationDto | null>(null);
 const isTargetLoading = ref(false);
 
+// --- 背包 ---
+const showBackpack = ref(false);
+const pendingAwardCount = ref(0);
+
+async function refreshAwardCount() {
+  try {
+    pendingAwardCount.value = await getAwardCount();
+  } catch {
+    pendingAwardCount.value = 0;
+  }
+}
+
+function handleBackpackClose(refreshed: boolean) {
+  showBackpack.value = false;
+  if (refreshed) refreshAwardCount();
+}
+
 // --- 初始化 ---
 onMounted(async () => {
   try {
@@ -28,6 +47,7 @@ onMounted(async () => {
   } catch (err) {
     console.error("初始化大厅失败", err);
   }
+  await refreshAwardCount();
 });
 
 // --- 核心修复：影子判断与开关逻辑 ---
@@ -231,10 +251,34 @@ const isNpc = (name: string) => name.startsWith('NPC__') && name.endsWith('__NPC
     </main>
 
     <aside class="w-24 border-l border-white/5 bg-slate-900 flex flex-col items-center py-8 gap-6 shrink-0 z-30">
-      <button v-for="icon in ['🎒', '🏆', '⚙️']" :key="icon"
-      @click="router.push({ name: 'FightCenter' })"
-        class="w-12 h-12 rounded-full bg-white/5 hover:bg-indigo-600 hover:text-white transition-all text-xl flex items-center justify-center border border-white/10">{{
-        icon }}</button>
+
+      <!-- 背包按钮（带奖励角标） -->
+      <button @click="showBackpack = true" title="背包"
+              class="relative w-12 h-12 rounded-full bg-white/5 hover:bg-indigo-600 hover:text-white
+                     transition-all text-xl flex items-center justify-center border border-white/10">
+        🎒
+        <span v-if="pendingAwardCount > 0"
+              class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1
+                     bg-red-500 rounded-full text-white text-[10px] font-black
+                     flex items-center justify-center leading-none shadow-lg">
+          {{ pendingAwardCount > 9 ? '9+' : pendingAwardCount }}
+        </span>
+      </button>
+
+      <!-- 历史对局按钮 -->
+      <button @click="router.push({ name: 'FightCenter' })" title="历史对局"
+              class="w-12 h-12 rounded-full bg-white/5 hover:bg-indigo-600 hover:text-white
+                     transition-all text-xl flex items-center justify-center border border-white/10">
+        🏆
+      </button>
+
+      <!-- 设置（占位） -->
+      <button title="设置"
+              class="w-12 h-12 rounded-full bg-white/5 hover:bg-indigo-600 hover:text-white
+                     transition-all text-xl flex items-center justify-center border border-white/10">
+        ⚙️
+      </button>
+
       <div class="mt-auto"></div>
 
       <Transition name="pop">
@@ -247,6 +291,9 @@ const isNpc = (name: string) => name.startsWith('NPC__') && name.endsWith('__NPC
     </aside>
 
   </div>
+
+  <!-- 背包弹层 -->
+  <BackpackView v-if="showBackpack" @close="handleBackpackClose" />
 </template>
 <style scoped>
 /* 背景纹理 */
