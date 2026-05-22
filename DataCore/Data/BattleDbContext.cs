@@ -17,6 +17,9 @@ namespace DataCore.Data
         public DbSet<Buff> Buffs { get; set; }
         public DbSet<TempAwardList> TempAwardLists { get; set; }
         public DbSet<BattleRecord> BattleRecords { get; set; }
+        public DbSet<UserWeapon> UserWeapons { get; set; }
+        public DbSet<UserSkill> UserSkills { get; set; }
+        public DbSet<UserDailyShopSlot> UserDailyShopSlots { get; set; }
 
         public BattleDbContext(DbContextOptions<BattleDbContext> options) : base(options) { }
 
@@ -131,7 +134,16 @@ namespace DataCore.Data
                 entity.Property(us => us.Count).HasDefaultValue(1);
             });
 
+            // --- UserDailyShopSlot 配置 ---
+            modelBuilder.Entity<UserDailyShopSlot>(entity =>
+            {
+                entity.HasKey(s => s.Id);
 
+                entity.HasOne(s => s.User)
+                      .WithMany(u => u.DailyShopSlots)
+                      .HasForeignKey(s => s.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

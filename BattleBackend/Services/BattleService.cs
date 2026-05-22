@@ -73,9 +73,14 @@ namespace BattleBackend.Services
             StaticDataHelper.BuffPool = await _dataHelper.GetAllBuffs();
             var user = await _dataHelper.GetUserById(id);
             var enemy = await _dataHelper.GetUserById(enemyId);
-            
+
             if (user is null || enemy is null)
                 return "";
+
+            // 记录升级前等级，用于计算升级 LotteryPoint
+            int userLevelBefore  = user.Level;
+            int enemyLevelBefore = enemy.Level;
+
             Fighter user_fighter = InitialFighter(user);
             Fighter enemy_fighter = InitialFighter(enemy);
             // 影子对决：两个 Fighter 来自同一个 User，前端按名字区分，必须保证名字唯一
@@ -91,6 +96,33 @@ namespace BattleBackend.Services
             if (awardInfo.Count > 0)
                 foreach (var award in awardInfo)
                     await SetAward(award);
+
+            // ── LotteryPoint 发放 ──────────────────────────────────────────
+            var now = DateTime.UtcNow;
+
+            // 玩家本人：战斗奖励（30s 冷却）+ 升级奖励
+            bool userCooldownOk = user.LastBattleTime == null ||
+                                  (now - user.LastBattleTime.Value.ToUniversalTime()).TotalSeconds >= 30;
+            if (userCooldownOk)
+            {
+                user.LotteryPoint  += isWin ? 8 : 3;
+                user.LastBattleTime = now;
+            }
+            user.LotteryPoint += (user.Level - userLevelBefore) * 15;
+
+            // 对手（非影子对决）
+            if (user.Id != enemy.Id)
+            {
+                bool enemyCooldownOk = enemy.LastBattleTime == null ||
+                                       (now - enemy.LastBattleTime.Value.ToUniversalTime()).TotalSeconds >= 30;
+                if (enemyCooldownOk)
+                {
+                    enemy.LotteryPoint  += isWin ? 3 : 8;   // enemy 输/赢与 isWin 相反
+                    enemy.LastBattleTime = now;
+                }
+                enemy.LotteryPoint += (enemy.Level - enemyLevelBefore) * 15;
+            }
+
             //更新数据库
             await _dataHelper.UpgradeSinlgeUser(user);
             if (user.Id != enemy.Id)
@@ -328,6 +360,11 @@ namespace BattleBackend.Services
                 if (existing != null) existing.Count++;
                 else user.UserWeaponLinks.Add(new UserWeapon { UserId = userId, WeaponId = itemId, Count = 1 });
                 user.LastWeaponAward = award.AwardLevel;
+
+                // Unique 卡获得 → 商店对应槽位失效
+                var weapon = award.Weapons.First(w => w.Id == itemId);
+                if (weapon.IsUnique)
+                    await _dataHelper.InvalidateUniqueItemSlotAsync(userId, "WEAPON", itemId);
             }
             else
             {
@@ -335,6 +372,11 @@ namespace BattleBackend.Services
                 if (existing != null) existing.Count++;
                 else user.UserSkillLinks.Add(new UserSkill { UserId = userId, SkillId = itemId, Count = 1 });
                 user.LastSkillAward = award.AwardLevel;
+
+                // Unique 卡获得 → 商店对应槽位失效
+                var skill = award.Skills.First(s => s.Id == itemId);
+                if (skill.IsUnique)
+                    await _dataHelper.InvalidateUniqueItemSlotAsync(userId, "SKILL", itemId);
             }
 
             _dataHelper.RemoveTempAwardList(award);

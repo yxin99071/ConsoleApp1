@@ -19,6 +19,7 @@ namespace BattleBackend.DTOs
         public string? SecondProfession { get; set; }
         public int RareLevel { get; set; }
         public bool IsPassive { get; set; }
+        public bool IsUnique { get; set; }
         public List<BuffSummaryDto> Buffs { get; set; } = new();
     }
 

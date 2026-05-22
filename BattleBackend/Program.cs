@@ -79,6 +79,7 @@ namespace BattleBackend
             // 依赖注入 (注意：Controller 默认是自动注册的，除非你有特殊需求，否则不需要 AddTransient<BattleController>)
             builder.Services.AddScoped<JwtService>();
             builder.Services.AddScoped<BattleService>();
+            builder.Services.AddScoped<ShopService>();
 
             // CORS 配置 (保持你的不变)
             builder.Services.AddCors(options =>

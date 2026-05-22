@@ -55,8 +55,15 @@ const rare = computed(() => {
   return RARE_CONFIG[lvl] ?? RARE_CONFIG[1];
 });
 
+const FALLBACK_PROFESSION = {
+  icon: '👤', label: '未知', color: 'text-slate-400',
+  headerBg: 'bg-slate-700/50', badgeBg: 'bg-slate-700/90',
+  badgeBorder: 'border-slate-400/50', badgeText: 'text-slate-200',
+  stampOpacity: 'opacity-[0.05]',
+};
+
 const profession = computed(
-  () => PROFESSION_MAP[props.item.profession] ?? PROFESSION_MAP['MORTAL']
+  () => PROFESSION_MAP[props.item.profession] ?? PROFESSION_MAP['MORTAL'] ?? FALLBACK_PROFESSION
 );
 
 const isPassiveSkill = computed(() => props.type === '技能' && props.item.isPassive);

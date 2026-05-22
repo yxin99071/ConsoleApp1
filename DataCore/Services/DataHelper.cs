@@ -75,7 +75,9 @@ namespace DataCore.Services
                     user.Health,
                     user.Agility,
                     user.Strength,
-                    user.Intelligence
+                    user.Intelligence,
+                    user.LotteryPoint,
+                    user.LastBattleTime
                 });
 
                 await _context.SaveChangesAsync();
@@ -925,6 +927,143 @@ namespace DataCore.Services
                     JsonFileName = fileName
                 }
                 );
+        }
+
+        // ── 商店槽位 ──────────────────────────────────────────────────────────
+
+        public async Task<List<UserDailyShopSlot>> GetShopSlotsAsync(int userId)
+            => await _context.UserDailyShopSlots.Where(s => s.UserId == userId).ToListAsync();
+
+        public async Task AddShopSlotsAsync(List<UserDailyShopSlot> slots)
+            => await _context.UserDailyShopSlots.AddRangeAsync(slots);
+
+        public void RemoveShopSlots(List<UserDailyShopSlot> slots)
+            => _context.UserDailyShopSlots.RemoveRange(slots);
+
+        public async Task<UserDailyShopSlot?> GetShopSlotByIdAsync(int slotId)
+            => await _context.UserDailyShopSlots.FirstOrDefaultAsync(s => s.Id == slotId);
+
+        /// <summary>当玩家获得某张 Unique 卡时，删除商店里对应的槽位并释放锁。</summary>
+        public async Task InvalidateUniqueItemSlotAsync(int userId, string itemType, int itemId)
+        {
+            var slot = await _context.UserDailyShopSlots
+                .FirstOrDefaultAsync(s => s.UserId == userId
+                                       && s.ItemType == itemType
+                                       && s.ItemId  == itemId
+                                       && !s.IsPurchased);
+            if (slot != null)
+                _context.UserDailyShopSlots.Remove(slot);
+        }
+
+        // ── 背包操作 ──────────────────────────────────────────────────────────
+
+        /// <summary>将一件物品加入玩家背包（Count+1 或新建记录），不自动 SaveChanges。</summary>
+        public async Task AddItemToUserAsync(int userId, string itemType, int itemId)
+        {
+            if (itemType == "WEAPON")
+            {
+                var link = await _context.UserWeapons
+                    .FirstOrDefaultAsync(uw => uw.UserId == userId && uw.WeaponId == itemId);
+                if (link != null)
+                    link.Count++;
+                else
+                    await _context.UserWeapons.AddAsync(new UserWeapon { UserId = userId, WeaponId = itemId, Count = 1 });
+            }
+            else
+            {
+                var link = await _context.UserSkills
+                    .FirstOrDefaultAsync(us => us.UserId == userId && us.SkillId == itemId);
+                if (link != null)
+                    link.Count++;
+                else
+                    await _context.UserSkills.AddAsync(new UserSkill { UserId = userId, SkillId = itemId, Count = 1 });
+            }
+        }
+
+        /// <summary>
+        /// 熔炼一件物品：Count-1，Count=0 时删除记录。
+        /// 返回该物品的 RareLevel，找不到返回 0。
+        /// 不自动 SaveChanges。
+        /// </summary>
+        public async Task<int> SmeltItemAsync(int userId, string itemType, int itemId)
+        {
+            if (itemType == "WEAPON")
+            {
+                var link = await _context.UserWeapons
+                    .FirstOrDefaultAsync(uw => uw.UserId == userId && uw.WeaponId == itemId);
+                if (link == null) return 0;
+
+                var weapon = await _context.Weapons.FindAsync(itemId);
+                int rareLevel = weapon?.RareLevel ?? 0;
+
+                link.Count--;
+                if (link.Count <= 0)
+                    _context.UserWeapons.Remove(link);
+
+                return rareLevel;
+            }
+            else
+            {
+                var link = await _context.UserSkills
+                    .FirstOrDefaultAsync(us => us.UserId == userId && us.SkillId == itemId);
+                if (link == null) return 0;
+
+                var skill = await _context.Skills.FindAsync(itemId);
+                int rareLevel = skill?.RareLevel ?? 0;
+
+                link.Count--;
+                if (link.Count <= 0)
+                    _context.UserSkills.Remove(link);
+
+                return rareLevel;
+            }
+        }
+
+        /// <summary>直接更新玩家的 LotteryPoint。</summary>
+        public async Task UpdateUserLotteryPointAsync(int userId, int newBalance)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return;
+            user.LotteryPoint = newBalance;
+        }
+
+        // ── 带 Buff 的物品查询 ────────────────────────────────────────────────
+
+        public async Task<Weapon?> GetWeaponWithBuffsById(int id)
+            => await _context.Weapons
+                .Include(w => w.WeaponBuffs).ThenInclude(wb => wb.Buff)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+        public async Task<Skill?> GetSkillWithBuffsById(int id)
+            => await _context.Skills
+                .Include(s => s.SkillBuffs).ThenInclude(sb => sb.Buff)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+        /// <summary>判断玩家是否已持有某张 Unique 物品。</summary>
+        public async Task<bool> UserOwnsUniqueItemAsync(int userId, string itemType, int itemId)
+        {
+            if (itemType == "WEAPON")
+                return await _context.UserWeapons.AnyAsync(uw => uw.UserId == userId && uw.WeaponId == itemId);
+            else
+                return await _context.UserSkills.AnyAsync(us => us.UserId == userId && us.SkillId == itemId);
+        }
+
+        /// <summary>获取某稀有度下所有 R4 Unique 武器是否都已被玩家拥有。</summary>
+        public async Task<bool> AllR4OwnedAsync(int userId)
+        {
+            var allR4WeaponIds = await _context.Weapons
+                .Where(w => w.RareLevel == 4 && w.IsUnique).Select(w => w.Id).ToListAsync();
+            var allR4SkillIds = await _context.Skills
+                .Where(s => s.RareLevel == 4 && s.IsUnique).Select(s => s.Id).ToListAsync();
+
+            foreach (var id in allR4WeaponIds)
+                if (!await _context.UserWeapons.AnyAsync(uw => uw.UserId == userId && uw.WeaponId == id))
+                    return false;
+            foreach (var id in allR4SkillIds)
+                if (!await _context.UserSkills.AnyAsync(us => us.UserId == userId && us.SkillId == id))
+                    return false;
+
+            return true;
         }
     }
 }

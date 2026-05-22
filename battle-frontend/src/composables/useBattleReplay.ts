@@ -78,6 +78,7 @@ export function useBattleReplay(battleData: Ref<BattleEvent[]>) {
     for (; currentIndex.value < battleData.value.length; currentIndex.value++) {
       if (!isPlaying.value) break // allow pause via stop()
       const event = battleData.value[currentIndex.value]
+      if (!event) continue
       if (event.type === 'BattleStart') continue
 
       state.value = applyEvent(state.value, event)
@@ -99,6 +100,7 @@ export function useBattleReplay(battleData: Ref<BattleEvent[]>) {
     isPlaying.value = false
     for (let i = currentIndex.value; i < battleData.value.length; i++) {
       const event = battleData.value[i]
+      if (!event) continue
       if (event.type === 'BattleStart') continue
       state.value = applyEvent(state.value, event)
       pushLog(event)

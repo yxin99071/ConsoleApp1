@@ -17,24 +17,20 @@ namespace DataCore.Models
         public double Agility { get; set; }
         public double Strength { get; set; }
         public double Intelligence { get; set; }
-        public int WeaponLotteryPoint { get; set; } = 1000;
-        public int SkillLotteryPoint { get; set; } = 1000;
+        // ── 货币 & 限流 ──────────────────────────────────
+        public int LotteryPoint { get; set; } = 0;
+        public DateTime? LastBattleTime { get; set; } = null;
+
         public List<UserWeapon> UserWeaponLinks { get; set; } = new List<UserWeapon>();
         public List<UserSkill> UserSkillLinks { get; set; } = new List<UserSkill>();
+        public List<UserDailyShopSlot> DailyShopSlots { get; set; } = new();
 
         public User Copy()
         {
-
             var wlists = new List<UserWeapon>();
-            foreach(var w in  this.UserWeaponLinks)
-            {
-                wlists.Add(w.Clone());
-            }
+            foreach (var w in this.UserWeaponLinks) wlists.Add(w.Clone());
             var slists = new List<UserSkill>();
-            foreach(var s in this.UserSkillLinks)
-            {
-                slists.Add(s.Clone());
-            }
+            foreach (var s in this.UserSkillLinks) slists.Add(s.Clone());
 
             return new User
             {
@@ -52,6 +48,8 @@ namespace DataCore.Models
                 Agility = this.Agility,
                 Strength = this.Strength,
                 Intelligence = this.Intelligence,
+                LotteryPoint = this.LotteryPoint,
+                LastBattleTime = this.LastBattleTime,
                 UserSkillLinks = slists,
                 UserWeaponLinks = wlists,
             };

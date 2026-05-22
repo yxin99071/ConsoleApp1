@@ -80,5 +80,31 @@ namespace BattleBackend.DTOs
             IsDamage = (buff.CoefficientAgility + buff.CoefficientIntelligence + buff.CoefficientStrength) >0,
             LastRound = buff.LastRound
         };
+
+        public static AwardItemDto ToAwardItemDto(this Weapon weapon) => new()
+        {
+            Id          = weapon.Id,
+            Name        = weapon.Name,
+            Description = weapon.Description,
+            Profession  = weapon.Profession,
+            SecondProfession = weapon.SecondProfession,
+            RareLevel   = weapon.RareLevel,
+            IsPassive   = false,
+            IsUnique    = weapon.IsUnique,
+            Buffs       = weapon.WeaponBuffs.Select(wb => wb.Buff.ToDto()).ToList()
+        };
+
+        public static AwardItemDto ToAwardItemDto(this Skill skill) => new()
+        {
+            Id          = skill.Id,
+            Name        = skill.Name,
+            Description = skill.Description,
+            Profession  = skill.Profession,
+            SecondProfession = skill.SecondProfession,
+            RareLevel   = skill.RareLevel,
+            IsPassive   = skill.IsPassive,
+            IsUnique    = skill.IsUnique,
+            Buffs       = skill.SkillBuffs.Select(sb => sb.Buff.ToDto()).ToList()
+        };
     }
 }

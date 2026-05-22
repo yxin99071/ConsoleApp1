@@ -8,6 +8,7 @@ export interface AwardItemDto {
   secondProfession?: string
   rareLevel: number
   isPassive: boolean
+  isUnique: boolean
   buffs: BuffSummaryDto[]
 }
 
