@@ -43,7 +43,7 @@ namespace BattleBackend.Services
             var blockStart = GetCurrentBlockStart();
 
             bool needsRefresh = slots.Count == 0 ||
-                                slots.Max(s => s.GeneratedAt.ToUniversalTime()) < blockStart;
+                                slots.Max(s => DateTime.SpecifyKind(s.GeneratedAt, DateTimeKind.Utc)) < blockStart;
 
             if (needsRefresh)
                 await DoRefreshAsync(userId, slots, forceFull: false);

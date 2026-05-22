@@ -181,7 +181,13 @@ async function handlePurchase(slot: ShopSlotDto) {
   shopError.value    = null
   try {
     await purchaseSlot(slot.id)
-    await loadDailyShop()   // Reload to reflect changes
+    // 本地更新：标记已购买，释放锁，扣除余额——不重新拉取商店以避免触发刷新
+    if (dailyShop.value) {
+      const s = dailyShop.value.slots.find(s => s.id === slot.id)
+      if (s) { s.isPurchased = true; s.isLocked = false }
+      dailyShop.value.lotteryPoint -= slot.price
+    }
+    if (inventory.value) inventory.value.lotteryPoint -= slot.price
     showShopMessage(`✅ 已获得「${slot.item.name}」`)
   } catch (e: any) {
     shopError.value = e?.response?.data?.message ?? '购买失败'
