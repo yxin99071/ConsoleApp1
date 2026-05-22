@@ -171,8 +171,8 @@ namespace BattleCore.BattleLogic
             chosenSkill = SkillList[choice];
             
 
-            //normalSkill
-            if (chosenSkill.Tags[0] == "普通")
+            //normalSkill：Tags 为空或首 Tag 为"普通"都走普通攻击逻辑
+            if (chosenSkill.Tags.Count == 0 || chosenSkill.Tags[0] == "普通")
                 ActionWithNormalSkill(source, taker, chosenSkill);
             //specialSkill
             else
